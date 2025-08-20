@@ -1,7 +1,9 @@
 name: fitness_workout
-description: "Interaktiver Workout Tracker"
+description: Ein flexibles Flutter-Package, um Workouts zu starten, Sätze zu tracken und Ergebnisse auszuwerten.
 version: 0.0.1
-homepage:
+homepage: https://github.com/nexas105/workout_runner_flutter
+repository: https://github.com/nexas105/workout_runner_flutter
+issue_tracker: https://github.com/nexas105/workout_runner_flutter/issues
 
 environment:
   sdk: ^3.7.0

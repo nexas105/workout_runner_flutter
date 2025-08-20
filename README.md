@@ -12,7 +12,7 @@ Es liefert eine klare Trennung aus **Controller-Logik** (State, Timer, Persisten
 - ⏱️ **Timer**: Workout-, Set- und Pausen-Timer
 - ✅ **Satz-Tracking**: Gewicht, Wiederholungen, RIR, Satzdauer
 - 🧠 **Persistenz** via `SharedPreferences` (Storage-Interface austauschbar)
-- 🧩 **Fertige Widgets**: `RunnerPanel`, `CurrentWorkout`, `CurrentExercise`, `CurrentSet/SetView`, `Results`, `RunnerScreen`
+- 🧩 **Fertige Widgets**: `RunnerPanel`, `QuickRunner`, `CurrentExercise`, `CurrentSet/SetView`, `Results`, `RunnerDefaultScreen`
 - 🎨 **Theming/Styling** per Parametern (Farben, TextStyles) überschreibbar
 
 ---
@@ -167,8 +167,29 @@ final done = runner.getPerformedSet(exerciseIndex, setIndex);
 
 ```dart
 final result = await runner.finish();
-// State + Plan werden aus dem Storage entfernt
+
+
+
 ```
+
+---
+## Screenshots
+
+### RunnerScreen
+![RunnerScreen](assets/screens/runner_screen.png)
+
+### QuickRunner
+![RunnerPanel](assets/screens/quick_runner1.png)
+![RunnerPanel](assets/screens/quick_runner2.png)
+
+![RunnerPanel](assets/screens/quick_runner3.png)
+
+### Bottom
+![RunnerPanel](assets/screens/bottom.png)
+
+### Bar
+![RunnerPanel](assets/screens/bar.png)
+---
 
 ---
 
