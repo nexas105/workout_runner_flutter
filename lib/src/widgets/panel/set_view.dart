@@ -164,7 +164,7 @@ class _SetViewState extends State<SetView> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header (Satzanzahl)
+            // Header (Satzanzahl) + Add/Remove buttons
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
@@ -174,6 +174,74 @@ class _SetViewState extends State<SetView> {
                     style: theme.textTheme.titleMedium,
                   ),
                   const Spacer(),
+                  Builder(
+                    builder: (ctx) {
+                      final hasActiveSet =
+                          widget.controller.activeSetIndex != null;
+                      final canAdd = !hasActiveSet;
+                      final lastIndex =
+                          ex.sets.isEmpty ? -1 : ex.sets.length - 1;
+                      final lastPerformed =
+                          lastIndex >= 0
+                              ? _performedSet(exerciseIdx, lastIndex) != null
+                              : false;
+                      final canRemove =
+                          lastIndex >= 0 && !lastPerformed && !hasActiveSet;
+
+                      return Row(
+                        children: [
+                          IconButton.filledTonal(
+                            onPressed:
+                                canRemove
+                                    ? () async {
+                                      final ok = await widget.controller
+                                          .removeSetFromExercise(
+                                            exerciseIdx,
+                                            lastIndex,
+                                          );
+                                      if (!ok && ctx.mounted) {
+                                        ScaffoldMessenger.of(ctx).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Satz konnte nicht entfernt werden',
+                                            ),
+                                          ),
+                                        );
+                                      } else if (ctx.mounted) {
+                                        setState(() {});
+                                      }
+                                    }
+                                    : null,
+                            tooltip: 'Letzten Satz entfernen',
+                            icon: const Icon(Icons.remove),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton.filled(
+                            onPressed:
+                                canAdd
+                                    ? () async {
+                                      final ok = await widget.controller
+                                          .addSetToExercise(exerciseIdx);
+                                      if (!ok && ctx.mounted) {
+                                        ScaffoldMessenger.of(ctx).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Satz konnte nicht hinzugefügt werden',
+                                            ),
+                                          ),
+                                        );
+                                      } else if (ctx.mounted) {
+                                        setState(() {});
+                                      }
+                                    }
+                                    : null,
+                            tooltip: 'Satz hinzufügen',
+                            icon: const Icon(Icons.add),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -200,7 +268,7 @@ class _SetViewState extends State<SetView> {
 
             // Set-Karten
             SizedBox(
-              height: 320,
+              height: 380,
               child: PageView.builder(
                 controller: _pageController,
                 padEnds: false,
@@ -275,14 +343,24 @@ class _SetViewState extends State<SetView> {
 
                   return Padding(
                     padding: const EdgeInsets.only(
-                      left: 12,
-                      right: 12,
+                      left: 4,
+                      right: 4,
                       bottom: 8,
                     ),
                     child: Card(
                       color: cardColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
+                        side:
+                            isThisActiveSet
+                                ? BorderSide(
+                                  color: theme.colorScheme.primary,
+                                  width: 1,
+                                )
+                                : BorderSide(
+                                  color: theme.colorScheme.outlineVariant,
+                                  width: 1,
+                                ),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(12),
@@ -324,7 +402,6 @@ class _SetViewState extends State<SetView> {
                                   ),
                               ],
                             ),
-
                             if (!isThisActiveSet && wasPerformed) ...[
                               const SizedBox(height: 4),
                               if (_lastSetDuration[key] != null)
@@ -338,22 +415,24 @@ class _SetViewState extends State<SetView> {
                                   style: theme.textTheme.bodySmall,
                                 ),
                             ],
-
                             const SizedBox(height: 8),
-
                             if (showInlineRest) ...[
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.surfaceVariant.withOpacity(0.5),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      theme.colorScheme.surfaceVariant
+                                          .withOpacity(0.7),
+                                      theme.colorScheme.surfaceVariant
+                                          .withOpacity(0.4),
+                                    ],
+                                  ),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color:
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.outlineVariant,
+                                    color: theme.colorScheme.outlineVariant,
                                   ),
                                 ),
                                 child: Column(
@@ -371,12 +450,14 @@ class _SetViewState extends State<SetView> {
                                               ).textTheme.titleSmall,
                                         ),
                                         const Spacer(),
-                                        Text(
-                                          '${widget.controller.restRemaining.inSeconds}s',
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.titleMedium,
+                                        Chip(
+                                          label: Text(
+                                            '${widget.controller.restRemaining.inSeconds}s',
+                                            style:
+                                                Theme.of(
+                                                  context,
+                                                ).textTheme.titleMedium,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -403,7 +484,7 @@ class _SetViewState extends State<SetView> {
                                                 progress.isNaN
                                                     ? null
                                                     : progress,
-                                            minHeight: 8,
+                                            minHeight: 10,
                                           ),
                                         );
                                       },
@@ -436,104 +517,82 @@ class _SetViewState extends State<SetView> {
                               ),
                               const SizedBox(height: 8),
                             ],
-
-                            if (!showInlineRest)
-                              Row(
+                            if (!showInlineRest) ...[
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Gewicht: ${wVal.toStringAsFixed(1)} kg',
-                                          style:
-                                              widget.inputStyle ??
-                                              theme.textTheme.bodyMedium,
-                                        ),
-                                        Slider(
-                                          value: wVal,
-                                          min: 0,
-                                          max: 300,
-                                          divisions: 120,
-                                          label: wVal.toStringAsFixed(1),
-                                          onChanged:
-                                              isThisActiveSet
-                                                  ? (v) => setState(
-                                                    () => _weight[key] = v,
-                                                  )
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
+                                  Text(
+                                    'Gewicht: ${wVal.toStringAsFixed(1)} kg',
+                                    style:
+                                        widget.inputStyle ??
+                                        theme.textTheme.bodyMedium,
+                                  ),
+                                  Slider(
+                                    value: wVal,
+                                    min: 0,
+                                    max: 300,
+                                    divisions: 300,
+                                    label: wVal.toStringAsFixed(1),
+                                    onChanged:
+                                        isThisActiveSet
+                                            ? (v) =>
+                                                setState(() => _weight[key] = v)
+                                            : null,
                                   ),
                                 ],
                               ),
-
-                            if (!showInlineRest)
-                              Row(
+                              const SizedBox(height: 6),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Wdh: $rVal',
-                                          style:
-                                              widget.inputStyle ??
-                                              theme.textTheme.bodyMedium,
-                                        ),
-                                        Slider(
-                                          value: rVal.toDouble(),
-                                          min: 1,
-                                          max: 30,
-                                          divisions: 29,
-                                          label: '$rVal',
-                                          onChanged:
-                                              isThisActiveSet
-                                                  ? (v) => setState(
-                                                    () =>
-                                                        _reps[key] = v.round(),
-                                                  )
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
+                                  Text(
+                                    'Wdh: $rVal',
+                                    style:
+                                        widget.inputStyle ??
+                                        theme.textTheme.bodyMedium,
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'RIR: $rirVal',
-                                          style:
-                                              widget.inputStyle ??
-                                              theme.textTheme.bodyMedium,
-                                        ),
-                                        Slider(
-                                          value: rirVal.toDouble(),
-                                          min: 0,
-                                          max: 5,
-                                          divisions: 5,
-                                          label: '$rirVal',
-                                          onChanged:
-                                              isThisActiveSet
-                                                  ? (v) => setState(
-                                                    () => _rir[key] = v.round(),
-                                                  )
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
+                                  Slider(
+                                    value: rVal.toDouble(),
+                                    min: 1,
+                                    max: 30,
+                                    divisions: 29,
+                                    label: '$rVal',
+                                    onChanged:
+                                        isThisActiveSet
+                                            ? (v) => setState(
+                                              () => _reps[key] = v.round(),
+                                            )
+                                            : null,
                                   ),
                                 ],
                               ),
-
+                              const SizedBox(height: 6),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'RIR: $rirVal',
+                                    style:
+                                        widget.inputStyle ??
+                                        theme.textTheme.bodyMedium,
+                                  ),
+                                  Slider(
+                                    value: rirVal.toDouble(),
+                                    min: 0,
+                                    max: 5,
+                                    divisions: 5,
+                                    label: '$rirVal',
+                                    onChanged:
+                                        isThisActiveSet
+                                            ? (v) => setState(
+                                              () => _rir[key] = v.round(),
+                                            )
+                                            : null,
+                                  ),
+                                ],
+                              ),
+                            ],
                             const Spacer(),
-
                             Row(
                               children: [
                                 if (!isThisActiveSet && !wasPerformed)
@@ -555,11 +614,8 @@ class _SetViewState extends State<SetView> {
                                         final endW = _weight[key] ?? wVal;
                                         final endR = _reps[key] ?? rVal;
                                         final endRir = _rir[key] ?? rirVal;
-
-                                        // Satzdauer merken (vom laufenden Timer)
                                         _lastSetDuration[key] =
                                             widget.controller.currentSetElapsed;
-
                                         final ok = await widget.controller
                                             .finishActiveSet(
                                               weight: endW,
@@ -571,7 +627,6 @@ class _SetViewState extends State<SetView> {
                                                       .currentSetElapsed,
                                             );
                                         if (!mounted || !ok) return;
-
                                         setState(() {
                                           _restKey = key;
                                           _restStartedAt = DateTime.now();
@@ -592,7 +647,6 @@ class _SetViewState extends State<SetView> {
                                             double w = _weight[key] ?? wVal;
                                             int reps = _reps[key] ?? rVal;
                                             int rir = _rir[key] ?? rirVal;
-
                                             return StatefulBuilder(
                                               builder: (ctx2, setLocal) {
                                                 return Padding(
@@ -623,7 +677,6 @@ class _SetViewState extends State<SetView> {
                                                       const SizedBox(
                                                         height: 12,
                                                       ),
-
                                                       Text(
                                                         'Gewicht: ${w.toStringAsFixed(1)} kg',
                                                       ),
@@ -631,13 +684,12 @@ class _SetViewState extends State<SetView> {
                                                         value: w,
                                                         min: 0,
                                                         max: 300,
-                                                        divisions: 120,
+                                                        divisions: 300,
                                                         onChanged:
                                                             (v) => setLocal(
                                                               () => w = v,
                                                             ),
                                                       ),
-
                                                       Text('Wdh: $reps'),
                                                       Slider(
                                                         value: reps.toDouble(),
@@ -651,7 +703,6 @@ class _SetViewState extends State<SetView> {
                                                                       v.round(),
                                                             ),
                                                       ),
-
                                                       Text('RIR: $rir'),
                                                       Slider(
                                                         value: rir.toDouble(),
@@ -665,7 +716,6 @@ class _SetViewState extends State<SetView> {
                                                                       v.round(),
                                                             ),
                                                       ),
-
                                                       const SizedBox(height: 8),
                                                       Row(
                                                         children: [

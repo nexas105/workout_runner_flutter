@@ -57,7 +57,7 @@ class _RunnerDefaultScreenState extends State<RunnerDefaultScreen> {
               _error == null
                   ? const CircularProgressIndicator()
                   : Padding(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(4),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -80,7 +80,7 @@ class _RunnerDefaultScreenState extends State<RunnerDefaultScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Runner')),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(4),
         child: RunnerPanel(
           controller: runner,
           plan: widget.plan,

@@ -149,6 +149,7 @@ class _CurrentExerciseState extends State<CurrentExercise> {
                     theme.textTheme.titleMedium?.copyWith(
                       fontWeight:
                           isPageActive ? FontWeight.w600 : FontWeight.w500,
+                      color: theme.colorScheme.onSurface,
                     );
 
                 final subtitleStyle =
@@ -156,7 +157,7 @@ class _CurrentExerciseState extends State<CurrentExercise> {
                     theme.textTheme.bodySmall?.copyWith(
                       color:
                           isPageActive
-                              ? theme.colorScheme.onPrimaryContainer
+                              ? theme.colorScheme.onSurface
                               : theme.colorScheme.onSurfaceVariant,
                     );
 
@@ -176,7 +177,7 @@ class _CurrentExerciseState extends State<CurrentExercise> {
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
                           color: borderColor,
-                          width: isPageActive ? 2 : 1,
+                          width: isPageActive ? 1 : 1,
                         ),
                       ),
                       child: Padding(
@@ -192,9 +193,9 @@ class _CurrentExerciseState extends State<CurrentExercise> {
                                       isPageActive
                                           ? (widget.activeCardColor ??
                                               theme.colorScheme.primary
-                                                  .withOpacity(0.15))
+                                                  .withAlpha(25))
                                           : (widget.inactiveCardColor ??
-                                              theme.colorScheme.surfaceVariant),
+                                              theme.colorScheme.surface),
                                   child: Icon(
                                     Icons.fitness_center,
                                     color: iconColor,

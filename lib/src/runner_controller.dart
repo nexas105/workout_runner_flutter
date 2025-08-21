@@ -463,5 +463,58 @@ class WorkoutRunnerController extends ChangeNotifier {
     }
   }
 
+  Future<bool> addSetToExercise(
+    int exerciseIndex, {
+    int? targetReps,
+    double? targetWeight,
+    Duration? rest,
+  }) async {
+    if (_plan == null) return false;
+    if (exerciseIndex < 0 || exerciseIndex >= (_plan!.exercises.length))
+      return false;
+    final ex = _plan!.exercises[exerciseIndex];
+    final newSet = WorkoutSet(
+      targetReps: targetReps ?? 10,
+      targetWeight: targetWeight,
+      rest: rest ?? defaultSetRest,
+    );
+    final updatedSets = [...ex.sets, newSet];
+    final updatedExercise = ex.copyWith(sets: updatedSets);
+    final updatedExercises = [..._plan!.exercises];
+    updatedExercises[exerciseIndex] = updatedExercise;
+    _plan = WorkoutPlan(
+      id: _plan!.id,
+      name: _plan!.name,
+      exercises: updatedExercises,
+    );
+    await _storage.savePlan(json: _plan!.toJson());
+    notifyListeners();
+    return true;
+  }
+
+  Future<bool> removeSetFromExercise(int exerciseIndex, int setIndex) async {
+    if (_plan == null) return false;
+    if (exerciseIndex < 0 || exerciseIndex >= (_plan!.exercises.length))
+      return false;
+    final ex = _plan!.exercises[exerciseIndex];
+    if (setIndex < 0 || setIndex >= ex.sets.length) return false;
+    if (getPerformedSet(exerciseIndex, setIndex) != null) return false;
+    final updatedSets = [
+      for (var i = 0; i < ex.sets.length; i++)
+        if (i != setIndex) ex.sets[i],
+    ];
+    final updatedExercise = ex.copyWith(sets: updatedSets);
+    final updatedExercises = [..._plan!.exercises];
+    updatedExercises[exerciseIndex] = updatedExercise;
+    _plan = WorkoutPlan(
+      id: _plan!.id,
+      name: _plan!.name,
+      exercises: updatedExercises,
+    );
+    await _storage.savePlan(json: _plan!.toJson());
+    notifyListeners();
+    return true;
+  }
+
   // String _key(String planId) => planId;
 }

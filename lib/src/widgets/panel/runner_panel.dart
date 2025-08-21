@@ -86,7 +86,7 @@ class _RunnerPanelState extends State<RunnerPanel> {
                 inactiveCardColor: widget.setInactiveCardColor,
                 doneCardColor: widget.setDoneCardColor,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () async {
                   await Navigator.push(

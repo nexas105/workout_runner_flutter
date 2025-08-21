@@ -37,7 +37,7 @@ class CurrentWorkout extends StatelessWidget {
                   textStyle ??
                   theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+                    color: theme.colorScheme.onSurface,
                   ),
             ),
             const SizedBox(height: 8),
