@@ -14,7 +14,8 @@ String fmt(Duration d) {
 
 class RunnerScreen extends StatelessWidget {
   final WorkoutPlan plan;
-  const RunnerScreen({super.key, required this.plan});
+  final OnRunnerFinished? onFinished;
+  const RunnerScreen({super.key, required this.plan, this.onFinished});
 
   @override
   Widget build(BuildContext context) {

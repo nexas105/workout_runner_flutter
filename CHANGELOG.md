@@ -31,3 +31,7 @@
 ## 0.0.4
 
 * UI Optimierung **Optmized UI**.
+
+## 0.0.5
+
+* BugFixing Finish Workout from DefaultScreen Callback 
