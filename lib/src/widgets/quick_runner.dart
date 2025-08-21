@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 /// Kompakter Card-Banner, der entweder den CurrentExercise-Pager einblendet
 /// (wenn keine aktive Übung existiert) oder – bei aktiver Übung – die Sätze
 /// der aktuellen Übung mit Start/Stop/Edit-Logik zeigt.
+/// Controller bitte mit übergeben
 class QuickRunner extends StatefulWidget {
   final List<WorkoutPlan>? plans;
   final WorkoutRunnerController controller;
@@ -506,9 +507,9 @@ class _QuickRunnerState extends State<QuickRunner> {
                     subtitle:
                         performed == null
                             ? null
-                            : (performed.restTaken != null
+                            : (performed.duration != null
                                 ? Text(
-                                  'Satzdauer: ${_fmt(performed.restTaken!)}',
+                                  'Satzdauer: ${_fmt(performed.duration!)}',
                                 )
                                 : null),
                     trailing: Row(

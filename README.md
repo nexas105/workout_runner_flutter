@@ -22,7 +22,7 @@ Es liefert eine klare Trennung aus **Controller-Logik** (State, Timer, Persisten
 1. In der `pubspec.yaml` eintragen:
 ```yaml
 dependencies:
-  fitness_workout: ^0.0.1
+  fitness_workout: ^0.0.3
 ```
 
 2. Optional schon beim App-Start konfigurieren (inkl. Auto-Resume):
@@ -39,8 +39,11 @@ void main() async {
 ## Usage (Schnellstart)
 
 ```dart
+import 'dart:math';
+
+import 'package:example/runner_screen.dart';
 import 'package:fitness_workout/fitness_workout.dart';
-import 'package:fitness_workout/example/lib/runner_screen.dart';
+import 'package:flutter/material.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,60 +51,150 @@ Future<void> main() async {
   runApp(const App());
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Home());
+    return MaterialApp(home: Home());
+  }
+}
 
-    class Home extends StatelessWidget {
-  const Home({super.key});
-    List<WorkoutPlan> _plans() => [
-    WorkoutPlan(
-      id: 'p1',
-      name: 'Pull',
-      exercises: [
-        WorkoutExercise(
-          id: 'bp',
-          name: 'Bankdrücken',
-          sets: [
-            WorkoutSet(targetReps: 10, targetWeight: 80),
-            WorkoutSet(targetReps: 8, targetWeight: 85),
-          ],
+class Home extends StatefulWidget {
+  Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    // HIER REGISTRIERST DU DEN LISTENER
+    // Diese Funktion wird ausgeführt, egal wo `runner.finish()` aufgerufen wird.
+    runner.onWorkoutFinished = (result) {
+      // Ignoriere, wenn das Widget nicht mehr im Baum ist.
+      if (!mounted) return;
+
+      debugPrint('WORKOUT VOM LISTENER IN HOME EMPFANGEN!');
+      debugPrint(
+        'Plan: ${result.planId}, Dauer: ${result.finishedAt.difference(result.startedAt)}',
+      );
+
+      // Zeige eine Bestätigung in deiner App an.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Super! Workout "${result.planId}" abgeschlossen.'),
+          backgroundColor: Colors.green,
         ),
-        WorkoutExercise(
-          id: 'ohp',
-          name: 'OHP',
-          sets: [WorkoutSet(targetReps: 10, targetWeight: 50)],
-        ),
-      ],
-    ),
-    WorkoutPlan(
-      id: 'p2',
-      name: 'Push',
-      exercises: [
-        WorkoutExercise(
-          id: 'sqt',
-          name: 'Squat',
-          sets: [
-            WorkoutSet(targetReps: 10, targetWeight: 100),
-            WorkoutSet(targetReps: 8, targetWeight: 110),
-          ],
-        ),
-      ],
-    ),
+      );
+
+      // Hier kannst du die Daten an Supabase senden, in einer lokalen DB speichern etc.
+    };
+  }
+
+  // List<WorkoutExercise> get _defaultExercises =>
+  Muscle _findOrCreateMuscle(String name, {String? group}) {
+    // 1. Versuche, den Muskel aus der Plugin-Datenbank zu finden.
+    final existingMuscle = Muscle.findByName(name);
+    if (existingMuscle != null) {
+      return existingMuscle;
+    }
+
+    // 2. Wenn nicht gefunden, erstelle ein neues Objekt für die App.
+    return Muscle(id: Random().toString(), name: name, group: group);
+  }
+
+  List<WorkoutExercise> _buildCustomExercises() {
+    return [
+      WorkoutExercise(
+        id: 'custom_ex_001',
+        name: 'Konzentrationscurls',
+        desc: 'Eine Isolationsübung für den Bizeps.',
+        category: ExerciseCategorie.findByName('Krafttraining'),
+        // Hier nutzen wir den Helfer. 'Bizeps' wird gefunden.
+        muscles: [_findOrCreateMuscle('Bizeps')],
+        sets: [
+          WorkoutSet(targetReps: 12, targetWeight: 10),
+          WorkoutSet(targetReps: 12, targetWeight: 10),
+        ],
+      ),
+      WorkoutExercise(
+        id: 'custom_ex_002',
+        name: 'Wadenheben an der Wand',
+        desc: 'Stärkt die Wadenmuskulatur ohne Geräte.',
+        category: ExerciseCategorie.findByName('Krafttraining'),
+        // 'Tibialis Anterior' existiert nicht, also wird ein neues Muscle-Objekt erstellt.
+        muscles: [
+          _findOrCreateMuscle('Waden'),
+          _findOrCreateMuscle('Tibialis Anterior', group: 'Unterkörper'),
+        ],
+        sets: [WorkoutSet(targetReps: 20), WorkoutSet(targetReps: 20)],
+      ),
+    ];
+  }
+
+  List<WorkoutPlan> _createWorkoutPlans() {
+    // 1. Hole dir die Daten aus dem Plugin
+    final defaultStrengthExercises = WorkoutExercise.getStrengthExercises();
+    final defaultCardioExercises = WorkoutExercise.getCardioExercises();
+
+    // 2. Hole dir die eigenen Übungen der App
+    final customExercises = _buildCustomExercises();
+
+    // 3. Kombiniere sie zu Plänen
+    return [
+      WorkoutPlan(
+        id: 'plan_fullbody_001',
+        name: 'Ganzkörper & Eigene Übungen',
+        // Nimm 2 Kraft-Übungen, 1 Cardio-Übung und alle eigenen Übungen
+        exercises: [
+          ...defaultStrengthExercises.take(2),
+          ...defaultCardioExercises.take(1),
+          ...customExercises,
+        ],
+      ),
+      WorkoutPlan(
+        id: 'plan_oberkoerper_001',
+        name: 'Fokus Oberkörper',
+        // Nutze die Plugin-Funktion, um alle OK-Übungen zu filtern
+        exercises: WorkoutExercise.getByMuscleGroup("Oberkörper"),
+      ),
+      WorkoutPlan(
+        id: 'plan_custom_only_001',
+        name: 'Nur meine Übungen',
+        exercises: customExercises,
+      ),
+    ];
+  }
+
+  final List<Muscle> customMuscles = [
+    Muscle(id: 'id001', name: 'Bizeps'),
+    Muscle(id: 'id003', name: 'Brust'),
   ];
-    final plans = _plans();
-          appBar: AppBar(
+
+  @override
+  Widget build(BuildContext context) {
+    final plans = _createWorkoutPlans();
+    return Scaffold(
+      appBar: AppBar(
         title: const Text('Workouts'),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: RunnerStatusChip(controller: runner),
+          ),
         ],
-              body: Column(
+      ),
+      body: Column(
         children: [
-          QuickRunner(controller: runner, plans: _plans()),
+          QuickRunner(controller: runner, plans: plans),
           RunnerStatusBanner(controller: runner),
           Expanded(
             child: ListView.builder(
@@ -126,6 +219,10 @@ class App extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: RunnerStatusBottomBar(controller: runner),
+    );
+  }
+}
+
       ```
       ---
 

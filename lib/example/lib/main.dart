@@ -18,7 +18,7 @@ class App extends StatelessWidget {
 
 class Home extends StatelessWidget {
   const Home({super.key});
-
+  // workout list create
   List<WorkoutPlan> _plans() => [
     WorkoutPlan(
       id: 'p1',
@@ -112,9 +112,11 @@ class Home extends StatelessWidget {
       ),
       body: Column(
         children: [
+          //example Quick Runner
           QuickRunner(controller: runner, plans: _plans()),
+          //example StatusBar
           RunnerStatusBanner(controller: runner),
-
+          //Example Use RunnerPanel
           Expanded(
             child: ListView.builder(
               itemCount: plans.length,
@@ -137,6 +139,7 @@ class Home extends StatelessWidget {
           ),
         ],
       ),
+      //Example Bottom Bar
       bottomNavigationBar: RunnerStatusBottomBar(controller: runner),
     );
   }

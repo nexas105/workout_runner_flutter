@@ -11,7 +11,7 @@ class WorkoutRunnerController extends ChangeNotifier {
       WorkoutRunnerController._internal();
   factory WorkoutRunnerController() => _instance;
   WorkoutRunnerController._internal();
-
+  void Function(WorkoutResult)? onWorkoutFinished;
   late RunnerStorage _storage;
 
   WorkoutPlan? _plan;
@@ -53,6 +53,8 @@ class WorkoutRunnerController extends ChangeNotifier {
   bool get isResting => _restTicker != null;
   Duration get restRemaining => _restRemaining;
 
+  /// hier Kann ein andere Speicher wie Datenbank ETC über die Klasse RunnerStorage erstellt werden zb. :
+  /// class MysqlWorkoutStorage implements RunnerStorage
   Future<void> configure({
     RunnerStorage? storage,
     bool autoResume = true,
@@ -241,6 +243,7 @@ class WorkoutRunnerController extends ChangeNotifier {
       reps: reps,
       rir: rir,
       setDuration: taken,
+      pauseDuration: Duration(seconds: restSeconds),
     );
     _activeSetExerciseIndex = null;
     _activeSetIndex = null;
@@ -286,6 +289,7 @@ class WorkoutRunnerController extends ChangeNotifier {
     required int reps,
     required int rir,
     Duration? setDuration,
+    Duration? pauseDuration, //Fehlt noch,
   }) async {
     if (_state == null || _plan == null) return;
 
@@ -297,7 +301,8 @@ class WorkoutRunnerController extends ChangeNotifier {
       actualWeight: weight,
       actualReps: reps,
       rir: rir,
-      restTaken: setDuration,
+      pause: pauseDuration,
+      duration: setDuration,
       completedAt: DateTime.now(),
     );
 
@@ -383,7 +388,8 @@ class WorkoutRunnerController extends ChangeNotifier {
                   actualReps: reps,
                   actualWeight: weight,
                   rir: rir,
-                  restTaken: s.restTaken,
+                  pause: s.pause,
+                  duration: s.duration,
                   completedAt: s.completedAt,
                 );
               }).toList();
@@ -403,21 +409,40 @@ class WorkoutRunnerController extends ChangeNotifier {
   }
 
   Future<WorkoutResult?> finish() async {
-    //TODO DATEN AN SUPABASE!!!
+    //TODO DATEN AUSGEBEN DETAILIERT!!!
     if (_plan == null || _state == null) return null;
 
-    _state = _state!.copyWith(isActive: false, updatedAt: DateTime.now());
+    final performedExerciseDetails =
+        _state!.performed.map((performedEx) {
+          // Finde die Original-Übung im Plan, um die exerciseId zu erhalten.
+          final originalExercise = _plan!.exercises[performedEx.exerciseIndex];
+
+          return PerformedExerciseDetails(
+            exerciseId: originalExercise.id,
+            exerciseName: performedEx.exerciseName,
+            // Die komplette, ungefilterte Liste der Sätze wird direkt übernommen.
+            sets: performedEx.sets,
+          );
+        }).toList();
+
+    // Der alte State wird gespeichert, bevor er zurückgesetzt wird.
+    final finalState = _state!;
+
+    _state = finalState.copyWith(isActive: false, updatedAt: DateTime.now());
     await _persist();
+
     await _storage.clearState();
     await _storage.clearPlan();
 
     final result = WorkoutResult(
-      planId: _state!.planId,
-      startedAt: _state!.startedAt,
+      planId: finalState.planId,
+      startedAt: finalState.startedAt,
       finishedAt: DateTime.now(),
-      exercises: [],
+      duration: elapsed,
+      exercises: performedExerciseDetails,
     );
 
+    // Controller-Zustand zurücksetzen
     _globalTimer?.cancel();
     _globalTimer = null;
 
@@ -425,6 +450,7 @@ class WorkoutRunnerController extends ChangeNotifier {
     _state = null;
     elapsed = Duration.zero;
 
+    onWorkoutFinished?.call(result);
     notifyListeners();
     return result;
   }
