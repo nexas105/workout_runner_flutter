@@ -26,3 +26,8 @@
 * Default Muscle, Exercises, and Categories.
 * Global finish Hook. To Get Workout Results.
 * My Plan in Future: UI optimize and any More.
+
+
+## 0.0.4
+
+* UI Optimierung **Optmized UI**.
