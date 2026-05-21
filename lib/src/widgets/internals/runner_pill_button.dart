@@ -56,12 +56,16 @@ class RunnerPillButton extends StatelessWidget {
           Icon(icon, size: 18, color: fg),
           SizedBox(width: t.space2),
         ],
-        Text(
-          label,
-          style: t.title.copyWith(
-            fontSize: fontSize ?? 14,
-            color: fg,
-            letterSpacing: 0.2,
+        Flexible(
+          child: Text(
+            label,
+            style: t.title.copyWith(
+              fontSize: fontSize ?? 14,
+              color: fg,
+              letterSpacing: 0.2,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

@@ -426,7 +426,12 @@ class _ExerciseCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: t.space3),
-                Text(exercise.name, style: t.titleLarge),
+                Text(
+                  exercise.name,
+                  style: t.titleLarge,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 if (exercise.muscles.isNotEmpty) ...[
                   SizedBox(height: t.space2),
                   Text(
@@ -683,6 +688,7 @@ class _Dot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final color =
         isActive
             ? t.accent
@@ -692,7 +698,7 @@ class _Dot extends StatelessWidget {
             ? t.textPrimary
             : t.textDim;
     return AnimatedContainer(
-      duration: t.motionFast,
+      duration: reduceMotion ? Duration.zero : t.motionFast,
       margin: EdgeInsets.symmetric(horizontal: 3),
       width: isCurrent ? 22 : 6,
       height: 6,

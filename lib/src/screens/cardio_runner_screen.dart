@@ -147,14 +147,16 @@ class _CardioRunnerScreenState extends State<CardioRunnerScreen> {
   void _defaultOnFinished(BuildContext context, CardioResult result) {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder:
-            (_) => Scaffold(
-              backgroundColor: WorkoutRunnerTheme.of(context).background,
-              body: CardioResultsView(
-                result: result,
-                onClose: () => Navigator.of(context).pop(),
-              ),
-            ),
+        builder: (routeContext) => Scaffold(
+          // Use the *new* route's context — the outer `context` belongs to
+          // the route we just replaced; reading inherited widgets off it
+          // after pushReplacement deactivates the element throws.
+          backgroundColor: WorkoutRunnerTheme.of(routeContext).background,
+          body: CardioResultsView(
+            result: result,
+            onClose: () => Navigator.of(routeContext).pop(),
+          ),
+        ),
       ),
     );
   }

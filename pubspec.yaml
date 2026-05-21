@@ -2,7 +2,7 @@ name: fitness_workout
 description: >-
   Fitness workout runner for Flutter. Strength (sets x reps x weight) and
   cardio (intervals/laps) controllers with persistable state, pluggable
-  storage, and a stack of drop-in dark-first widgets.
+  storage, drop-in dark-first widgets, editors, stats, PRs and a focus runner.
 version: 1.0.0
 homepage: https://github.com/nexas105/workout_runner_flutter
 repository: https://github.com/nexas105/workout_runner_flutter
@@ -14,6 +14,20 @@ topics:
   - timer
   - health
   - widgets
+
+screenshots:
+  - description: Quick runner — pick a plan and go.
+    path: assets/screens/01.png
+  - description: Runner panel — active set focus.
+    path: assets/screens/02.png
+  - description: Set input — reps, weight, RIR, rest.
+    path: assets/screens/03.png
+  - description: Rest overlay — full-bleed countdown.
+    path: assets/screens/04.png
+  - description: Results view — workout summary.
+    path: assets/screens/05.png
+  - description: Cardio runner — interval focus.
+    path: assets/screens/06.png
 
 environment:
   sdk: ^3.7.0

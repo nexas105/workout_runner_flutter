@@ -93,6 +93,21 @@ class WorkoutPlanBuilder {
     meta: meta,
   );
 
+  /// Seed a builder from an existing plan — useful for editors that want a
+  /// mutable copy without forking the constructor signature.
+  factory WorkoutPlanBuilder.fromPlan(WorkoutPlan plan) {
+    final b = WorkoutPlanBuilder(
+      plan.name,
+      id: plan.id,
+      description: plan.description,
+      meta: plan.meta,
+    );
+    for (final ex in plan.exercises) {
+      b._exercises.add(_ExerciseDraft.fromExercise(ex));
+    }
+    return b;
+  }
+
   String _uniqueExerciseId(String baseId) {
     final normalizedBase = baseId.isEmpty ? 'exercise' : baseId;
     var candidate = normalizedBase;

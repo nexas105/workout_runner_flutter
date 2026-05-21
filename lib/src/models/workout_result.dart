@@ -156,12 +156,18 @@ class PerformedExerciseDetails {
   /// for consumers.
   final String? categoryId;
 
+  /// Original exercise id when this slot was substituted mid-session via
+  /// `WorkoutRunner.substituteExercise(...)`. `null` for first-class plan
+  /// entries.
+  final String? substitutedFrom;
+
   const PerformedExerciseDetails({
     required this.exerciseId,
     required this.exerciseName,
     required this.sets,
     this.met,
     this.categoryId,
+    this.substitutedFrom,
   });
 
   Map<String, dynamic> toJson() => {
@@ -170,6 +176,7 @@ class PerformedExerciseDetails {
     'sets': sets.map((s) => s.toJson()).toList(),
     if (met != null) 'met': met,
     if (categoryId != null) 'categoryId': categoryId,
+    if (substitutedFrom != null) 'substitutedFrom': substitutedFrom,
   };
 
   factory PerformedExerciseDetails.fromJson(Map<String, dynamic> json) =>
@@ -182,5 +189,6 @@ class PerformedExerciseDetails {
                 .toList(),
         met: (json['met'] as num?)?.toDouble(),
         categoryId: json['categoryId'] as String?,
+        substitutedFrom: json['substitutedFrom'] as String?,
       );
 }

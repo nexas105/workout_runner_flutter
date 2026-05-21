@@ -38,6 +38,23 @@ import 'package:fitness_workout/fitness_workout.dart';
 
 ---
 
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="assets/screens/01.png" alt="Quick runner" width="200"/><br><sub>Quick runner</sub></td>
+    <td align="center"><img src="assets/screens/02.png" alt="Runner panel" width="200"/><br><sub>Runner panel</sub></td>
+    <td align="center"><img src="assets/screens/03.png" alt="Set input" width="200"/><br><sub>Set input</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screens/04.png" alt="Rest overlay" width="200"/><br><sub>Rest overlay</sub></td>
+    <td align="center"><img src="assets/screens/05.png" alt="Results" width="200"/><br><sub>Results</sub></td>
+    <td align="center"><img src="assets/screens/06.png" alt="Cardio runner" width="200"/><br><sub>Cardio runner</sub></td>
+  </tr>
+</table>
+
+---
+
 ## Quick start
 
 ```dart

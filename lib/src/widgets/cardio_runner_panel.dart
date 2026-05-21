@@ -609,10 +609,11 @@ class _LapInputSheetState extends State<_LapInputSheet> {
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
     final viewInsets = MediaQuery.viewInsetsOf(context);
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final interval = widget.runner.currentInterval;
 
     return AnimatedPadding(
-      duration: t.motionFast,
+      duration: reduceMotion ? Duration.zero : t.motionFast,
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
       curve: Curves.easeOut,
       child: Container(

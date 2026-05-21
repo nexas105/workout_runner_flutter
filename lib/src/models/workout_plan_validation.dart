@@ -141,6 +141,54 @@ extension WorkoutPlanValidation on WorkoutPlan {
       }
     }
 
+    final blockIds = <String>{};
+    for (var i = 0; i < blocks.length; i++) {
+      final block = blocks[i];
+      if (block.id.trim().isEmpty) {
+        issues.add(
+          WorkoutPlanValidationIssue(
+            code: 'block_id_empty',
+            message: 'Block at index $i has an empty id.',
+          ),
+        );
+      } else if (!blockIds.add(block.id)) {
+        issues.add(
+          WorkoutPlanValidationIssue(
+            code: 'block_id_duplicate',
+            message: 'Block id "${block.id}" appears more than once.',
+          ),
+        );
+      }
+      if (block.exerciseIndices.isEmpty) {
+        issues.add(
+          WorkoutPlanValidationIssue(
+            code: 'block_empty',
+            message: 'Block "${block.id}" must reference at least one exercise.',
+            severity: WorkoutPlanValidationSeverity.warning,
+          ),
+        );
+      }
+      for (final idx in block.exerciseIndices) {
+        if (idx < 0 || idx >= exercises.length) {
+          issues.add(
+            WorkoutPlanValidationIssue(
+              code: 'block_exercise_index_out_of_range',
+              message:
+                  'Block "${block.id}" references exercise index $idx which is out of range.',
+            ),
+          );
+        }
+      }
+      if (block.rounds < 1) {
+        issues.add(
+          WorkoutPlanValidationIssue(
+            code: 'block_rounds_invalid',
+            message: 'Block "${block.id}" must have at least 1 round.',
+          ),
+        );
+      }
+    }
+
     return WorkoutPlanValidationResult(List.unmodifiable(issues));
   }
 }

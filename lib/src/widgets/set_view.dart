@@ -223,9 +223,10 @@ class _SetBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final isDone = mode == _SetMode.done;
     return AnimatedContainer(
-      duration: t.motionFast,
+      duration: reduceMotion ? Duration.zero : t.motionFast,
       width: 40,
       height: 40,
       decoration: BoxDecoration(
@@ -460,9 +461,10 @@ class _SetInputSheetState extends State<SetInputSheet> {
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
     final viewInsets = MediaQuery.viewInsetsOf(context);
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     return AnimatedPadding(
-      duration: t.motionFast,
+      duration: reduceMotion ? Duration.zero : t.motionFast,
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
       curve: Curves.easeOut,
       child: Container(
@@ -655,12 +657,13 @@ class _RestChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final label =
         seconds == 0 ? 'None' : TimerText.format(Duration(seconds: seconds));
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: t.motionFast,
+        duration: reduceMotion ? Duration.zero : t.motionFast,
         padding: EdgeInsets.symmetric(horizontal: t.space3, vertical: t.space2),
         decoration: BoxDecoration(
           color: selected ? t.accent : Colors.transparent,

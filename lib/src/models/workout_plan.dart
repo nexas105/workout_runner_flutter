@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import '../internal/schema.dart';
+import 'workout_block.dart';
 import 'workout_exercise.dart';
 
 @immutable
@@ -13,12 +14,19 @@ class WorkoutPlan {
   final List<WorkoutExercise> exercises;
   final Map<String, dynamic>? meta;
 
+  /// Optional supersets / circuits layered on top of the flat [exercises]
+  /// list. The runner doesn't consume these natively (it still walks
+  /// `exercises` one by one) — they're metadata for UI and rest helpers.
+  /// Each block references exercises by index into [exercises].
+  final List<WorkoutBlock> blocks;
+
   const WorkoutPlan({
     required this.id,
     required this.name,
     required this.exercises,
     this.description,
     this.meta,
+    this.blocks = const [],
   });
 
   WorkoutPlan copyWith({
@@ -27,12 +35,14 @@ class WorkoutPlan {
     String? description,
     List<WorkoutExercise>? exercises,
     Map<String, dynamic>? meta,
+    List<WorkoutBlock>? blocks,
   }) => WorkoutPlan(
     id: id ?? this.id,
     name: name ?? this.name,
     description: description ?? this.description,
     exercises: exercises ?? this.exercises,
     meta: meta ?? this.meta,
+    blocks: blocks ?? this.blocks,
   );
 
   Map<String, dynamic> toJson() => {
@@ -42,6 +52,8 @@ class WorkoutPlan {
     if (description != null) 'description': description,
     'exercises': exercises.map((e) => e.toJson()).toList(),
     if (meta != null) 'meta': meta,
+    if (blocks.isNotEmpty)
+      'blocks': blocks.map((b) => b.toJson()).toList(),
   };
 
   factory WorkoutPlan.fromJson(Map<String, dynamic> json) => WorkoutPlan(
@@ -53,7 +65,18 @@ class WorkoutPlan {
             .map((e) => WorkoutExercise.fromJson(e as Map<String, dynamic>))
             .toList(),
     meta: (json['meta'] as Map?)?.cast<String, dynamic>(),
+    blocks: ((json['blocks'] as List<dynamic>?) ?? const [])
+        .map((b) => WorkoutBlock.fromJson(b as Map<String, dynamic>))
+        .toList(),
   );
+
+  /// Block id that owns [exerciseIndex], or `null` for stand-alone moves.
+  WorkoutBlock? blockForExerciseIndex(int exerciseIndex) {
+    for (final b in blocks) {
+      if (b.exerciseIndices.contains(exerciseIndex)) return b;
+    }
+    return null;
+  }
 
   String toJsonString() => jsonEncode(toJson());
   factory WorkoutPlan.fromJsonString(String s) =>

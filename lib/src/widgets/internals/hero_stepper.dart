@@ -85,23 +85,35 @@ class HeroStepper extends StatelessWidget {
                     child: Semantics(
                       label: label,
                       value: '${_format(value)}${unit != null ? ' $unit' : ''}',
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            _format(value),
-                            style: t.heroNumber.copyWith(fontSize: 40),
-                          ),
-                          if (unit != null) ...[
-                            SizedBox(width: t.space2),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 6),
-                              child: Text(unit!, style: t.bodyMuted),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              _format(value),
+                              style: t.heroNumber.copyWith(fontSize: 40),
+                              maxLines: 1,
+                              softWrap: false,
                             ),
+                            if (unit != null) ...[
+                              SizedBox(width: t.space2),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 6),
+                                child: Text(
+                                  unit!,
+                                  style: t.bodyMuted,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                ),
+                              ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -126,6 +138,9 @@ class HeroStepper extends StatelessWidget {
               child: Text(
                 'tap & hold for ±$largeStep · long press to type',
                 style: t.caption.copyWith(fontSize: 11, color: t.textDim),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
             ),
           ],
