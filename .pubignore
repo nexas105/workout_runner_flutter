@@ -1,0 +1,4 @@
+# Files ignored by pub publish (in addition to .gitignore patterns).
+
+# Agent worktrees and per-session sandbox dirs.
+.claude/
