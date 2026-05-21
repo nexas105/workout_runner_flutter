@@ -19,25 +19,25 @@ class PerformedExercise {
     int? exerciseIndex,
     String? exerciseName,
     List<PerformedSet>? sets,
-  }) =>
-      PerformedExercise(
-        exerciseIndex: exerciseIndex ?? this.exerciseIndex,
-        exerciseName: exerciseName ?? this.exerciseName,
-        sets: sets ?? this.sets,
-      );
+  }) => PerformedExercise(
+    exerciseIndex: exerciseIndex ?? this.exerciseIndex,
+    exerciseName: exerciseName ?? this.exerciseName,
+    sets: sets ?? this.sets,
+  );
 
   Map<String, dynamic> toJson() => {
-        'exerciseIndex': exerciseIndex,
-        'exerciseName': exerciseName,
-        'sets': sets.map((s) => s.toJson()).toList(),
-      };
+    'exerciseIndex': exerciseIndex,
+    'exerciseName': exerciseName,
+    'sets': sets.map((s) => s.toJson()).toList(),
+  };
 
   factory PerformedExercise.fromJson(Map<String, dynamic> json) =>
       PerformedExercise(
         exerciseIndex: (json['exerciseIndex'] as num).toInt(),
         exerciseName: json['exerciseName'] as String,
-        sets: (json['sets'] as List<dynamic>)
-            .map((s) => PerformedSet.fromJson(s as Map<String, dynamic>))
-            .toList(),
+        sets:
+            (json['sets'] as List<dynamic>)
+                .map((s) => PerformedSet.fromJson(s as Map<String, dynamic>))
+                .toList(),
       );
 }

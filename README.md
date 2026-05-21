@@ -1,302 +1,281 @@
-# fitness_workout / workout_runner_flutter
+# fitness_workout
 
-Ein flexibles Flutter-Package, um **Workouts zu starten, Sätze zu tracken und Ergebnisse auszuwerten**.  
-Es liefert eine klare Trennung aus **Controller-Logik** (State, Timer, Persistenz) und **UI-Widgets** (Panels, Cards, Bottom-Banner).
+A Flutter package for running, tracking and finishing workouts.
+
+It ships:
+
+- **`WorkoutRunner`** — a `ChangeNotifier`-based controller with timers,
+  set/exercise indices, plan mutation, persistence and a `Stream<WorkoutResult>`
+  finished hook.
+- **`CardioRunner`** — interval / lap based companion controller for
+  running, cycling, rowing, HIIT, jump rope, etc. Same lifecycle shape,
+  same storage interface, a separate slot so it coexists with the
+  strength runner.
+- **Pluggable `RunnerStorage`** with `SharedPreferences` and in-memory
+  implementations. Roll your own to point at SQLite, Hive, Supabase, …
+- **Drop-in widgets** in a dark-first fitness style for both sides:
+  `RunnerPanel`, `QuickRunner`, `ResultsView`, `RunnerStatusChip` /
+  `Banner` / `BottomBar`, full `RunnerScreen`, and their cardio peers
+  (`CardioRunnerPanel`, `CardioQuickRunner`, `CardioResultsView`,
+  `CardioRunnerStatusChip` / `Banner` / `BottomBar`, `CardioRunnerScreen`).
+- **`WorkoutRunnerTheme`** with design tokens you can override to re-style
+  every bundled widget.
+
+> Requires Flutter ≥ 3.16 / Dart ≥ 3.7.
 
 ---
 
-## Features
+## Install
 
-- 📋 **Workout-Pläne** mit Übungen & Ziel-Sätzen (Reps, Gewicht)
-- ▶️ **Starten/Fortsetzen** eines Workouts (inkl. Auto-Resume nach App-Neustart)
-- ⏱️ **Timer**: Workout-, Set- und Pausen-Timer
-- ✅ **Satz-Tracking**: Gewicht, Wiederholungen, RIR, Satzdauer
-- 🧠 **Persistenz** via `SharedPreferences` (Storage-Interface austauschbar)
-- 🧩 **Fertige Widgets**: `RunnerPanel`, `QuickRunner`, `CurrentExercise`, `CurrentSet/SetView`, `Results`, `RunnerDefaultScreen`
-- 🎨 **Theming/Styling** per Parametern (Farben, TextStyles) überschreibbar
-
----
-
-## Getting started
-
-1. In der `pubspec.yaml` eintragen:
 ```yaml
 dependencies:
-  fitness_workout: ^0.0.3
+  fitness_workout: ^1.0.0
 ```
 
-2. Optional schon beim App-Start konfigurieren (inkl. Auto-Resume):
 ```dart
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await runner.configure(autoResume: true); // lädt aktives Workout, falls vorhanden
-  runApp(const App());
-}
+import 'package:fitness_workout/fitness_workout.dart';
 ```
 
 ---
 
-## Usage (Schnellstart)
+## Quick start
 
 ```dart
-import 'dart:math';
+final runner = WorkoutRunner();
 
-import 'package:example/runner_screen.dart';
-import 'package:fitness_workout/fitness_workout.dart';
-import 'package:flutter/material.dart';
-
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await runner.configure();
-  runApp(const App());
+  await runner.tryAutoResume(); // optional — resumes a previous workout
+
+  runApp(MaterialApp(home: Home(runner: runner)));
 }
 
-class App extends StatefulWidget {
-  const App({super.key});
+class Home extends StatelessWidget {
+  final WorkoutRunner runner;
+  const Home({super.key, required this.runner});
 
-  @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Home());
-  }
-}
+    final plan = WorkoutPlan(
+      id: 'fullbody',
+      name: 'Full body',
+      exercises: DefaultExercises.all.take(5).toList(),
+    );
 
-class Home extends StatefulWidget {
-  Home({super.key});
-
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  @override
-  void initState() {
-    super.initState();
-    // HIER REGISTRIERST DU DEN LISTENER
-    // Diese Funktion wird ausgeführt, egal wo `runner.finish()` aufgerufen wird.
-    runner.onWorkoutFinished = (result) {
-      // Ignoriere, wenn das Widget nicht mehr im Baum ist.
-      if (!mounted) return;
-
-      debugPrint('WORKOUT VOM LISTENER IN HOME EMPFANGEN!');
-      debugPrint(
-        'Plan: ${result.planId}, Dauer: ${result.finishedAt.difference(result.startedAt)}',
-      );
-
-      // Zeige eine Bestätigung in deiner App an.
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Super! Workout "${result.planId}" abgeschlossen.'),
-          backgroundColor: Colors.green,
+    return RunnerScope(
+      runner: runner,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Workouts'),
+          actions: const [RunnerStatusAppBarAction()],
         ),
-      );
-
-      // Hier kannst du die Daten an Supabase senden, in einer lokalen DB speichern etc.
-    };
-  }
-
-  // List<WorkoutExercise> get _defaultExercises =>
-  Muscle _findOrCreateMuscle(String name, {String? group}) {
-    // 1. Versuche, den Muskel aus der Plugin-Datenbank zu finden.
-    final existingMuscle = Muscle.findByName(name);
-    if (existingMuscle != null) {
-      return existingMuscle;
-    }
-
-    // 2. Wenn nicht gefunden, erstelle ein neues Objekt für die App.
-    return Muscle(id: Random().toString(), name: name, group: group);
-  }
-
-  List<WorkoutExercise> _buildCustomExercises() {
-    return [
-      WorkoutExercise(
-        id: 'custom_ex_001',
-        name: 'Konzentrationscurls',
-        desc: 'Eine Isolationsübung für den Bizeps.',
-        category: ExerciseCategorie.findByName('Krafttraining'),
-        // Hier nutzen wir den Helfer. 'Bizeps' wird gefunden.
-        muscles: [_findOrCreateMuscle('Bizeps')],
-        sets: [
-          WorkoutSet(targetReps: 12, targetWeight: 10),
-          WorkoutSet(targetReps: 12, targetWeight: 10),
-        ],
-      ),
-      WorkoutExercise(
-        id: 'custom_ex_002',
-        name: 'Wadenheben an der Wand',
-        desc: 'Stärkt die Wadenmuskulatur ohne Geräte.',
-        category: ExerciseCategorie.findByName('Krafttraining'),
-        // 'Tibialis Anterior' existiert nicht, also wird ein neues Muscle-Objekt erstellt.
-        muscles: [
-          _findOrCreateMuscle('Waden'),
-          _findOrCreateMuscle('Tibialis Anterior', group: 'Unterkörper'),
-        ],
-        sets: [WorkoutSet(targetReps: 20), WorkoutSet(targetReps: 20)],
-      ),
-    ];
-  }
-
-  List<WorkoutPlan> _createWorkoutPlans() {
-    // 1. Hole dir die Daten aus dem Plugin
-    final defaultStrengthExercises = WorkoutExercise.getStrengthExercises();
-    final defaultCardioExercises = WorkoutExercise.getCardioExercises();
-
-    // 2. Hole dir die eigenen Übungen der App
-    final customExercises = _buildCustomExercises();
-
-    // 3. Kombiniere sie zu Plänen
-    return [
-      WorkoutPlan(
-        id: 'plan_fullbody_001',
-        name: 'Ganzkörper & Eigene Übungen',
-        // Nimm 2 Kraft-Übungen, 1 Cardio-Übung und alle eigenen Übungen
-        exercises: [
-          ...defaultStrengthExercises.take(2),
-          ...defaultCardioExercises.take(1),
-          ...customExercises,
-        ],
-      ),
-      WorkoutPlan(
-        id: 'plan_oberkoerper_001',
-        name: 'Fokus Oberkörper',
-        // Nutze die Plugin-Funktion, um alle OK-Übungen zu filtern
-        exercises: WorkoutExercise.getByMuscleGroup("Oberkörper"),
-      ),
-      WorkoutPlan(
-        id: 'plan_custom_only_001',
-        name: 'Nur meine Übungen',
-        exercises: customExercises,
-      ),
-    ];
-  }
-
-  final List<Muscle> customMuscles = [
-    Muscle(id: 'id001', name: 'Bizeps'),
-    Muscle(id: 'id003', name: 'Brust'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final plans = _createWorkoutPlans();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Workouts'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: RunnerStatusChip(controller: runner),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          QuickRunner(controller: runner, plans: plans),
-          RunnerStatusBanner(controller: runner),
-          Expanded(
-            child: ListView.builder(
-              itemCount: plans.length,
-              itemBuilder: (context, i) {
-                final plan = plans[i];
-                return ListTile(
-                  title: Text(plan.name),
-                  subtitle: Text('${plan.exercises.length} Übungen'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => RunnerScreen(plan: plan),
-                      ),
-                    );
-                  },
-                );
-              },
+        body: QuickRunner(
+          plans: [plan],
+          onOpen: (p) => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => RunnerScreen(plan: p, runner: runner),
             ),
           ),
-        ],
+        ),
+        bottomNavigationBar: const RunnerStatusBottomBar(),
       ),
-      bottomNavigationBar: RunnerStatusBottomBar(controller: runner),
     );
   }
 }
-
-      ```
-      ---
-
-## Die wichtigsten Widgets
-
-- **`RunnerScreen`** – Kompletter Screen mit AppBar, Panel, Finish-Flow
-- **`RunnerPanel`** – Panel mit Workout-Header, Übungsauswahl, Sets, Finish-Button
-- **`CurrentWorkout`** – Zeigt Plan/Timer/Gesamtstatus
-- **`CurrentExercise`** – Pager zur Auswahl/Start der Übung (inkl. „pinned“ State)
-- **`CurrentSet` / `SetView`** – Kompakte/ausführliche Ansicht zum aktuellen Satz
-- **`Results`** – Abschlussansicht mit Finish-Callback
-- **Status-Widgets**: `RunnerStatusAppBar`, `RunnerStatusChip`, `RunnerStatusBanner`, `RunnerStatusBottomBar`
-
----
-
-## Controller & Persistenz
-
-- **Controller**: `WorkoutRunnerController` (Singleton `runner`) hält State & Timer
-- **Persistenz**: Standard `PrefsRunnerStorage` (SharedPreferences)
-- **Auto-Resume**: `await runner.configure(autoResume: true)` beim App-Start aufrufen
-
-### Manuell starten
-
-```dart
-await runner.start(plan, resumeIfPossible: false);
 ```
 
-### Satz-APIs (UI-unabhängig)
+You can build plans fluently instead of nesting model constructors:
 
 ```dart
-runner.setActiveExercise(index);
-runner.startSet(exerciseIndex, setIndex);
-await runner.finishActiveSet(weight: 80, reps: 8, rir: 2);
-runner.skipRest();
-final done = runner.getPerformedSet(exerciseIndex, setIndex);
+final plan = WorkoutPlanBuilder('Push Day')
+    .exercise('Bench Press')
+    .set(reps: 8, weight: 80, rest: const Duration(seconds: 90))
+    .set(reps: 8, weight: 80)
+    .exercise('Shoulder Press')
+    .set(reps: 10)
+    .build();
+
+final validation = plan.validate();
+if (!validation.isValid) {
+  for (final issue in validation.errors) {
+    debugPrint(issue.message);
+  }
+}
 ```
 
-### Workout beenden
+Listen for finished workouts anywhere:
 
 ```dart
-final result = await runner.finish();
+runner.finished.listen((result) {
+  // ship to backend, log to analytics, …
+  print('Done in ${result.duration}, '
+        '${result.totalSets} sets, '
+        '${result.totalVolume} kg total volume.');
+});
+```
 
+Or attach lightweight lifecycle callbacks:
 
-
+```dart
+runner
+  ..onSetCompleted = (set) => debugPrint('Set ${set.setIndex + 1} done')
+  ..onExerciseChanged = (index) => debugPrint('Showing exercise $index')
+  ..onRestStarted = (rest) => debugPrint('Rest: ${rest.inSeconds}s');
 ```
 
 ---
+
+## Cardio runner
+
+`CardioRunner` is the interval-based companion to `WorkoutRunner` — for
+plans built out of laps (`CardioInterval`) rather than `(set × reps ×
+weight)` tuples.
+
+```dart
+final cardio = CardioRunner();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await cardio.tryAutoResume();
+
+  runApp(MaterialApp(home: CardioHome(runner: cardio)));
+}
+
+class CardioHome extends StatelessWidget {
+  final CardioRunner runner;
+  const CardioHome({super.key, required this.runner});
+
+  @override
+  Widget build(BuildContext context) {
+    return CardioRunnerScope(
+      runner: runner,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Cardio'),
+          actions: const [CardioRunnerStatusChip(), SizedBox(width: 8)],
+        ),
+        body: Center(
+          child: ElevatedButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => CardioRunnerScreen(
+                  plan: DefaultCardioPlans.tabata,
+                  runner: runner,
+                ),
+              ),
+            ),
+            child: const Text('Start Tabata'),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+`CardioRunner` defaults to slot `'cardio'`, while `WorkoutRunner` defaults
+to slot `'default'`. The two can share the same `RunnerStorage` without
+collision, so you can nest both scopes near the root of your app and run
+strength + cardio sessions side-by-side:
+
+```dart
+RunnerScope(
+  runner: strengthRunner,
+  child: CardioRunnerScope(
+    runner: cardioRunner,
+    child: const MaterialApp(home: Home()),
+  ),
+)
+```
+
+Cardio exposes the same kind of lightweight lifecycle hooks:
+
+```dart
+cardio
+  ..onIntervalCompleted = (lap) => debugPrint('Lap ${lap.intervalIndex + 1}')
+  ..onPaused = () => debugPrint('Cardio paused')
+  ..onResumed = () => debugPrint('Cardio resumed');
+```
+
+See [`doc/ARCHITECTURE.md`](doc/ARCHITECTURE.md#two-runners-strength--cardio)
+for the coexistence model.
+
+---
+
+## What's in the box
+
+| Widget | Purpose |
+|---|---|
+| `RunnerPanel` | Plan header, exercise carousel, rest strip, finish button. |
+| `RunnerScreen` | Stand-alone screen wrapping `RunnerPanel` + AppBar + result transition. |
+| `QuickRunner` | "Start workout" picker that swaps to "Continue" when one is running. |
+| `ResultsView` | Hero summary with stats and per-exercise breakdown. |
+| `RunnerStatusChip` | Tiny "23:45" pill — safe to drop into any AppBar. |
+| `RunnerStatusBanner` | Inline banner under your AppBar / hero block. |
+| `RunnerStatusBottomBar` | Bottom-attached "continue workout" CTA. |
+| `SetRow` | Individual set row with start / running / done states + input sheet. |
+| `CardioRunnerPanel` | Hero timer + interval card + lap timeline + control bar. |
+| `CardioRunnerScreen` | Stand-alone cardio screen + result transition. |
+| `CardioQuickRunner` | "Start cardio" picker that swaps to "Cardio running" when active. |
+| `CardioResultsView` | Hero summary with laps, work time, distance, average pace. |
+| `CardioRunnerStatusChip` | Tiny accent pill with elapsed cardio time. |
+| `CardioRunnerStatusBanner` | Inline banner highlighting the running cardio session. |
+| `CardioRunnerStatusBottomBar` | Bottom-attached "continue cardio" CTA. |
+
+Strength widgets read from the nearest `RunnerScope`; cardio
+widgets read from the nearest `CardioRunnerScope`.
+
+---
+
+## Theming
+
+```dart
+WorkoutRunnerTheme(
+  data: WorkoutRunnerThemeData.dark().copyWith(
+    accent: const Color(0xFFFF7E2A), // switch to orange
+  ),
+  child: const RunnerScreen(...),
+);
+```
+
+See `doc/THEMING.md` for the full token list.
+
+---
+
+## Custom storage
+
+```dart
+class SupabaseRunnerStorage implements RunnerStorage {
+  // implement read/save/clear for state + plan
+}
+
+final runner = WorkoutRunner(storage: SupabaseRunnerStorage());
+```
+
+See `doc/STORAGE.md`.
+
+---
+
 ## Screenshots
 
-### RunnerScreen
-![RunnerScreen](assets/screens/runner_screen.png)
-
-### QuickRunner
-![RunnerPanel](assets/screens/quick_runner1.png)
-![RunnerPanel](assets/screens/quick_runner2.png)
-
-![RunnerPanel](assets/screens/quick_runner3.png)
-
-### Bottom
-![RunnerPanel](assets/screens/bottom.png)
-
-### Bar
-![RunnerPanel](assets/screens/bar.png)
----
+The example app under `example/` demonstrates every widget. Run it with
+`cd example && flutter run`.
 
 ---
 
-## Contribution
+## Documentation
 
-- Issues & Feature-Wünsche: bitte via GitHub-Issues
-- PRs sind willkommen. Bitte kleine, thematisch saubere Branches.
+| File | Content |
+|---|---|
+| [`doc/ARCHITECTURE.md`](doc/ARCHITECTURE.md) | Module map, data flow, lifecycle |
+| [`doc/API.md`](doc/API.md) | Public API reference |
+| [`doc/WIDGETS.md`](doc/WIDGETS.md) | Widget gallery with code snippets |
+| [`doc/STORAGE.md`](doc/STORAGE.md) | Implementing your own storage |
+| [`doc/THEMING.md`](doc/THEMING.md) | Design tokens and overrides |
+| [`doc/MIGRATION.md`](doc/MIGRATION.md) | Upgrading from 0.x to 1.0 |
 
 ---
 
-## Lizenz
+## License
 
-MIT License – siehe `LICENSE`.
+MIT — see [`LICENSE`](LICENSE).

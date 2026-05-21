@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import 'set_type.dart';
+
 /// A set that has been executed by the user (with actual values).
 @immutable
 class PerformedSet {
@@ -10,6 +12,7 @@ class PerformedSet {
   final int? rir;
   final Duration? pause;
   final Duration? duration;
+  final SetType type;
   final DateTime completedAt;
 
   const PerformedSet({
@@ -20,6 +23,7 @@ class PerformedSet {
     this.rir,
     this.pause,
     this.duration,
+    this.type = SetType.working,
     required this.completedAt,
   });
 
@@ -31,40 +35,43 @@ class PerformedSet {
     int? rir,
     Duration? pause,
     Duration? duration,
+    SetType? type,
     DateTime? completedAt,
-  }) =>
-      PerformedSet(
-        exerciseIndex: exerciseIndex ?? this.exerciseIndex,
-        setIndex: setIndex ?? this.setIndex,
-        actualReps: actualReps ?? this.actualReps,
-        actualWeight: actualWeight ?? this.actualWeight,
-        rir: rir ?? this.rir,
-        pause: pause ?? this.pause,
-        duration: duration ?? this.duration,
-        completedAt: completedAt ?? this.completedAt,
-      );
+  }) => PerformedSet(
+    exerciseIndex: exerciseIndex ?? this.exerciseIndex,
+    setIndex: setIndex ?? this.setIndex,
+    actualReps: actualReps ?? this.actualReps,
+    actualWeight: actualWeight ?? this.actualWeight,
+    rir: rir ?? this.rir,
+    pause: pause ?? this.pause,
+    duration: duration ?? this.duration,
+    type: type ?? this.type,
+    completedAt: completedAt ?? this.completedAt,
+  );
 
   Map<String, dynamic> toJson() => {
-        'exerciseIndex': exerciseIndex,
-        'setIndex': setIndex,
-        'actualReps': actualReps,
-        if (actualWeight != null) 'actualWeight': actualWeight,
-        if (rir != null) 'rir': rir,
-        if (pause != null) 'pause': pause!.inSeconds,
-        if (duration != null) 'duration': duration!.inSeconds,
-        'completedAt': completedAt.toIso8601String(),
-      };
+    'exerciseIndex': exerciseIndex,
+    'setIndex': setIndex,
+    'actualReps': actualReps,
+    if (actualWeight != null) 'actualWeight': actualWeight,
+    if (rir != null) 'rir': rir,
+    if (pause != null) 'pause': pause!.inSeconds,
+    if (duration != null) 'duration': duration!.inSeconds,
+    if (type != SetType.working) 'type': type.id,
+    'completedAt': completedAt.toIso8601String(),
+  };
 
   factory PerformedSet.fromJson(Map<String, dynamic> json) => PerformedSet(
-        exerciseIndex: (json['exerciseIndex'] as num).toInt(),
-        setIndex: (json['setIndex'] as num).toInt(),
-        actualReps: (json['actualReps'] as num).toInt(),
-        actualWeight: (json['actualWeight'] as num?)?.toDouble(),
-        rir: (json['rir'] as num?)?.toInt(),
-        pause: _readDuration(json, 'pause', fallback: 'restTaken'),
-        duration: _readDuration(json, 'duration'),
-        completedAt: DateTime.parse(json['completedAt'] as String),
-      );
+    exerciseIndex: (json['exerciseIndex'] as num).toInt(),
+    setIndex: (json['setIndex'] as num).toInt(),
+    actualReps: (json['actualReps'] as num).toInt(),
+    actualWeight: (json['actualWeight'] as num?)?.toDouble(),
+    rir: (json['rir'] as num?)?.toInt(),
+    pause: _readDuration(json, 'pause', fallback: 'restTaken'),
+    duration: _readDuration(json, 'duration'),
+    type: SetTypeSerializer.fromId(json['type'] as String?),
+    completedAt: DateTime.parse(json['completedAt'] as String),
+  );
 
   static Duration? _readDuration(
     Map<String, dynamic> json,

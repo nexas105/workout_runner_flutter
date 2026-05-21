@@ -9,22 +9,22 @@ class Muscle {
   const Muscle({required this.id, required this.name, this.group});
 
   Muscle copyWith({String? id, String? name, String? group}) => Muscle(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        group: group ?? this.group,
-      );
+    id: id ?? this.id,
+    name: name ?? this.name,
+    group: group ?? this.group,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        if (group != null) 'group': group,
-      };
+    'id': id,
+    'name': name,
+    if (group != null) 'group': group,
+  };
 
   factory Muscle.fromJson(Map<String, dynamic> json) => Muscle(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        group: json['group'] as String?,
-      );
+    id: json['id'] as String,
+    name: json['name'] as String,
+    group: json['group'] as String?,
+  );
 
   @override
   bool operator ==(Object other) =>

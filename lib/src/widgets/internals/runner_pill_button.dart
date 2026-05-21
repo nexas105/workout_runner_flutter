@@ -32,36 +32,20 @@ class RunnerPillButton extends StatelessWidget {
     final disabled = onPressed == null;
 
     final (bg, fg, border) = switch (style) {
-      RunnerButtonStyle.accent => (
-          t.accent,
-          t.onAccent,
-          Colors.transparent,
-        ),
-      RunnerButtonStyle.hot => (
-          t.hot,
-          t.onAccent,
-          Colors.transparent,
-        ),
-      RunnerButtonStyle.danger => (
-          t.danger,
-          Colors.white,
-          Colors.transparent,
-        ),
-      RunnerButtonStyle.filled => (
-          t.surfaceElevated,
-          t.textPrimary,
-          t.border,
-        ),
+      RunnerButtonStyle.accent => (t.accent, t.onAccent, Colors.transparent),
+      RunnerButtonStyle.hot => (t.hot, t.onAccent, Colors.transparent),
+      RunnerButtonStyle.danger => (t.danger, Colors.white, Colors.transparent),
+      RunnerButtonStyle.filled => (t.surfaceElevated, t.textPrimary, t.border),
       RunnerButtonStyle.outline => (
-          Colors.transparent,
-          t.textPrimary,
-          t.textMuted.withValues(alpha: 0.4),
-        ),
+        Colors.transparent,
+        t.textPrimary,
+        t.textMuted.withValues(alpha: 0.4),
+      ),
       RunnerButtonStyle.ghost => (
-          Colors.transparent,
-          t.textPrimary,
-          Colors.transparent,
-        ),
+        Colors.transparent,
+        t.textPrimary,
+        Colors.transparent,
+      ),
     };
 
     final content = Row(
@@ -83,18 +67,24 @@ class RunnerPillButton extends StatelessWidget {
       ],
     );
 
-    final pad = padding ??
+    final pad =
+        padding ??
         EdgeInsets.symmetric(horizontal: t.space4, vertical: t.space3);
 
-    final body = AnimatedContainer(
-      duration: t.motionFast,
-      decoration: BoxDecoration(
-        color: disabled ? bg.withValues(alpha: 0.4) : bg,
-        borderRadius: t.radiusPill,
-        border: Border.all(color: border),
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final body = ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 48),
+      child: AnimatedContainer(
+        duration: reduceMotion ? Duration.zero : t.motionFast,
+        decoration: BoxDecoration(
+          color: disabled ? bg.withValues(alpha: 0.4) : bg,
+          borderRadius: t.radiusPill,
+          border: Border.all(color: border),
+        ),
+        padding: pad,
+        alignment: Alignment.center,
+        child: content,
       ),
-      padding: pad,
-      child: content,
     );
 
     return Semantics(

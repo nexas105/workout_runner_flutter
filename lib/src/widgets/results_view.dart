@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/workout_runner_localizations.dart';
 import '../models/workout_result.dart';
 import '../theme/workout_runner_theme.dart';
 import 'internals/runner_card.dart';
@@ -7,23 +8,38 @@ import 'internals/runner_pill_button.dart';
 import 'internals/section_label.dart';
 import 'internals/timer_text.dart';
 
+/// Build the row of stat tiles shown in a [ResultsView]. Return whatever
+/// widgets you want — the bundled `ResultsStatTile` is exposed publicly so you
+/// can mix custom values in with the defaults without rebuilding the visual
+/// style from scratch.
+typedef WorkoutStatBuilder = List<Widget> Function(
+  BuildContext context,
+  WorkoutResult result,
+);
+
 /// Stand-alone result summary, ready to push as a destination after
 /// `runner.finish()`. Looks the same as the in-app `RunnerScreen` summary.
-class WorkoutResultsView extends StatelessWidget {
+class ResultsView extends StatelessWidget {
   final WorkoutResult result;
   final VoidCallback? onClose;
   final String closeLabel;
 
-  const WorkoutResultsView({
+  /// Replaces the default stat-tile row (Exercises / Sets / Reps / Volume).
+  /// When `null` the bundled tiles are shown.
+  final WorkoutStatBuilder? statBuilder;
+
+  const ResultsView({
     super.key,
     required this.result,
     this.onClose,
     this.closeLabel = 'Close',
+    this.statBuilder,
   });
 
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
+    final l = WorkoutRunnerLocalizationsScope.of(context);
     return Container(
       color: t.background,
       child: SafeArea(
@@ -34,9 +50,9 @@ class WorkoutResultsView extends StatelessWidget {
             children: [
               _Hero(result: result),
               SizedBox(height: t.space4),
-              _StatsRow(result: result),
+              _StatsRow(result: result, builder: statBuilder),
               SizedBox(height: t.space5),
-              SectionLabel('Performed exercises'),
+              SectionLabel(l.performedExercises),
               SizedBox(height: t.space3),
               for (final ex in result.exercises) ...[
                 _ExerciseSummary(ex: ex),
@@ -66,6 +82,7 @@ class _Hero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
+    final l = WorkoutRunnerLocalizationsScope.of(context);
     return Container(
       padding: EdgeInsets.all(t.space5),
       decoration: BoxDecoration(
@@ -74,10 +91,7 @@ class _Hero extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            t.accent.withValues(alpha: 0.18),
-            t.surface,
-          ],
+          colors: [t.accent.withValues(alpha: 0.18), t.surface],
         ),
         boxShadow: t.shadowGlow,
       ),
@@ -88,16 +102,16 @@ class _Hero extends StatelessWidget {
             children: [
               Icon(Icons.celebration_rounded, color: t.accent, size: 28),
               SizedBox(width: t.space2),
-              Text('Workout complete', style: t.title.copyWith(color: t.accent)),
+              Text(
+                l.workoutComplete,
+                style: t.title.copyWith(color: t.accent),
+              ),
             ],
           ),
           SizedBox(height: t.space3),
           TimerText(duration: result.duration),
           SizedBox(height: t.space1),
-          Text(
-            'Plan ${result.planId}',
-            style: t.bodyMuted,
-          ),
+          Text('Plan ${result.planId}', style: t.bodyMuted),
         ],
       ),
     );
@@ -106,55 +120,63 @@ class _Hero extends StatelessWidget {
 
 class _StatsRow extends StatelessWidget {
   final WorkoutResult result;
-  const _StatsRow({required this.result});
+  final WorkoutStatBuilder? builder;
+  const _StatsRow({required this.result, this.builder});
 
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
-    final volume = result.totalVolume;
+    final l = WorkoutRunnerLocalizationsScope.of(context);
+    final tiles = builder != null
+        ? builder!(context, result)
+        : _defaultTiles(result, l);
+    if (tiles.isEmpty) return const SizedBox.shrink();
     return Row(
       children: [
-        Expanded(
-          child: _StatTile(
-            label: 'Exercises',
-            value: '${result.exercises.length}',
-          ),
-        ),
-        SizedBox(width: t.space3),
-        Expanded(
-          child: _StatTile(
-            label: 'Sets',
-            value: '${result.totalSets}',
-          ),
-        ),
-        SizedBox(width: t.space3),
-        Expanded(
-          child: _StatTile(
-            label: 'Reps',
-            value: '${result.totalReps}',
-          ),
-        ),
-        if (volume > 0) ...[
-          SizedBox(width: t.space3),
-          Expanded(
-            child: _StatTile(
-              label: 'Volume',
-              value: '${volume.toStringAsFixed(0)}',
-              suffix: 'kg',
-            ),
-          ),
+        for (var i = 0; i < tiles.length; i++) ...[
+          if (i > 0) SizedBox(width: t.space3),
+          Expanded(child: tiles[i]),
         ],
       ],
     );
   }
+
+  static List<Widget> _defaultTiles(
+    WorkoutResult result,
+    WorkoutRunnerLocalizations l,
+  ) {
+    final volume = result.totalVolume;
+    return [
+      ResultsStatTile(
+        label: l.statExercises,
+        value: '${result.exercises.length}',
+      ),
+      ResultsStatTile(label: l.statSets, value: '${result.totalSets}'),
+      ResultsStatTile(label: l.statReps, value: '${result.totalReps}'),
+      if (volume > 0)
+        ResultsStatTile(
+          label: l.statVolume,
+          value: volume.toStringAsFixed(0),
+          suffix: l.unitKg,
+        ),
+    ];
+  }
 }
 
-class _StatTile extends StatelessWidget {
+/// Reusable stat-tile in the same look as the default tiles inside
+/// [ResultsView]. Exposed so custom [WorkoutStatBuilder]s can mix in extra
+/// tiles without rebuilding the visual style.
+class ResultsStatTile extends StatelessWidget {
   final String label;
   final String value;
   final String? suffix;
 
-  const _StatTile({required this.label, required this.value, this.suffix});
+  const ResultsStatTile({
+    super.key,
+    required this.label,
+    required this.value,
+    this.suffix,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -168,16 +190,21 @@ class _StatTile extends StatelessWidget {
         children: [
           Text(label, style: t.caption),
           SizedBox(height: t.space1),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(value, style: t.titleLarge.copyWith(fontSize: 26)),
-              if (suffix != null) ...[
-                const SizedBox(width: 4),
-                Text(suffix!, style: t.caption),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(value, style: t.titleLarge.copyWith(fontSize: 26)),
+                if (suffix != null) ...[
+                  const SizedBox(width: 4),
+                  Text(suffix!, style: t.caption),
+                ],
               ],
-            ],
+            ),
           ),
         ],
       ),

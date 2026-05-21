@@ -26,7 +26,10 @@ class TimerText extends StatelessWidget {
     final s = v.inSeconds.remainder(60);
     final mm = m.toString().padLeft(2, '0');
     final ss = s.toString().padLeft(2, '0');
-    final text = h > 0 ? '${h.toString().padLeft(compact ? 1 : 2, '0')}:$mm:$ss' : '$mm:$ss';
+    final text =
+        h > 0
+            ? '${h.toString().padLeft(compact ? 1 : 2, '0')}:$mm:$ss'
+            : '$mm:$ss';
     return negative ? '-$text' : text;
   }
 
@@ -34,9 +37,20 @@ class TimerText extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
     final base = style ?? t.heroNumber;
-    return Text(
-      format(duration, compact: compact),
-      style: base.copyWith(color: color ?? base.color),
+    final v = duration.abs();
+    final h = v.inHours;
+    final m = v.inMinutes.remainder(60);
+    final s = v.inSeconds.remainder(60);
+    final spoken = h > 0
+        ? '$h hours $m minutes $s seconds'
+        : '$m minutes $s seconds';
+    return Semantics(
+      value: spoken,
+      excludeSemantics: true,
+      child: Text(
+        format(duration, compact: compact),
+        style: base.copyWith(color: color ?? base.color),
+      ),
     );
   }
 }

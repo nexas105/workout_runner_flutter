@@ -15,11 +15,10 @@ class DefaultExercises {
     int reps = 10,
     double? weight,
     Duration rest = const Duration(seconds: 90),
-  }) =>
-      List.generate(
-        sets,
-        (_) => WorkoutSet(targetReps: reps, targetWeight: weight, rest: rest),
-      );
+  }) => List.generate(
+    sets,
+    (_) => WorkoutSet(targetReps: reps, targetWeight: weight, rest: rest),
+  );
 
   static final List<WorkoutExercise> all = [
     // Strength — upper push
@@ -327,9 +326,7 @@ class DefaultExercises {
   static List<WorkoutExercise> byMuscleGroup(String group) {
     final g = group.trim().toLowerCase();
     return all
-        .where(
-          (e) => e.muscles.any((m) => (m.group ?? '').toLowerCase() == g),
-        )
+        .where((e) => e.muscles.any((m) => (m.group ?? '').toLowerCase() == g))
         .toList();
   }
 

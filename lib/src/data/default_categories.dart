@@ -15,8 +15,7 @@ class DefaultCategories {
   static const ExerciseCategory cardio = ExerciseCategory(
     id: 'cat_cardio',
     name: 'Cardio',
-    description:
-        'Cardiovascular training (running, cycling, rowing, …).',
+    description: 'Cardiovascular training (running, cycling, rowing, …).',
   );
 
   static const ExerciseCategory mobility = ExerciseCategory(

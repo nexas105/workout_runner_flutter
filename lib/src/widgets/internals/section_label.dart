@@ -18,11 +18,6 @@ class SectionLabel extends StatelessWidget {
       style: t.eyebrow.copyWith(color: color ?? t.textMuted),
     );
     if (trailing == null) return label;
-    return Row(
-      children: [
-        Expanded(child: label),
-        trailing!,
-      ],
-    );
+    return Row(children: [Expanded(child: label), trailing!]);
   }
 }

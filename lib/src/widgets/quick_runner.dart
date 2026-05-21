@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import '../models/workout_plan.dart';
 import '../theme/workout_runner_theme.dart';
 import 'internals/runner_card.dart';
-import 'internals/runner_pill_button.dart';
 import 'internals/section_label.dart';
 import 'internals/timer_text.dart';
-import 'workout_runner_scope.dart';
+import 'runner_scope.dart';
 
 /// Compact card that either advertises a running workout (with a *Continue*
 /// CTA) or lets the user pick from a list of plans to start one.
@@ -28,14 +27,15 @@ class QuickRunner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
-    final runner = WorkoutRunnerScope.of(context);
+    final runner = RunnerScope.of(context);
     final activePlan = runner.plan;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: t.space5, vertical: t.space3),
-      child: activePlan != null
-          ? _ActiveCard(onOpen: () => onOpen?.call(activePlan))
-          : _PickerCard(plans: plans, onOpen: onOpen),
+      child:
+          activePlan != null
+              ? _ActiveCard(onOpen: () => onOpen?.call(activePlan))
+              : _PickerCard(plans: plans, onOpen: onOpen),
     );
   }
 }
@@ -47,12 +47,16 @@ class _ActiveCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
-    final runner = WorkoutRunnerScope.of(context);
+    final runner = RunnerScope.of(context);
     final plan = runner.plan!;
-    final totalSets =
-        plan.exercises.fold<int>(0, (acc, e) => acc + e.sets.length);
-    final doneSets = (runner.state?.performed ?? const [])
-        .fold<int>(0, (acc, e) => acc + e.sets.length);
+    final totalSets = plan.exercises.fold<int>(
+      0,
+      (acc, e) => acc + e.sets.length,
+    );
+    final doneSets = (runner.state?.performed ?? const []).fold<int>(
+      0,
+      (acc, e) => acc + e.sets.length,
+    );
 
     return RunnerCard(
       borderColor: t.accent.withValues(alpha: 0.45),
@@ -77,7 +81,12 @@ class _ActiveCard extends StatelessWidget {
               children: [
                 SectionLabel('Workout running', color: t.accent),
                 SizedBox(height: t.space1),
-                Text(plan.name, style: t.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(
+                  plan.name,
+                  style: t.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 SizedBox(height: t.space1),
                 Row(
                   children: [
@@ -110,7 +119,7 @@ class _PickerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
-    final runner = WorkoutRunnerScope.of(context);
+    final runner = RunnerScope.of(context);
     if (plans.isEmpty) return const SizedBox.shrink();
 
     return RunnerCard(
@@ -127,8 +136,10 @@ class _PickerCard extends StatelessWidget {
               separatorBuilder: (_, __) => SizedBox(width: t.space3),
               itemBuilder: (context, i) {
                 final plan = plans[i];
-                final totalSets = plan.exercises
-                    .fold<int>(0, (acc, e) => acc + e.sets.length);
+                final totalSets = plan.exercises.fold<int>(
+                  0,
+                  (acc, e) => acc + e.sets.length,
+                );
                 return GestureDetector(
                   onTap: () async {
                     await runner.start(plan);
@@ -154,8 +165,11 @@ class _PickerCard extends StatelessWidget {
                         const Spacer(),
                         Row(
                           children: [
-                            Icon(Icons.fitness_center_rounded,
-                                size: 14, color: t.textMuted),
+                            Icon(
+                              Icons.fitness_center_rounded,
+                              size: 14,
+                              color: t.textMuted,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               '${plan.exercises.length} ex · $totalSets sets',

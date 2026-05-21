@@ -20,10 +20,10 @@ class ExerciseCategory {
       );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        if (description != null) 'description': description,
-      };
+    'id': id,
+    'name': name,
+    if (description != null) 'description': description,
+  };
 
   factory ExerciseCategory.fromJson(Map<String, dynamic> json) =>
       ExerciseCategory(

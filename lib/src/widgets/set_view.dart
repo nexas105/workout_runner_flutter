@@ -1,24 +1,63 @@
 import 'package:flutter/material.dart';
 
 import '../controller/workout_runner.dart';
+import '../l10n/workout_runner_localizations.dart';
 import '../models/performed_set.dart';
+import '../models/set_type.dart';
 import '../models/workout_set.dart';
 import '../theme/workout_runner_theme.dart';
+import 'internals/hero_stepper.dart';
 import 'internals/runner_card.dart';
 import 'internals/runner_pill_button.dart';
 import 'internals/timer_text.dart';
-import 'workout_runner_scope.dart';
+import 'runner_scope.dart';
 
-/// State machine for a single set row.
+String? _labelFor(SetType type, WorkoutRunnerLocalizations l) =>
+    type == SetType.working ? null : l.labelForSetType(type);
+
+/// Lifecycle state of a [SetRow], surfaced to custom trailing builders.
+enum SetRowState { pending, running, done, locked }
+
+/// Data passed to a [SetRow.trailingBuilder] override.
+class SetRowSlotData {
+  final WorkoutRunner runner;
+  final WorkoutSet target;
+  final PerformedSet? performed;
+  final int exerciseIndex;
+  final int setIndex;
+  final SetRowState state;
+
+  const SetRowSlotData({
+    required this.runner,
+    required this.target,
+    required this.performed,
+    required this.exerciseIndex,
+    required this.setIndex,
+    required this.state,
+  });
+}
+
+/// Builder signature for [SetRow.trailingBuilder]. Return any widget — the
+/// bundled trailing visuals are shown when the builder is `null`.
+typedef SetTrailingBuilder = Widget Function(
+  BuildContext context,
+  SetRowSlotData data,
+);
+
 enum _SetMode { pending, running, done, locked }
 
-/// A single set row inside an exercise card. Handles start / running / done
-/// visuals plus the bottom-sheet input flow for finishing a set.
+/// A single set row inside an exercise card. Handles the start / running /
+/// done visuals and opens the [SetInputSheet] when the user taps a running
+/// set or a finished set (to edit it).
 class SetRow extends StatelessWidget {
   final int exerciseIndex;
   final int setIndex;
   final WorkoutSet target;
   final PerformedSet? performed;
+
+  /// Replaces the default trailing widget (play button / timer pill / edit
+  /// icon / lock). Receives the current row state so builders can adapt.
+  final SetTrailingBuilder? trailingBuilder;
 
   const SetRow({
     super.key,
@@ -26,47 +65,83 @@ class SetRow extends StatelessWidget {
     required this.setIndex,
     required this.target,
     this.performed,
+    this.trailingBuilder,
   });
 
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
-    final runner = WorkoutRunnerScope.of(context);
+    final runner = RunnerScope.of(context);
     final mode = _modeFor(runner);
+
+    final typeAccent =
+        target.type == SetType.working ? null : t.accentFor(target.type);
 
     final accent = switch (mode) {
       _SetMode.running => t.hot,
       _SetMode.done => t.accent,
+      _SetMode.pending => typeAccent ?? t.textPrimary,
       _ => t.textDim,
     };
 
-    return RunnerCard(
-      padding: EdgeInsets.symmetric(horizontal: t.space4, vertical: t.space3),
-      borderRadius: t.radiusMedium,
-      color: t.surfaceElevated,
-      borderColor:
-          mode == _SetMode.running ? t.hot : t.border,
-      shadow: mode == _SetMode.running
-          ? [
-              BoxShadow(
-                color: t.hot.withValues(alpha: 0.25),
-                blurRadius: 18,
-                spreadRadius: -4,
-              ),
-            ]
-          : t.shadowCard,
-      onTap: () => _handleTap(context, runner, mode),
-      child: Row(
-        children: [
-          _SetBadge(setIndex: setIndex + 1, accent: accent, mode: mode),
-          SizedBox(width: t.space3),
-          Expanded(child: _SetMeta(target: target, performed: performed)),
-          SizedBox(width: t.space3),
-          _SetTrailing(mode: mode, runner: runner, target: target),
-        ],
+    final isWarmup = target.type == SetType.warmup;
+
+    return Opacity(
+      opacity: isWarmup && mode != _SetMode.running && mode != _SetMode.done
+          ? 0.85
+          : 1,
+      child: RunnerCard(
+        padding: EdgeInsets.symmetric(horizontal: t.space4, vertical: t.space3),
+        borderRadius: t.radiusMedium,
+        color:
+            mode == _SetMode.running
+                ? t.hot.withValues(alpha: 0.08)
+                : t.surfaceElevated,
+        borderColor: mode == _SetMode.running
+            ? t.hot
+            : (typeAccent ?? t.border),
+        shadow:
+            mode == _SetMode.running
+                ? [
+                  BoxShadow(
+                    color: t.hot.withValues(alpha: 0.25),
+                    blurRadius: 18,
+                    spreadRadius: -4,
+                  ),
+                ]
+                : const <BoxShadow>[],
+        onTap: () => _handleTap(context, runner, mode),
+        child: Row(
+          children: [
+            _SetBadge(setIndex: setIndex + 1, accent: accent, mode: mode),
+            SizedBox(width: t.space3),
+            Expanded(child: _SetMeta(target: target, performed: performed)),
+            SizedBox(width: t.space3),
+            trailingBuilder != null
+                ? trailingBuilder!(
+                    context,
+                    SetRowSlotData(
+                      runner: runner,
+                      target: target,
+                      performed: performed,
+                      exerciseIndex: exerciseIndex,
+                      setIndex: setIndex,
+                      state: _publicState(mode),
+                    ),
+                  )
+                : _SetTrailing(mode: mode, runner: runner, target: target),
+          ],
+        ),
       ),
     );
   }
+
+  SetRowState _publicState(_SetMode m) => switch (m) {
+        _SetMode.pending => SetRowState.pending,
+        _SetMode.running => SetRowState.running,
+        _SetMode.done => SetRowState.done,
+        _SetMode.locked => SetRowState.locked,
+      };
 
   _SetMode _modeFor(WorkoutRunner runner) {
     if (performed != null) return _SetMode.done;
@@ -89,27 +164,22 @@ class SetRow extends StatelessWidget {
         runner.startSet(exerciseIndex, setIndex);
         break;
       case _SetMode.running:
-        await _promptFinish(context, runner);
+        await _finish(context, runner);
         break;
       case _SetMode.done:
+        await _editDone(context, runner);
+        break;
       case _SetMode.locked:
         break;
     }
   }
 
-  Future<void> _promptFinish(
-    BuildContext context,
-    WorkoutRunner runner,
-  ) async {
-    final result = await showModalBottomSheet<_SetInputResult>(
+  Future<void> _finish(BuildContext context, WorkoutRunner runner) async {
+    final result = await SetInputSheet.show(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => _SetInputSheet(
-        target: target,
-        elapsed: runner.currentSetElapsed,
-        setIndex: setIndex,
-      ),
+      target: target,
+      elapsed: runner.currentSetElapsed,
+      setIndex: setIndex,
     );
     if (result == null) return;
     await runner.finishCurrentSet(
@@ -117,6 +187,24 @@ class SetRow extends StatelessWidget {
       weight: result.weight,
       rir: result.rir,
       rest: result.rest,
+    );
+  }
+
+  Future<void> _editDone(BuildContext context, WorkoutRunner runner) async {
+    final result = await SetInputSheet.show(
+      context: context,
+      target: target,
+      elapsed: performed!.duration ?? Duration.zero,
+      setIndex: setIndex,
+      existing: performed,
+    );
+    if (result == null) return;
+    await runner.updatePerformedSet(
+      exerciseIndex: exerciseIndex,
+      setIndex: setIndex,
+      reps: result.reps,
+      weight: result.weight,
+      rir: result.rir,
     );
   }
 }
@@ -143,19 +231,23 @@ class _SetBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDone ? t.accent : Colors.transparent,
         borderRadius: t.radiusSmall,
-        border: Border.all(color: isDone ? Colors.transparent : accent, width: 1.5),
+        border: Border.all(
+          color: isDone ? Colors.transparent : accent,
+          width: 1.5,
+        ),
       ),
       alignment: Alignment.center,
-      child: isDone
-          ? Icon(Icons.check_rounded, color: t.onAccent, size: 20)
-          : Text(
-              '$setIndex',
-              style: t.title.copyWith(
-                color: accent,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+      child:
+          isDone
+              ? Icon(Icons.check_rounded, color: t.onAccent, size: 20)
+              : Text(
+                '$setIndex',
+                style: t.title.copyWith(
+                  color: accent,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
-            ),
     );
   }
 }
@@ -170,21 +262,53 @@ class _SetMeta extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
     final p = performed;
+    final l = WorkoutRunnerLocalizationsScope.of(context);
+    final typeLabel = _labelFor(target.type, l);
+    final typeAccent =
+        target.type == SetType.working ? null : t.accentFor(target.type);
 
-    String repsLine = '${target.targetReps} reps';
-    if (target.targetWeight != null) {
-      repsLine = '${target.targetReps} × ${_formatNum(target.targetWeight!)} kg';
+    String targetLine;
+    if (target.type == SetType.amrap && target.targetDuration != null) {
+      targetLine = 'AMRAP — ${TimerText.format(target.targetDuration!)}';
+    } else if (target.type == SetType.timed && target.targetDuration != null) {
+      targetLine = 'Hold ${TimerText.format(target.targetDuration!)}';
+    } else if (target.targetWeight != null) {
+      targetLine =
+          '${target.targetReps} × ${l.formatWeight(target.targetWeight!)} ${l.unitKg}';
+    } else {
+      targetLine = '${target.targetReps} ${l.repsLabel.toLowerCase()}';
     }
+
+    final typePill = typeLabel == null
+        ? null
+        : Container(
+            padding: EdgeInsets.symmetric(horizontal: t.space2, vertical: 2),
+            margin: EdgeInsets.only(bottom: t.space1),
+            decoration: BoxDecoration(
+              color: (typeAccent ?? t.accent).withValues(alpha: 0.18),
+              borderRadius: t.radiusPill,
+            ),
+            child: Text(
+              typeLabel,
+              style: t.caption.copyWith(
+                color: typeAccent ?? t.accent,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.8,
+              ),
+            ),
+          );
 
     if (p == null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(repsLine, style: t.body),
+          if (typePill != null) typePill,
+          Text(targetLine, style: t.body),
           if (target.rest != null && target.rest!.inSeconds > 0) ...[
             SizedBox(height: t.space1),
             Text(
-              'Rest ${TimerText.format(target.rest!)}',
+              '${l.restLabel} ${TimerText.format(target.rest!)}',
               style: t.caption,
             ),
           ],
@@ -193,26 +317,25 @@ class _SetMeta extends StatelessWidget {
     }
 
     final weight = p.actualWeight;
-    final actualLine = weight != null
-        ? '${p.actualReps} × ${_formatNum(weight)} kg'
-        : '${p.actualReps} reps';
+    final actualLine =
+        weight != null
+            ? '${p.actualReps} × ${_formatNum(weight)} kg'
+            : '${p.actualReps} reps';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (typePill != null) typePill,
         Text(actualLine, style: t.body),
         SizedBox(height: t.space1),
         Wrap(
           spacing: t.space2,
           children: [
-            Text('Target $repsLine', style: t.caption),
+            Text('Target $targetLine', style: t.caption),
             if (p.rir != null)
               Text('RIR ${p.rir}', style: t.caption.copyWith(color: t.accent)),
             if (p.duration != null && p.duration!.inSeconds > 0)
-              Text(
-                'Time ${TimerText.format(p.duration!)}',
-                style: t.caption,
-              ),
+              Text('Time ${TimerText.format(p.duration!)}', style: t.caption),
           ],
         ),
       ],
@@ -241,92 +364,103 @@ class _SetTrailing extends StatelessWidget {
     final t = WorkoutRunnerTheme.of(context);
     switch (mode) {
       case _SetMode.pending:
-        return Icon(Icons.play_arrow_rounded, color: t.accent, size: 28);
+        return Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: t.accent,
+            borderRadius: t.radiusSmall,
+          ),
+          child: Icon(Icons.play_arrow_rounded, color: t.onAccent, size: 24),
+        );
       case _SetMode.running:
+        final isTimed = target.isTimed && target.targetDuration != null;
+        final shownDuration = isTimed
+            ? runner.currentSetRemaining
+            : runner.currentSetElapsed;
+        final reachedTarget = isTimed &&
+            runner.currentSetElapsed >= target.targetDuration!;
         return Container(
           padding: EdgeInsets.symmetric(
             horizontal: t.space3,
             vertical: t.space1,
           ),
           decoration: BoxDecoration(
-            color: t.hot.withValues(alpha: 0.18),
+            color: (reachedTarget ? t.success : t.hot).withValues(alpha: 0.22),
             borderRadius: t.radiusPill,
           ),
           child: TimerText(
-            duration: runner.currentSetElapsed,
+            duration: shownDuration,
             style: t.title.copyWith(
               fontSize: 14,
-              color: t.hot,
+              color: reachedTarget ? t.success : t.hot,
               fontWeight: FontWeight.w800,
             ),
           ),
         );
       case _SetMode.done:
-        return Icon(Icons.check_circle_rounded, color: t.accent, size: 24);
+        return Icon(Icons.edit_rounded, color: t.textDim, size: 18);
       case _SetMode.locked:
         return Icon(Icons.lock_outline_rounded, color: t.textDim, size: 20);
     }
   }
 }
 
-class _SetInputResult {
-  final int reps;
-  final double? weight;
-  final int? rir;
-  final Duration rest;
-
-  const _SetInputResult({
-    required this.reps,
-    this.weight,
-    this.rir,
-    required this.rest,
-  });
-}
-
-class _SetInputSheet extends StatefulWidget {
+/// Bottom-sheet entry/edit form for a single set. Use [show] to display it;
+/// the result is a [SetInputResult] or `null` if the user cancelled.
+class SetInputSheet extends StatefulWidget {
   final WorkoutSet target;
   final Duration elapsed;
   final int setIndex;
+  final PerformedSet? existing;
 
-  const _SetInputSheet({
+  const SetInputSheet({
+    super.key,
     required this.target,
     required this.elapsed,
     required this.setIndex,
+    this.existing,
   });
 
+  /// Convenience launcher.
+  static Future<SetInputResult?> show({
+    required BuildContext context,
+    required WorkoutSet target,
+    required Duration elapsed,
+    required int setIndex,
+    PerformedSet? existing,
+  }) => showModalBottomSheet<SetInputResult>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder:
+        (ctx) => SetInputSheet(
+          target: target,
+          elapsed: elapsed,
+          setIndex: setIndex,
+          existing: existing,
+        ),
+  );
+
   @override
-  State<_SetInputSheet> createState() => _SetInputSheetState();
+  State<SetInputSheet> createState() => _SetInputSheetState();
 }
 
-class _SetInputSheetState extends State<_SetInputSheet> {
-  late int _reps = widget.target.targetReps;
-  late double _weight = widget.target.targetWeight ?? 0;
-  int _rir = 2;
-  late Duration _rest =
-      widget.target.rest ?? const Duration(seconds: 90);
+class _SetInputSheetState extends State<SetInputSheet> {
+  late int _reps = widget.existing?.actualReps ?? widget.target.targetReps;
+  late double _weight =
+      widget.existing?.actualWeight ?? widget.target.targetWeight ?? 0;
+  late int _rir = widget.existing?.rir ?? 2;
+  late Duration _rest = widget.target.rest ?? const Duration(seconds: 90);
 
-  late final TextEditingController _repsCtrl =
-      TextEditingController(text: _reps.toString());
-  late final TextEditingController _weightCtrl =
-      TextEditingController(text: _formatNum(_weight));
-
-  @override
-  void dispose() {
-    _repsCtrl.dispose();
-    _weightCtrl.dispose();
-    super.dispose();
-  }
-
-  String _formatNum(double v) {
-    if (v == 0) return '';
-    if (v == v.roundToDouble()) return v.toInt().toString();
-    return v.toString();
-  }
+  bool get _isEdit => widget.existing != null;
+  bool get _hasWeightTarget => widget.target.targetWeight != null;
 
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
     final viewInsets = MediaQuery.viewInsetsOf(context);
+
     return AnimatedPadding(
       duration: t.motionFast,
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
@@ -335,9 +469,7 @@ class _SetInputSheetState extends State<_SetInputSheet> {
         decoration: BoxDecoration(
           color: t.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          border: Border(
-            top: BorderSide(color: t.border),
-          ),
+          border: Border(top: BorderSide(color: t.border)),
         ),
         padding: EdgeInsets.fromLTRB(
           t.space5,
@@ -364,24 +496,27 @@ class _SetInputSheetState extends State<_SetInputSheet> {
               children: [
                 Expanded(
                   child: Text(
-                    'Set ${widget.setIndex + 1}',
+                    _isEdit
+                        ? 'Edit set ${widget.setIndex + 1}'
+                        : 'Set ${widget.setIndex + 1}',
                     style: t.titleLarge,
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: t.space3,
-                    vertical: 6,
+                if (widget.elapsed.inSeconds > 0)
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: t.space3,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: t.hotMuted,
+                      borderRadius: t.radiusPill,
+                    ),
+                    child: TimerText(
+                      duration: widget.elapsed,
+                      style: t.title.copyWith(color: t.hot, fontSize: 14),
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    color: t.hotMuted,
-                    borderRadius: t.radiusPill,
-                  ),
-                  child: TimerText(
-                    duration: widget.elapsed,
-                    style: t.title.copyWith(color: t.hot, fontSize: 14),
-                  ),
-                ),
               ],
             ),
             SizedBox(height: t.space5),
@@ -389,34 +524,59 @@ class _SetInputSheetState extends State<_SetInputSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: _NumberField(
+                  child: HeroStepper(
                     label: 'Reps',
-                    controller: _repsCtrl,
-                    onChanged: (v) =>
-                        _reps = int.tryParse(v) ?? widget.target.targetReps,
-                    isInteger: true,
+                    value: _reps,
+                    integer: true,
+                    min: 0,
+                    max: 999,
+                    smallStep: 1,
+                    largeStep: 5,
+                    onChanged: (v) => setState(() => _reps = v.toInt()),
                   ),
                 ),
                 SizedBox(width: t.space3),
                 Expanded(
-                  child: _NumberField(
-                    label: 'Weight (kg)',
-                    controller: _weightCtrl,
-                    onChanged: (v) =>
-                        _weight = double.tryParse(v.replaceAll(',', '.')) ?? 0,
+                  child: HeroStepper(
+                    label: 'Weight',
+                    unit: 'kg',
+                    value: _weight,
+                    min: 0,
+                    max: 1000,
+                    smallStep: _hasWeightTarget ? 2.5 : 1,
+                    largeStep: 5,
+                    onChanged: (v) => setState(() => _weight = v.toDouble()),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: t.space5),
-            Text('Reps in reserve  ·  $_rir', style: t.caption),
+            SizedBox(height: t.space4),
+            Row(
+              children: [
+                Text('Reps in reserve', style: t.caption),
+                const Spacer(),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: t.space2,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: t.accentMuted,
+                    borderRadius: t.radiusPill,
+                  ),
+                  child: Text(
+                    '$_rir',
+                    style: t.title.copyWith(color: t.accent, fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 activeTrackColor: t.accent,
                 inactiveTrackColor: t.surfaceElevated,
                 thumbColor: t.accent,
                 overlayColor: t.accentMuted,
-                valueIndicatorColor: t.accent,
                 trackHeight: 4,
               ),
               child: Slider(
@@ -425,37 +585,39 @@ class _SetInputSheetState extends State<_SetInputSheet> {
                 min: 0,
                 max: 5,
                 divisions: 5,
-                label: '$_rir',
               ),
             ),
-            SizedBox(height: t.space3),
-            Text('Rest', style: t.caption),
-            SizedBox(height: t.space2),
-            Wrap(
-              spacing: t.space2,
-              children: [
-                for (final s in const [0, 30, 60, 90, 120, 180, 240])
-                  _RestChip(
-                    seconds: s,
-                    selected: _rest.inSeconds == s,
-                    onTap: () =>
-                        setState(() => _rest = Duration(seconds: s)),
-                  ),
-              ],
-            ),
+            if (!_isEdit) ...[
+              SizedBox(height: t.space2),
+              Text('Rest', style: t.caption),
+              SizedBox(height: t.space2),
+              Wrap(
+                spacing: t.space2,
+                children: [
+                  for (final s in const [0, 30, 60, 90, 120, 180, 240])
+                    _RestChip(
+                      seconds: s,
+                      selected: _rest.inSeconds == s,
+                      onTap: () => setState(() => _rest = Duration(seconds: s)),
+                    ),
+                ],
+              ),
+            ],
             SizedBox(height: t.space5),
             RunnerPillButton(
-              label: 'Save set',
+              label: _isEdit ? 'Save changes' : 'Save set',
               icon: Icons.check_rounded,
               expand: true,
-              onPressed: () => Navigator.of(context).pop(
-                _SetInputResult(
-                  reps: _reps,
-                  weight: _weight == 0 ? null : _weight,
-                  rir: _rir,
-                  rest: _rest,
-                ),
-              ),
+              onPressed:
+                  () => Navigator.of(context).pop(
+                    SetInputResult(
+                      reps: _reps,
+                      weight:
+                          _weight == 0 && !_hasWeightTarget ? null : _weight,
+                      rir: _rir,
+                      rest: _rest,
+                    ),
+                  ),
             ),
           ],
         ),
@@ -464,56 +626,19 @@ class _SetInputSheetState extends State<_SetInputSheet> {
   }
 }
 
-class _NumberField extends StatelessWidget {
-  final String label;
-  final TextEditingController controller;
-  final ValueChanged<String> onChanged;
-  final bool isInteger;
+/// Return type for [SetInputSheet].
+class SetInputResult {
+  final int reps;
+  final double? weight;
+  final int? rir;
+  final Duration rest;
 
-  const _NumberField({
-    required this.label,
-    required this.controller,
-    required this.onChanged,
-    this.isInteger = false,
+  const SetInputResult({
+    required this.reps,
+    this.weight,
+    this.rir,
+    required this.rest,
   });
-
-  @override
-  Widget build(BuildContext context) {
-    final t = WorkoutRunnerTheme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: t.caption),
-        SizedBox(height: t.space2),
-        Container(
-          decoration: BoxDecoration(
-            color: t.surfaceElevated,
-            borderRadius: t.radiusMedium,
-            border: Border.all(color: t.border),
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: t.space3,
-            vertical: t.space2,
-          ),
-          child: TextField(
-            controller: controller,
-            keyboardType: TextInputType.numberWithOptions(
-              decimal: !isInteger,
-              signed: false,
-            ),
-            cursorColor: t.accent,
-            style: t.titleLarge.copyWith(fontSize: 28),
-            decoration: const InputDecoration(
-              isCollapsed: true,
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 4),
-            ),
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 class _RestChip extends StatelessWidget {
@@ -536,10 +661,7 @@ class _RestChip extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: t.motionFast,
-        padding: EdgeInsets.symmetric(
-          horizontal: t.space3,
-          vertical: t.space2,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: t.space3, vertical: t.space2),
         decoration: BoxDecoration(
           color: selected ? t.accent : Colors.transparent,
           borderRadius: t.radiusPill,

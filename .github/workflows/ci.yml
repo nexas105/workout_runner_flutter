@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: analyze + test + dry-run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Match the lower bound declared in pubspec.yaml.
+          flutter-version: '3.16.0'
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Format check
+        run: dart format --output none --set-exit-if-changed lib test
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos --fatal-warnings
+
+      - name: Test
+        run: flutter test --reporter expanded
+
+      - name: Pub publish dry-run
+        run: flutter pub publish --dry-run

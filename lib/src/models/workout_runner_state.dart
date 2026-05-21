@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../internal/schema.dart';
 import 'performed_exercise.dart';
 
 /// Persistable snapshot of an active workout. Stored by [RunnerStorage] and
@@ -15,6 +16,11 @@ class WorkoutRunnerState {
   final DateTime updatedAt;
   final List<PerformedExercise> performed;
 
+  /// Total wall-clock time the session has spent in a paused state. Subtracted
+  /// from `now - startedAt` to compute the visible elapsed counter, so pauses
+  /// don't inflate workout duration.
+  final Duration pausedFor;
+
   const WorkoutRunnerState({
     required this.planId,
     required this.currentExerciseIndex,
@@ -24,6 +30,7 @@ class WorkoutRunnerState {
     required this.startedAt,
     required this.updatedAt,
     required this.performed,
+    this.pausedFor = Duration.zero,
   });
 
   WorkoutRunnerState copyWith({
@@ -33,45 +40,51 @@ class WorkoutRunnerState {
     bool? isActive,
     DateTime? updatedAt,
     List<PerformedExercise>? performed,
-  }) =>
-      WorkoutRunnerState(
-        planId: planId,
-        currentExerciseIndex: currentExerciseIndex ?? this.currentExerciseIndex,
-        activeExerciseIndex: identical(activeExerciseIndex, _noChange)
+    Duration? pausedFor,
+  }) => WorkoutRunnerState(
+    planId: planId,
+    currentExerciseIndex: currentExerciseIndex ?? this.currentExerciseIndex,
+    activeExerciseIndex:
+        identical(activeExerciseIndex, _noChange)
             ? this.activeExerciseIndex
             : activeExerciseIndex as int?,
-        currentSetIndex: currentSetIndex ?? this.currentSetIndex,
-        isActive: isActive ?? this.isActive,
-        startedAt: startedAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        performed: performed ?? this.performed,
-      );
+    currentSetIndex: currentSetIndex ?? this.currentSetIndex,
+    isActive: isActive ?? this.isActive,
+    startedAt: startedAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    performed: performed ?? this.performed,
+    pausedFor: pausedFor ?? this.pausedFor,
+  );
 
   Map<String, dynamic> toJson() => {
-        'planId': planId,
-        'currentExerciseIndex': currentExerciseIndex,
-        'activeExerciseIndex': activeExerciseIndex,
-        'currentSetIndex': currentSetIndex,
-        'isActive': isActive,
-        'startedAt': startedAt.toIso8601String(),
-        'updatedAt': updatedAt.toIso8601String(),
-        'performed': performed.map((e) => e.toJson()).toList(),
-      };
+    'schemaVersion': kPluginSchemaVersion,
+    'planId': planId,
+    'currentExerciseIndex': currentExerciseIndex,
+    'activeExerciseIndex': activeExerciseIndex,
+    'currentSetIndex': currentSetIndex,
+    'isActive': isActive,
+    'startedAt': startedAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+    'performed': performed.map((e) => e.toJson()).toList(),
+    'pausedFor': pausedFor.inSeconds,
+  };
 
-  factory WorkoutRunnerState.fromJson(Map<String, dynamic> json) =>
-      WorkoutRunnerState(
-        planId: json['planId'] as String,
-        currentExerciseIndex:
-            (json['currentExerciseIndex'] as num?)?.toInt() ?? 0,
-        activeExerciseIndex: (json['activeExerciseIndex'] as num?)?.toInt(),
-        currentSetIndex: (json['currentSetIndex'] as num?)?.toInt() ?? 0,
-        isActive: (json['isActive'] as bool?) ?? true,
-        startedAt: DateTime.parse(json['startedAt'] as String),
-        updatedAt: DateTime.parse(json['updatedAt'] as String),
-        performed: (json['performed'] as List<dynamic>? ?? const [])
+  factory WorkoutRunnerState.fromJson(
+    Map<String, dynamic> json,
+  ) => WorkoutRunnerState(
+    planId: json['planId'] as String,
+    currentExerciseIndex: (json['currentExerciseIndex'] as num?)?.toInt() ?? 0,
+    activeExerciseIndex: (json['activeExerciseIndex'] as num?)?.toInt(),
+    currentSetIndex: (json['currentSetIndex'] as num?)?.toInt() ?? 0,
+    isActive: (json['isActive'] as bool?) ?? true,
+    startedAt: DateTime.parse(json['startedAt'] as String),
+    updatedAt: DateTime.parse(json['updatedAt'] as String),
+    performed:
+        (json['performed'] as List<dynamic>? ?? const [])
             .map((e) => PerformedExercise.fromJson(e as Map<String, dynamic>))
             .toList(),
-      );
+    pausedFor: Duration(seconds: (json['pausedFor'] as num?)?.toInt() ?? 0),
+  );
 }
 
 const Object _noChange = Object();

@@ -6,16 +6,16 @@ import '../controller/workout_runner.dart';
 /// through every constructor.
 ///
 /// ```dart
-/// WorkoutRunnerScope(
+/// RunnerScope(
 ///   runner: myRunner,
 ///   child: const RunnerPanel(),
 /// );
 /// ```
 ///
-/// Internal widgets read the runner with [WorkoutRunnerScope.of] and rebuild
+/// Internal widgets read the runner with [RunnerScope.of] and rebuild
 /// on every notification.
-class WorkoutRunnerScope extends InheritedNotifier<WorkoutRunner> {
-  const WorkoutRunnerScope({
+class RunnerScope extends InheritedNotifier<WorkoutRunner> {
+  const RunnerScope({
     super.key,
     required WorkoutRunner runner,
     required super.child,
@@ -24,12 +24,11 @@ class WorkoutRunnerScope extends InheritedNotifier<WorkoutRunner> {
   /// Returns the nearest [WorkoutRunner]. Throws if none was provided.
   static WorkoutRunner of(BuildContext context) {
     final runner = maybeOf(context);
-    assert(runner != null, 'No WorkoutRunnerScope found in widget tree.');
+    assert(runner != null, 'No RunnerScope found in widget tree.');
     return runner!;
   }
 
   /// Returns the nearest [WorkoutRunner], or `null` when missing.
-  static WorkoutRunner? maybeOf(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<WorkoutRunnerScope>()
-      ?.notifier;
+  static WorkoutRunner? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<RunnerScope>()?.notifier;
 }
