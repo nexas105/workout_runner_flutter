@@ -25,9 +25,10 @@ class DefaultCoachEngine extends CoachEngine {
   @override
   void emitSignal(CoachSignalEvent event) {
     if (_controller.isClosed) return;
-    final CoachingMessage? message = _mapper != null
-        ? _mapper(event)
-        : defaultMessageFor(event, idSuffix: _seq);
+    final CoachingMessage? message =
+        _mapper != null
+            ? _mapper(event)
+            : defaultMessageFor(event, idSuffix: _seq);
     _seq++;
     if (message != null) {
       _controller.add(message);
@@ -66,7 +67,8 @@ class DefaultCoachEngine extends CoachEngine {
     CoachSignal.restSkipped: CoachingMessageTemplate(
       severity: CoachSeverity.warning,
       title: 'Rest skipped',
-      body: 'Skipping rest can hurt the next set. Take a breath if you need it.',
+      body:
+          'Skipping rest can hurt the next set. Take a breath if you need it.',
       source: 'rest',
     ),
     CoachSignal.restExtended: CoachingMessageTemplate(
@@ -84,7 +86,8 @@ class DefaultCoachEngine extends CoachEngine {
     CoachSignal.deloadSuggested: CoachingMessageTemplate(
       severity: CoachSeverity.info,
       title: 'Deload suggested',
-      body: 'Recent performance suggests a lighter session would help recovery.',
+      body:
+          'Recent performance suggests a lighter session would help recovery.',
       source: 'readiness',
     ),
     CoachSignal.longRest: CoachingMessageTemplate(
@@ -102,7 +105,8 @@ class DefaultCoachEngine extends CoachEngine {
     CoachSignal.slowPace: CoachingMessageTemplate(
       severity: CoachSeverity.info,
       title: 'Slower pace',
-      body: 'Take the time you need, but watch the clock if you\'re short on time.',
+      body:
+          'Take the time you need, but watch the clock if you\'re short on time.',
       source: 'runner',
     ),
     CoachSignal.hitTarget: CoachingMessageTemplate(

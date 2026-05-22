@@ -34,13 +34,13 @@ class DataBundle {
 
   factory DataBundle.fromJson(Map<String, dynamic> json) {
     final rawVersion = json['schemaVersion'];
-    final version = rawVersion is num
-        ? rawVersion.toInt()
-        : kPluginSchemaVersion;
+    final version =
+        rawVersion is num ? rawVersion.toInt() : kPluginSchemaVersion;
     final rawExportedAt = json['exportedAt'];
-    final exportedAt = rawExportedAt is String
-        ? DateTime.parse(rawExportedAt)
-        : DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
+    final exportedAt =
+        rawExportedAt is String
+            ? DateTime.parse(rawExportedAt)
+            : DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
     return DataBundle(
       schemaVersion: version,
       exportedAt: exportedAt,

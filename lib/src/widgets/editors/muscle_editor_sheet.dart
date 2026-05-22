@@ -32,10 +32,11 @@ class MuscleEditorSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => MuscleEditorSheet(
-        existing: existing,
-        onSave: (m) => Navigator.of(ctx).pop(m),
-      ),
+      builder:
+          (ctx) => MuscleEditorSheet(
+            existing: existing,
+            onSave: (m) => Navigator.of(ctx).pop(m),
+          ),
     );
   }
 
@@ -86,12 +87,7 @@ class _MuscleEditorSheetState extends State<MuscleEditorSheet> {
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
       curve: Curves.easeOut,
       child: RunnerCard(
-        padding: EdgeInsets.fromLTRB(
-          t.space4,
-          t.space3,
-          t.space4,
-          t.space4,
-        ),
+        padding: EdgeInsets.fromLTRB(t.space4, t.space3, t.space4, t.space4),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         child: Column(
           mainAxisSize: MainAxisSize.min,

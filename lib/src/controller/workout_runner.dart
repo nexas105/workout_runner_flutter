@@ -687,12 +687,14 @@ class WorkoutRunner extends ChangeNotifier {
     // Active set / exercise pointers may dangle — clear them defensively.
     if (state != null) {
       _state = state.copyWith(
-        currentExerciseIndex: state.currentExerciseIndex >= newExercises.length
-            ? (newExercises.isEmpty ? 0 : newExercises.length - 1)
-            : state.currentExerciseIndex,
-        activeExerciseIndex: state.activeExerciseIndex == exerciseIndex
-            ? null
-            : state.activeExerciseIndex,
+        currentExerciseIndex:
+            state.currentExerciseIndex >= newExercises.length
+                ? (newExercises.isEmpty ? 0 : newExercises.length - 1)
+                : state.currentExerciseIndex,
+        activeExerciseIndex:
+            state.activeExerciseIndex == exerciseIndex
+                ? null
+                : state.activeExerciseIndex,
         updatedAt: DateTime.now(),
       );
       if (_activeSetExerciseIndex == exerciseIndex) {
@@ -737,23 +739,27 @@ class WorkoutRunner extends ChangeNotifier {
         }
       }
       final remapped = state.performed
-          .map((p) => p.copyWith(
-                exerciseIndex: perm[p.exerciseIndex] ?? p.exerciseIndex,
-                sets: p.sets
-                    .map((s) => s.copyWith(
-                          exerciseIndex:
-                              perm[s.exerciseIndex] ?? s.exerciseIndex,
-                        ))
-                    .toList(growable: false),
-              ))
+          .map(
+            (p) => p.copyWith(
+              exerciseIndex: perm[p.exerciseIndex] ?? p.exerciseIndex,
+              sets: p.sets
+                  .map(
+                    (s) => s.copyWith(
+                      exerciseIndex: perm[s.exerciseIndex] ?? s.exerciseIndex,
+                    ),
+                  )
+                  .toList(growable: false),
+            ),
+          )
           .toList(growable: false);
       _state = state.copyWith(
         performed: remapped,
         currentExerciseIndex:
             perm[state.currentExerciseIndex] ?? state.currentExerciseIndex,
-        activeExerciseIndex: state.activeExerciseIndex == null
-            ? null
-            : perm[state.activeExerciseIndex],
+        activeExerciseIndex:
+            state.activeExerciseIndex == null
+                ? null
+                : perm[state.activeExerciseIndex],
         updatedAt: DateTime.now(),
       );
       await _persist();
@@ -824,7 +830,10 @@ class WorkoutRunner extends ChangeNotifier {
   /// keeps the same exercise indices (e.g. mid-session edit from a Plan
   /// Editor). When `false`, performed sets are wiped so the runner starts
   /// the new plan fresh. Refuses when no plan is currently active.
-  Future<bool> replacePlan(WorkoutPlan plan, {bool preservePerformed = true}) async {
+  Future<bool> replacePlan(
+    WorkoutPlan plan, {
+    bool preservePerformed = true,
+  }) async {
     final state = _state;
     if (state == null) return false;
     _plan = plan;
@@ -922,10 +931,7 @@ class WorkoutRunner extends ChangeNotifier {
     }
     final ex = plan.exercises[exerciseIndex];
     final n = ex.sets.length;
-    if (oldIndex < 0 ||
-        oldIndex >= n ||
-        newIndex < 0 ||
-        newIndex >= n) {
+    if (oldIndex < 0 || oldIndex >= n || newIndex < 0 || newIndex >= n) {
       return false;
     }
     if (oldIndex == newIndex) return true;

@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
-      home: WorkoutRunnerTheme(
-        data: WorkoutRunnerThemeData.dark(),
-        child: Scaffold(body: Center(child: child)),
-      ),
-    );
+  home: WorkoutRunnerTheme(
+    data: WorkoutRunnerThemeData.dark(),
+    child: Scaffold(body: Center(child: child)),
+  ),
+);
 
 void main() {
-  testWidgets('TimerText announces hours/minutes/seconds via Semantics',
-      (tester) async {
+  testWidgets('TimerText announces hours/minutes/seconds via Semantics', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       _wrap(const TimerText(duration: Duration(minutes: 1, seconds: 30))),
     );
@@ -21,8 +22,9 @@ void main() {
     expect(node.value, contains('30 seconds'));
   });
 
-  testWidgets('TimerText hides the raw digits from screen readers',
-      (tester) async {
+  testWidgets('TimerText hides the raw digits from screen readers', (
+    tester,
+  ) async {
     final handle = tester.ensureSemantics();
     await tester.pumpWidget(
       _wrap(const TimerText(duration: Duration(seconds: 42))),
@@ -32,8 +34,9 @@ void main() {
     handle.dispose();
   });
 
-  testWidgets('RunnerPillButton enforces a minimum 48 dp tap target',
-      (tester) async {
+  testWidgets('RunnerPillButton enforces a minimum 48 dp tap target', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       _wrap(RunnerPillButton(label: 'Go', onPressed: () {})),
     );

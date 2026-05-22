@@ -92,19 +92,14 @@ void main() {
     final benchDbIdx = results.indexWhere(
       (s) => s.exercise.id == benchDumbbell.id,
     );
-    final pecDeckIdx = results.indexWhere(
-      (s) => s.exercise.id == pecDeck.id,
-    );
+    final pecDeckIdx = results.indexWhere((s) => s.exercise.id == pecDeck.id);
     expect(benchDbIdx, greaterThanOrEqualTo(0));
     expect(pecDeckIdx, greaterThanOrEqualTo(0));
     expect(benchDbIdx, lessThan(pecDeckIdx));
 
     final benchDbScore = results[benchDbIdx];
     final pecDeckScore = results[pecDeckIdx];
-    expect(
-      benchDbScore.match,
-      AlternativeMatch.sameMovementDifferentEquipment,
-    );
+    expect(benchDbScore.match, AlternativeMatch.sameMovementDifferentEquipment);
     expect(benchDbScore.score, 0.8);
     expect(pecDeckScore.match, AlternativeMatch.sameMuscleGroup);
     expect(pecDeckScore.score, 0.6);

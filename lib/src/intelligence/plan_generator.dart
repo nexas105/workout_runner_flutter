@@ -94,12 +94,8 @@ class PlanGenerationProfile {
           equipment.containsAll(other.equipment);
 
   @override
-  int get hashCode => Object.hash(
-    goal,
-    level,
-    daysPerWeek,
-    Object.hashAllUnordered(equipment),
-  );
+  int get hashCode =>
+      Object.hash(goal, level, daysPerWeek, Object.hashAllUnordered(equipment));
 }
 
 abstract class PlanGenerator {
@@ -136,14 +132,9 @@ abstract class PlanGenerator {
     'ex_kettlebell_swing',
   ];
 
-  static const List<String> _legAccessoryIds = [
-    'ex_leg_curl',
-    'ex_calf_raise',
-  ];
+  static const List<String> _legAccessoryIds = ['ex_leg_curl', 'ex_calf_raise'];
 
-  static const List<String> _pushAccessoryIds = [
-    'ex_triceps_pushdown',
-  ];
+  static const List<String> _pushAccessoryIds = ['ex_triceps_pushdown'];
 
   static WorkoutPlan fullBody(
     PlanGenerationProfile profile, {
@@ -198,14 +189,17 @@ abstract class PlanGenerator {
       ..._pickAll(_legAccessoryIds, pool, max: 1),
     ];
 
-    WorkoutPlan build(String slug, String displayName, List<WorkoutExercise> e) =>
-        WorkoutPlan(
-          id: 'plan_generated_ppl_$slug',
-          name: displayName,
-          description: _planDescription(profile),
-          exercises: e.map((x) => _applyScheme(x, profile)).toList(),
-          meta: _planMeta(profile, 'pushPullLegs_$slug'),
-        );
+    WorkoutPlan build(
+      String slug,
+      String displayName,
+      List<WorkoutExercise> e,
+    ) => WorkoutPlan(
+      id: 'plan_generated_ppl_$slug',
+      name: displayName,
+      description: _planDescription(profile),
+      exercises: e.map((x) => _applyScheme(x, profile)).toList(),
+      meta: _planMeta(profile, 'pushPullLegs_$slug'),
+    );
 
     return [
       build('push', 'Push', push),
@@ -305,9 +299,8 @@ abstract class PlanGenerator {
   ) {
     final scheme = _schemeFor(profile);
     final rest = Duration(seconds: _restSecondsFor(profile.goal));
-    final firstWeight = base.sets.isNotEmpty
-        ? base.sets.first.targetWeight
-        : null;
+    final firstWeight =
+        base.sets.isNotEmpty ? base.sets.first.targetWeight : null;
     final sets = List<WorkoutSet>.generate(
       scheme.sets,
       (_) => WorkoutSet(

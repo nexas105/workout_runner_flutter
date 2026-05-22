@@ -95,9 +95,7 @@ void main() {
     });
 
     test('general uses 3x10 with 60s rest', () {
-      final plan = PlanGenerator.fullBody(
-        _profile(goal: TrainingGoal.general),
-      );
+      final plan = PlanGenerator.fullBody(_profile(goal: TrainingGoal.general));
       expect(plan.exercises.length, greaterThanOrEqualTo(4));
       for (final ex in plan.exercises) {
         expect(ex.sets.length, 3);
@@ -199,9 +197,7 @@ void main() {
     test('exercises without equipment meta pass through', () {
       // Default exercises carry no `meta.equipment`, so even a very narrow
       // filter still lets them through.
-      final plan = PlanGenerator.fullBody(
-        _profile(equipment: {'unobtanium'}),
-      );
+      final plan = PlanGenerator.fullBody(_profile(equipment: {'unobtanium'}));
       expect(plan.exercises, isNotEmpty);
     });
 
@@ -215,9 +211,7 @@ void main() {
       // not possible without mutation, so we exercise the filter indirectly:
       // a profile that excludes 'cable' should still produce a full plan
       // because real defaults have no meta.equipment.
-      final plan = PlanGenerator.fullBody(
-        _profile(equipment: {'barbell'}),
-      );
+      final plan = PlanGenerator.fullBody(_profile(equipment: {'barbell'}));
       expect(
         plan.exercises.any((e) => e.id == 'ex_bench_press'),
         isTrue,
@@ -229,17 +223,14 @@ void main() {
       expect(tagged.meta?['equipment'], 'cable');
     });
 
-    test(
-      'filter respects meta.equipment when it equals an allowed value',
-      () {
-        // Build a profile that selects only one piece of equipment, and
-        // confirm the resulting plan still has >=4 picks because the default
-        // catalogue does not carry equipment metadata.
-        final plan = PlanGenerator.fullBody(
-          _profile(equipment: {'barbell', 'bodyweight'}),
-        );
-        expect(plan.exercises.length, greaterThanOrEqualTo(4));
-      },
-    );
+    test('filter respects meta.equipment when it equals an allowed value', () {
+      // Build a profile that selects only one piece of equipment, and
+      // confirm the resulting plan still has >=4 picks because the default
+      // catalogue does not carry equipment metadata.
+      final plan = PlanGenerator.fullBody(
+        _profile(equipment: {'barbell', 'bodyweight'}),
+      );
+      expect(plan.exercises.length, greaterThanOrEqualTo(4));
+    });
   });
 }

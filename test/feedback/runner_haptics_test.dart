@@ -107,85 +107,64 @@ void main() {
       expect(haptics.setCompletedCount, 1);
     });
 
-    test(
-      'restTickCountdown fires exactly once per rest, when remaining '
-      'drops under the threshold',
-      () async {
-        await runner.start(_buildPlan());
-        runner.setActiveExercise(0);
-        runner.startSet(0, 0);
-        await runner.finishCurrentSet(
-          reps: 8,
-          rest: const Duration(seconds: 30),
-        );
+    test('restTickCountdown fires exactly once per rest, when remaining '
+        'drops under the threshold', () async {
+      await runner.start(_buildPlan());
+      runner.setActiveExercise(0);
+      runner.startSet(0, 0);
+      await runner.finishCurrentSet(reps: 8, rest: const Duration(seconds: 30));
 
-        // Above threshold — nothing yet.
-        runner.onRestTick!(const Duration(seconds: 10));
-        runner.onRestTick!(const Duration(seconds: 5));
-        runner.onRestTick!(const Duration(seconds: 4));
-        expect(haptics.restTickCountdownCount, 0);
+      // Above threshold — nothing yet.
+      runner.onRestTick!(const Duration(seconds: 10));
+      runner.onRestTick!(const Duration(seconds: 5));
+      runner.onRestTick!(const Duration(seconds: 4));
+      expect(haptics.restTickCountdownCount, 0);
 
-        // Drop into threshold — fires once.
-        runner.onRestTick!(const Duration(seconds: 3));
-        expect(haptics.restTickCountdownCount, 1);
+      // Drop into threshold — fires once.
+      runner.onRestTick!(const Duration(seconds: 3));
+      expect(haptics.restTickCountdownCount, 1);
 
-        // Further ticks inside threshold do not refire.
-        runner.onRestTick!(const Duration(seconds: 2));
-        runner.onRestTick!(const Duration(seconds: 1));
-        expect(haptics.restTickCountdownCount, 1);
+      // Further ticks inside threshold do not refire.
+      runner.onRestTick!(const Duration(seconds: 2));
+      runner.onRestTick!(const Duration(seconds: 1));
+      expect(haptics.restTickCountdownCount, 1);
 
-        // Remaining-zero tick is treated as "rest complete", not a countdown.
-        runner.onRestTick!(Duration.zero);
-        expect(haptics.restTickCountdownCount, 1);
-      },
-    );
+      // Remaining-zero tick is treated as "rest complete", not a countdown.
+      runner.onRestTick!(Duration.zero);
+      expect(haptics.restTickCountdownCount, 1);
+    });
 
     test('countdown flag resets between rest periods', () async {
       await runner.start(_buildPlan());
       runner.setActiveExercise(0);
 
       runner.startSet(0, 0);
-      await runner.finishCurrentSet(
-        reps: 8,
-        rest: const Duration(seconds: 30),
-      );
+      await runner.finishCurrentSet(reps: 8, rest: const Duration(seconds: 30));
       runner.onRestTick!(const Duration(seconds: 2));
       expect(haptics.restTickCountdownCount, 1);
       runner.skipRest();
 
       runner.startSet(0, 1);
-      await runner.finishCurrentSet(
-        reps: 8,
-        rest: const Duration(seconds: 30),
-      );
+      await runner.finishCurrentSet(reps: 8, rest: const Duration(seconds: 30));
       runner.onRestTick!(const Duration(seconds: 2));
       expect(haptics.restTickCountdownCount, 2);
     });
 
-    test(
-      'short rest (<= tickAt) fires restTickCountdown immediately on '
-      'restStarted',
-      () async {
-        await runner.start(_buildPlan());
-        runner.setActiveExercise(0);
-        runner.startSet(0, 0);
-        await runner.finishCurrentSet(
-          reps: 8,
-          rest: const Duration(seconds: 2),
-        );
+    test('short rest (<= tickAt) fires restTickCountdown immediately on '
+        'restStarted', () async {
+      await runner.start(_buildPlan());
+      runner.setActiveExercise(0);
+      runner.startSet(0, 0);
+      await runner.finishCurrentSet(reps: 8, rest: const Duration(seconds: 2));
 
-        expect(haptics.restTickCountdownCount, 1);
-      },
-    );
+      expect(haptics.restTickCountdownCount, 1);
+    });
 
     test('restSkipped fires when skipRest is called', () async {
       await runner.start(_buildPlan());
       runner.setActiveExercise(0);
       runner.startSet(0, 0);
-      await runner.finishCurrentSet(
-        reps: 8,
-        rest: const Duration(seconds: 30),
-      );
+      await runner.finishCurrentSet(reps: 8, rest: const Duration(seconds: 30));
 
       runner.skipRest();
 

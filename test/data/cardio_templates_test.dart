@@ -7,13 +7,21 @@ void main() {
       final all = CardioTemplates.all;
       expect(all, hasLength(6));
       for (final plan in all) {
-        expect(plan.intervals, isNotEmpty, reason: '${plan.id} has no intervals');
+        expect(
+          plan.intervals,
+          isNotEmpty,
+          reason: '${plan.id} has no intervals',
+        );
       }
     });
 
     test('plan ids are unique and prefixed with cardio_tmpl_', () {
       final ids = CardioTemplates.all.map((p) => p.id).toList();
-      expect(ids.toSet().length, ids.length, reason: 'duplicate plan ids: $ids');
+      expect(
+        ids.toSet().length,
+        ids.length,
+        reason: 'duplicate plan ids: $ids',
+      );
       for (final id in ids) {
         expect(id, startsWith('cardio_tmpl_'));
       }
@@ -36,10 +44,10 @@ void main() {
       final plan = CardioTemplates.tabataClassic;
       final work = plan.intervals.where((i) => i.phase == CardioPhase.work);
       final rest = plan.intervals.where((i) => i.phase == CardioPhase.rest);
-      final warmup =
-          plan.intervals.where((i) => i.phase == CardioPhase.warmup);
-      final cooldown =
-          plan.intervals.where((i) => i.phase == CardioPhase.cooldown);
+      final warmup = plan.intervals.where((i) => i.phase == CardioPhase.warmup);
+      final cooldown = plan.intervals.where(
+        (i) => i.phase == CardioPhase.cooldown,
+      );
 
       expect(work, hasLength(8));
       expect(rest, hasLength(8));
@@ -58,10 +66,11 @@ void main() {
 
     test('work intervals follow the 1/2/3/4/3/2/1 pyramid pattern', () {
       final plan = CardioTemplates.pyramid;
-      final workMinutes = plan.intervals
-          .where((i) => i.phase == CardioPhase.work)
-          .map((i) => i.targetDuration!.inMinutes)
-          .toList();
+      final workMinutes =
+          plan.intervals
+              .where((i) => i.phase == CardioPhase.work)
+              .map((i) => i.targetDuration!.inMinutes)
+              .toList();
       expect(workMinutes, [1, 2, 3, 4, 3, 2, 1]);
     });
   });

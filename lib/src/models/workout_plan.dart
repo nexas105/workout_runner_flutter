@@ -52,8 +52,7 @@ class WorkoutPlan {
     if (description != null) 'description': description,
     'exercises': exercises.map((e) => e.toJson()).toList(),
     if (meta != null) 'meta': meta,
-    if (blocks.isNotEmpty)
-      'blocks': blocks.map((b) => b.toJson()).toList(),
+    if (blocks.isNotEmpty) 'blocks': blocks.map((b) => b.toJson()).toList(),
   };
 
   factory WorkoutPlan.fromJson(Map<String, dynamic> json) => WorkoutPlan(
@@ -65,9 +64,10 @@ class WorkoutPlan {
             .map((e) => WorkoutExercise.fromJson(e as Map<String, dynamic>))
             .toList(),
     meta: (json['meta'] as Map?)?.cast<String, dynamic>(),
-    blocks: ((json['blocks'] as List<dynamic>?) ?? const [])
-        .map((b) => WorkoutBlock.fromJson(b as Map<String, dynamic>))
-        .toList(),
+    blocks:
+        ((json['blocks'] as List<dynamic>?) ?? const [])
+            .map((b) => WorkoutBlock.fromJson(b as Map<String, dynamic>))
+            .toList(),
   );
 
   /// Block id that owns [exerciseIndex], or `null` for stand-alone moves.
@@ -87,8 +87,7 @@ class WorkoutPlan {
   WorkoutPlan cloneWithId(String newId) => copyWith(id: newId);
 
   /// Total target set count across all exercises.
-  int get totalTargetSets =>
-      exercises.fold(0, (sum, e) => sum + e.sets.length);
+  int get totalTargetSets => exercises.fold(0, (sum, e) => sum + e.sets.length);
 
   /// Rough estimate of how long this plan takes if every set is executed.
   /// Uses each set's `targetDuration` when present, otherwise assumes 30 s of

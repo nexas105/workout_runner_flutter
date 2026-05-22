@@ -90,18 +90,13 @@ abstract class WorkoutImport {
           continue;
         }
 
-        final outcome = _resolveConflict(
-          plan.id,
-          takenWorkoutIds,
-          policy,
-        );
+        final outcome = _resolveConflict(plan.id, takenWorkoutIds, policy);
         if (outcome.skip) {
           skippedIds.add(plan.id);
           continue;
         }
         final finalId = outcome.id;
-        final finalPlan =
-            finalId == plan.id ? plan : plan.cloneWithId(finalId);
+        final finalPlan = finalId == plan.id ? plan : plan.cloneWithId(finalId);
         importedWorkouts.add(finalPlan);
         takenWorkoutIds.add(finalId);
         if (outcome.duplicated) duplicatedIds.add(finalId);
@@ -136,18 +131,13 @@ abstract class WorkoutImport {
           continue;
         }
 
-        final outcome = _resolveConflict(
-          plan.id,
-          takenCardioIds,
-          policy,
-        );
+        final outcome = _resolveConflict(plan.id, takenCardioIds, policy);
         if (outcome.skip) {
           skippedIds.add(plan.id);
           continue;
         }
         final finalId = outcome.id;
-        final finalPlan =
-            finalId == plan.id ? plan : plan.cloneWithId(finalId);
+        final finalPlan = finalId == plan.id ? plan : plan.cloneWithId(finalId);
         importedCardio.add(finalPlan);
         takenCardioIds.add(finalId);
         if (outcome.duplicated) duplicatedIds.add(finalId);

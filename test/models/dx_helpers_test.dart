@@ -33,12 +33,15 @@ void main() {
       expect(plan.totalTargetSets, 3);
     });
 
-    test('estimatedDuration uses targetDuration when present, default work otherwise', () {
-      // 2 working sets: 30s work + 90s rest = 120s × 2 = 240s
-      // 1 timed set: 45s work + 0 rest = 45s
-      // Total: 285s
-      expect(plan.estimatedDuration, const Duration(seconds: 285));
-    });
+    test(
+      'estimatedDuration uses targetDuration when present, default work otherwise',
+      () {
+        // 2 working sets: 30s work + 90s rest = 120s × 2 = 240s
+        // 1 timed set: 45s work + 0 rest = 45s
+        // Total: 285s
+        expect(plan.estimatedDuration, const Duration(seconds: 285));
+      },
+    );
 
     test('previewSummary mentions exercise / set / minute counts', () {
       final summary = plan.previewSummary;
@@ -64,24 +67,22 @@ void main() {
 
   group('CardioPlanBuilder', () {
     test('builds a plan with warmup, work intervals, rest and cooldown', () {
-      final plan = CardioPlanBuilder(
-        'Intervals',
-        discipline: CardioDiscipline.running,
-      )
-          .warmup(duration: const Duration(minutes: 5))
-          .interval(
-            name: '400m',
-            duration: const Duration(minutes: 2),
-            met: 11,
-          )
-          .rest(duration: const Duration(minutes: 1))
-          .interval(
-            name: '400m',
-            duration: const Duration(minutes: 2),
-            met: 11,
-          )
-          .cooldown(duration: const Duration(minutes: 5))
-          .build();
+      final plan =
+          CardioPlanBuilder('Intervals', discipline: CardioDiscipline.running)
+              .warmup(duration: const Duration(minutes: 5))
+              .interval(
+                name: '400m',
+                duration: const Duration(minutes: 2),
+                met: 11,
+              )
+              .rest(duration: const Duration(minutes: 1))
+              .interval(
+                name: '400m',
+                duration: const Duration(minutes: 2),
+                met: 11,
+              )
+              .cooldown(duration: const Duration(minutes: 5))
+              .build();
 
       expect(plan.intervals.length, 5);
       expect(plan.intervals.first.phase, CardioPhase.warmup);
@@ -92,9 +93,10 @@ void main() {
     });
 
     test('CardioPlan.previewSummary includes interval count and minutes', () {
-      final plan = CardioPlanBuilder('Easy run')
-          .interval(name: 'Easy', duration: const Duration(minutes: 30))
-          .build();
+      final plan =
+          CardioPlanBuilder('Easy run')
+              .interval(name: 'Easy', duration: const Duration(minutes: 30))
+              .build();
       expect(plan.previewSummary, contains('1 interval'));
       expect(plan.previewSummary, contains('~30 min'));
     });

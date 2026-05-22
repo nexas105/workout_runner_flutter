@@ -50,16 +50,16 @@ abstract class ExerciseAlternatives {
     final sourceMovement = _metaLower(source, 'movementPattern');
     final sourceEquipment = _metaLower(source, 'equipment');
     final sourceMuscleIds = source.muscles.map((m) => m.id).toSet();
-    final sourceMuscleGroups = source.muscles
-        .map((m) => m.group)
-        .whereType<String>()
-        .map((g) => g.toLowerCase())
-        .toSet();
+    final sourceMuscleGroups =
+        source.muscles
+            .map((m) => m.group)
+            .whereType<String>()
+            .map((g) => g.toLowerCase())
+            .toSet();
     final sourceCategoryId = source.category?.id;
 
-    final availableLower = availableEquipment
-        ?.map((e) => e.toLowerCase())
-        .toSet();
+    final availableLower =
+        availableEquipment?.map((e) => e.toLowerCase()).toSet();
 
     final scored = <ScoredAlternative>[];
 
@@ -75,11 +75,12 @@ abstract class ExerciseAlternatives {
 
       final candidateMovement = _metaLower(candidate, 'movementPattern');
       final candidateMuscleIds = candidate.muscles.map((m) => m.id).toSet();
-      final candidateMuscleGroups = candidate.muscles
-          .map((m) => m.group)
-          .whereType<String>()
-          .map((g) => g.toLowerCase())
-          .toSet();
+      final candidateMuscleGroups =
+          candidate.muscles
+              .map((m) => m.group)
+              .whereType<String>()
+              .map((g) => g.toLowerCase())
+              .toSet();
 
       ScoredAlternative? entry;
 

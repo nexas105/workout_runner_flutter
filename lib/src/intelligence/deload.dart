@@ -74,22 +74,28 @@ abstract class DeloadPlan {
         }
       }
 
-      final keepCount = workings.isEmpty
-          ? 0
-          : math.max(1, (workings.length * cfg.setMultiplier).ceil());
-      final keptWorking = workings.take(keepCount).map((s) {
-        final reps = math.max(1, (s.targetReps * cfg.repMultiplier).round());
-        final weight = s.targetWeight == null
-            ? null
-            : _roundToHalf(s.targetWeight! * cfg.weightMultiplier);
-        return WorkoutSet(
-          targetReps: reps,
-          targetWeight: weight,
-          rest: s.rest,
-          type: SetType.working,
-          targetDuration: s.targetDuration,
-        );
-      }).toList();
+      final keepCount =
+          workings.isEmpty
+              ? 0
+              : math.max(1, (workings.length * cfg.setMultiplier).ceil());
+      final keptWorking =
+          workings.take(keepCount).map((s) {
+            final reps = math.max(
+              1,
+              (s.targetReps * cfg.repMultiplier).round(),
+            );
+            final weight =
+                s.targetWeight == null
+                    ? null
+                    : _roundToHalf(s.targetWeight! * cfg.weightMultiplier);
+            return WorkoutSet(
+              targetReps: reps,
+              targetWeight: weight,
+              rest: s.rest,
+              type: SetType.working,
+              targetDuration: s.targetDuration,
+            );
+          }).toList();
 
       newExercises.add(ex.copyWith(sets: [...warmups, ...keptWorking]));
     }

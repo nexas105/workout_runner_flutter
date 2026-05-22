@@ -46,9 +46,7 @@ final class CoachingAction {
     return CoachingAction(
       label: json['label'] as String,
       actionId: json['actionId'] as String,
-      args: rawArgs == null
-          ? null
-          : Map<String, dynamic>.from(rawArgs as Map),
+      args: rawArgs == null ? null : Map<String, dynamic>.from(rawArgs as Map),
     );
   }
 
@@ -127,14 +125,15 @@ final class CoachingMessage {
       severity: CoachSeveritySerializer.fromId(json['severity'] as String?),
       title: json['title'] as String,
       body: json['body'] as String,
-      action: rawAction == null
-          ? null
-          : CoachingAction.fromJson(Map<String, dynamic>.from(rawAction as Map)),
+      action:
+          rawAction == null
+              ? null
+              : CoachingAction.fromJson(
+                Map<String, dynamic>.from(rawAction as Map),
+              ),
       at: DateTime.parse(json['at'] as String),
       source: json['source'] as String?,
-      meta: rawMeta == null
-          ? null
-          : Map<String, dynamic>.from(rawMeta as Map),
+      meta: rawMeta == null ? null : Map<String, dynamic>.from(rawMeta as Map),
     );
   }
 

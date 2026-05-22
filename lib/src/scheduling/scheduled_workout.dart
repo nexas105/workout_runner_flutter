@@ -81,31 +81,34 @@ class ScheduledWorkout {
       isCardio: isCardio ?? this.isCardio,
       scheduledAt: scheduledAt ?? this.scheduledAt,
       startedAt:
-          identical(startedAt, _unset) ? this.startedAt : startedAt as DateTime?,
-      completedAt: identical(completedAt, _unset)
-          ? this.completedAt
-          : completedAt as DateTime?,
+          identical(startedAt, _unset)
+              ? this.startedAt
+              : startedAt as DateTime?,
+      completedAt:
+          identical(completedAt, _unset)
+              ? this.completedAt
+              : completedAt as DateTime?,
       skippedAt:
-          identical(skippedAt, _unset) ? this.skippedAt : skippedAt as DateTime?,
+          identical(skippedAt, _unset)
+              ? this.skippedAt
+              : skippedAt as DateTime?,
       notes: identical(notes, _unset) ? this.notes : notes as String?,
-      meta: identical(meta, _unset)
-          ? this.meta
-          : meta as Map<String, dynamic>?,
+      meta: identical(meta, _unset) ? this.meta : meta as Map<String, dynamic>?,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'planId': planId,
-        if (planName != null) 'planName': planName,
-        'isCardio': isCardio,
-        'scheduledAt': scheduledAt.toIso8601String(),
-        if (startedAt != null) 'startedAt': startedAt!.toIso8601String(),
-        if (completedAt != null) 'completedAt': completedAt!.toIso8601String(),
-        if (skippedAt != null) 'skippedAt': skippedAt!.toIso8601String(),
-        if (notes != null) 'notes': notes,
-        if (meta != null) 'meta': meta,
-      };
+    'id': id,
+    'planId': planId,
+    if (planName != null) 'planName': planName,
+    'isCardio': isCardio,
+    'scheduledAt': scheduledAt.toIso8601String(),
+    if (startedAt != null) 'startedAt': startedAt!.toIso8601String(),
+    if (completedAt != null) 'completedAt': completedAt!.toIso8601String(),
+    if (skippedAt != null) 'skippedAt': skippedAt!.toIso8601String(),
+    if (notes != null) 'notes': notes,
+    if (meta != null) 'meta': meta,
+  };
 
   factory ScheduledWorkout.fromJson(Map<String, dynamic> json) {
     DateTime? parseOpt(Object? raw) =>
@@ -157,12 +160,13 @@ abstract class ScheduledWorkoutQuery {
     DateTime? now,
   }) {
     final ref = now ?? DateTime.now();
-    final result = all.where((s) {
-      final at = s.scheduledAt;
-      return at.year == ref.year &&
-          at.month == ref.month &&
-          at.day == ref.day;
-    }).toList();
+    final result =
+        all.where((s) {
+          final at = s.scheduledAt;
+          return at.year == ref.year &&
+              at.month == ref.month &&
+              at.day == ref.day;
+        }).toList();
     result.sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
     return result;
   }

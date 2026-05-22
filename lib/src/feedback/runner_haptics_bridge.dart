@@ -38,9 +38,7 @@ class RunnerHapticsBridge {
       }
     };
     runner.onRestTick = (remaining) {
-      if (!countdownFired &&
-          remaining <= tickAt &&
-          remaining > Duration.zero) {
+      if (!countdownFired && remaining <= tickAt && remaining > Duration.zero) {
         countdownFired = true;
         haptics.restTickCountdown();
       }

@@ -50,12 +50,13 @@ class ExerciseEditorSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => ExerciseEditorSheet(
-        existing: existing,
-        categories: categories,
-        muscles: muscles,
-        onSave: (ex) => Navigator.of(ctx).pop(ex),
-      ),
+      builder:
+          (ctx) => ExerciseEditorSheet(
+            existing: existing,
+            categories: categories,
+            muscles: muscles,
+            onSave: (ex) => Navigator.of(ctx).pop(ex),
+          ),
     );
   }
 
@@ -178,12 +179,7 @@ class _ExerciseEditorSheetState extends State<ExerciseEditorSheet> {
       child: SizedBox(
         height: screenHeight * 0.9,
         child: RunnerCard(
-          padding: EdgeInsets.fromLTRB(
-            t.space4,
-            t.space3,
-            t.space4,
-            t.space4,
-          ),
+          padding: EdgeInsets.fromLTRB(t.space4, t.space3, t.space4, t.space4),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -220,9 +216,10 @@ class _ExerciseEditorSheetState extends State<ExerciseEditorSheet> {
                       ),
                       _PickerRow(
                         label: 'Muscles',
-                        value: _muscles.isEmpty
-                            ? 'None'
-                            : _muscles.map((m) => m.name).join(', '),
+                        value:
+                            _muscles.isEmpty
+                                ? 'None'
+                                : _muscles.map((m) => m.name).join(', '),
                         onTap: _pickMuscles,
                       ),
                       MetaFieldRow.stepper(
@@ -253,8 +250,8 @@ class _ExerciseEditorSheetState extends State<ExerciseEditorSheet> {
                           for (final e in ExerciseEquipment.values)
                             DropdownMenuItem(value: e, child: Text(e.name)),
                         ],
-                        onChanged: (v) =>
-                            setState(() => _equipment = v ?? _equipment),
+                        onChanged:
+                            (v) => setState(() => _equipment = v ?? _equipment),
                       ),
                       MetaFieldRow.dropdown<MovementPattern?>(
                         label: 'Movement',
@@ -270,8 +267,7 @@ class _ExerciseEditorSheetState extends State<ExerciseEditorSheet> {
                               child: Text(m.name),
                             ),
                         ],
-                        onChanged: (v) =>
-                            setState(() => _movementPattern = v),
+                        onChanged: (v) => setState(() => _movementPattern = v),
                       ),
                       MetaFieldRow.dropdown<ExerciseDifficulty?>(
                         label: 'Difficulty',

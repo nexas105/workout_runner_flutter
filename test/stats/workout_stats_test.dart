@@ -77,10 +77,7 @@ void main() {
       expect(WorkoutStats.totalVolume([r1, r2]), 960 + 1500);
       expect(WorkoutStats.totalSets([r1, r2]), 5);
       expect(WorkoutStats.totalReps([r1, r2]), 31);
-      expect(
-        WorkoutStats.totalDuration([r1, r2]),
-        const Duration(minutes: 75),
-      );
+      expect(WorkoutStats.totalDuration([r1, r2]), const Duration(minutes: 75));
     });
 
     test('totalKcal accumulates per-result kcal', () {
@@ -145,10 +142,7 @@ void main() {
 
   group('WorkoutStats.streakDays', () {
     test('empty list returns 0', () {
-      expect(
-        WorkoutStats.streakDays(const [], now: DateTime(2026, 5, 21)),
-        0,
-      );
+      expect(WorkoutStats.streakDays(const [], now: DateTime(2026, 5, 21)), 0);
     });
 
     test('consecutive days including today', () {
@@ -203,10 +197,7 @@ void main() {
   group('WorkoutStats.weeklySummary', () {
     test('empty list returns zeroed summary for window', () {
       final start = DateTime.utc(2026, 5, 14);
-      final summary = WorkoutStats.weeklySummary(
-        const [],
-        weekStart: start,
-      );
+      final summary = WorkoutStats.weeklySummary(const [], weekStart: start);
       expect(summary.workoutCount, 0);
       expect(summary.totalSets, 0);
       expect(summary.totalReps, 0);
@@ -254,10 +245,12 @@ void main() {
         duration: const Duration(minutes: 10),
       );
 
-      final summary = WorkoutStats.weeklySummary(
-        [inside1, inside2, boundary, before],
-        weekStart: start,
-      );
+      final summary = WorkoutStats.weeklySummary([
+        inside1,
+        inside2,
+        boundary,
+        before,
+      ], weekStart: start);
       expect(summary.workoutCount, 2);
       expect(summary.totalSets, 2);
       expect(summary.totalReps, 13);

@@ -62,21 +62,14 @@ class ProgramWeek {
   final List<ProgramDay> days;
   final String? notes;
 
-  const ProgramWeek({
-    required this.index,
-    required this.days,
-    this.notes,
-  });
+  const ProgramWeek({required this.index, required this.days, this.notes});
 
-  ProgramWeek copyWith({
-    int? index,
-    List<ProgramDay>? days,
-    String? notes,
-  }) => ProgramWeek(
-    index: index ?? this.index,
-    days: days ?? this.days,
-    notes: notes ?? this.notes,
-  );
+  ProgramWeek copyWith({int? index, List<ProgramDay>? days, String? notes}) =>
+      ProgramWeek(
+        index: index ?? this.index,
+        days: days ?? this.days,
+        notes: notes ?? this.notes,
+      );
 
   Map<String, dynamic> toJson() => {
     'index': index,
@@ -86,9 +79,10 @@ class ProgramWeek {
 
   factory ProgramWeek.fromJson(Map<String, dynamic> json) => ProgramWeek(
     index: (json['index'] as num).toInt(),
-    days: (json['days'] as List<dynamic>)
-        .map((d) => ProgramDay.fromJson(d as Map<String, dynamic>))
-        .toList(),
+    days:
+        (json['days'] as List<dynamic>)
+            .map((d) => ProgramDay.fromJson(d as Map<String, dynamic>))
+            .toList(),
     notes: json['notes'] as String?,
   );
 }
@@ -136,14 +130,14 @@ class TrainingProgram {
         id: json['id'] as String,
         name: json['name'] as String,
         description: json['description'] as String?,
-        weeks: (json['weeks'] as List<dynamic>)
-            .map((w) => ProgramWeek.fromJson(w as Map<String, dynamic>))
-            .toList(),
+        weeks:
+            (json['weeks'] as List<dynamic>)
+                .map((w) => ProgramWeek.fromJson(w as Map<String, dynamic>))
+                .toList(),
         meta: (json['meta'] as Map?)?.cast<String, dynamic>(),
       );
 
-  int get totalDays =>
-      weeks.fold(0, (sum, w) => sum + w.days.length);
+  int get totalDays => weeks.fold(0, (sum, w) => sum + w.days.length);
 
   int get totalStrengthDays => weeks.fold(
     0,

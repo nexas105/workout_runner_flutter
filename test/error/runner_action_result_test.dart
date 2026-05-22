@@ -121,14 +121,8 @@ void main() {
     });
 
     test('different messages are not equal', () {
-      final a = RunnerActionResult.fail(
-        RunnerActionError.unknown,
-        'message a',
-      );
-      final b = RunnerActionResult.fail(
-        RunnerActionError.unknown,
-        'message b',
-      );
+      final a = RunnerActionResult.fail(RunnerActionError.unknown, 'message a');
+      final b = RunnerActionResult.fail(RunnerActionError.unknown, 'message b');
       expect(a, isNot(equals(b)));
     });
 

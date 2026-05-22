@@ -22,10 +22,7 @@ abstract class CardioTemplates {
             intensity: 'RPE 10',
             met: 12,
           )
-          .rest(
-            name: 'Rest',
-            duration: const Duration(seconds: 10),
-          );
+          .rest(name: 'Rest', duration: const Duration(seconds: 10));
     }
     return b.cooldown(duration: const Duration(minutes: 3)).build();
   }();
@@ -47,32 +44,30 @@ abstract class CardioTemplates {
             intensity: 'Z4',
             met: 12,
           )
-          .rest(
-            name: 'Rest',
-            duration: const Duration(seconds: 30),
-          );
+          .rest(name: 'Rest', duration: const Duration(seconds: 30));
     }
     return b.cooldown(duration: const Duration(minutes: 3)).build();
   }();
 
-  static final CardioPlan lissRun = CardioPlanBuilder(
-    'LISS Run',
-    id: 'cardio_tmpl_liss_run',
-    description: '30 minutes of steady-state Zone 2 running.',
-    discipline: CardioDiscipline.running,
-    meta: const {'protocol': 'liss'},
-  )
-      .warmup(duration: const Duration(minutes: 5))
-      .interval(
-        name: 'Steady Z2',
-        id: 'steady',
-        phase: CardioPhase.steady,
-        duration: const Duration(minutes: 30),
-        intensity: 'Z2',
-        met: 9,
-      )
-      .cooldown(duration: const Duration(minutes: 5))
-      .build();
+  static final CardioPlan lissRun =
+      CardioPlanBuilder(
+            'LISS Run',
+            id: 'cardio_tmpl_liss_run',
+            description: '30 minutes of steady-state Zone 2 running.',
+            discipline: CardioDiscipline.running,
+            meta: const {'protocol': 'liss'},
+          )
+          .warmup(duration: const Duration(minutes: 5))
+          .interval(
+            name: 'Steady Z2',
+            id: 'steady',
+            phase: CardioPhase.steady,
+            duration: const Duration(minutes: 30),
+            intensity: 'Z2',
+            met: 9,
+          )
+          .cooldown(duration: const Duration(minutes: 5))
+          .build();
 
   static final CardioPlan pyramid = () {
     const efforts = [1, 2, 3, 4, 3, 2, 1];
@@ -100,24 +95,25 @@ abstract class CardioTemplates {
     return b.cooldown(duration: const Duration(minutes: 5)).build();
   }();
 
-  static final CardioPlan easyBike = CardioPlanBuilder(
-    'Easy Bike',
-    id: 'cardio_tmpl_easy_bike',
-    description: '45 minutes of steady Zone 2 cycling.',
-    discipline: CardioDiscipline.cycling,
-    meta: const {'protocol': 'liss'},
-  )
-      .warmup(duration: const Duration(minutes: 5))
-      .interval(
-        name: 'Steady Z2',
-        id: 'steady',
-        phase: CardioPhase.steady,
-        duration: const Duration(minutes: 45),
-        intensity: 'Z2',
-        met: 7.5,
-      )
-      .cooldown(duration: const Duration(minutes: 5))
-      .build();
+  static final CardioPlan easyBike =
+      CardioPlanBuilder(
+            'Easy Bike',
+            id: 'cardio_tmpl_easy_bike',
+            description: '45 minutes of steady Zone 2 cycling.',
+            discipline: CardioDiscipline.cycling,
+            meta: const {'protocol': 'liss'},
+          )
+          .warmup(duration: const Duration(minutes: 5))
+          .interval(
+            name: 'Steady Z2',
+            id: 'steady',
+            phase: CardioPhase.steady,
+            duration: const Duration(minutes: 45),
+            intensity: 'Z2',
+            met: 7.5,
+          )
+          .cooldown(duration: const Duration(minutes: 5))
+          .build();
 
   static final CardioPlan runWalk = () {
     final b = CardioPlanBuilder(
@@ -149,11 +145,11 @@ abstract class CardioTemplates {
   }();
 
   static List<CardioPlan> get all => [
-        tabataClassic,
-        hiit_30_30,
-        lissRun,
-        pyramid,
-        easyBike,
-        runWalk,
-      ];
+    tabataClassic,
+    hiit_30_30,
+    lissRun,
+    pyramid,
+    easyBike,
+    runWalk,
+  ];
 }

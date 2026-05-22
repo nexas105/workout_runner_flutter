@@ -14,29 +14,29 @@ Widget _wrap({required WorkoutRunner runner, required Widget child}) =>
     );
 
 WorkoutPlan _typedPlan() => const WorkoutPlan(
-      id: 'p',
-      name: 'Push',
-      exercises: [
-        WorkoutExercise(
-          id: 'ex',
-          name: 'Bench',
-          sets: [
-            WorkoutSet(targetReps: 8, type: SetType.warmup),
-            WorkoutSet(
-              targetReps: 0,
-              type: SetType.amrap,
-              targetDuration: Duration(seconds: 60),
-            ),
-            WorkoutSet(
-              targetReps: 0,
-              type: SetType.timed,
-              targetDuration: Duration(seconds: 45),
-            ),
-            WorkoutSet(targetReps: 8, targetWeight: 60),
-          ],
+  id: 'p',
+  name: 'Push',
+  exercises: [
+    WorkoutExercise(
+      id: 'ex',
+      name: 'Bench',
+      sets: [
+        WorkoutSet(targetReps: 8, type: SetType.warmup),
+        WorkoutSet(
+          targetReps: 0,
+          type: SetType.amrap,
+          targetDuration: Duration(seconds: 60),
         ),
+        WorkoutSet(
+          targetReps: 0,
+          type: SetType.timed,
+          targetDuration: Duration(seconds: 45),
+        ),
+        WorkoutSet(targetReps: 8, targetWeight: 60),
       ],
-    );
+    ),
+  ],
+);
 
 void main() {
   Future<void> runWithPlan(
@@ -53,22 +53,25 @@ void main() {
     }
   }
 
-  testWidgets('SetRow shows the type label for non-working sets',
-      (tester) async {
+  testWidgets('SetRow shows the type label for non-working sets', (
+    tester,
+  ) async {
     await runWithPlan(tester, (runner, plan) async {
-      await tester.pumpWidget(_wrap(
-        runner: runner,
-        child: Column(
-          children: [
-            for (var i = 0; i < plan.exercises.first.sets.length; i++)
-              SetRow(
-                exerciseIndex: 0,
-                setIndex: i,
-                target: plan.exercises.first.sets[i],
-              ),
-          ],
+      await tester.pumpWidget(
+        _wrap(
+          runner: runner,
+          child: Column(
+            children: [
+              for (var i = 0; i < plan.exercises.first.sets.length; i++)
+                SetRow(
+                  exerciseIndex: 0,
+                  setIndex: i,
+                  target: plan.exercises.first.sets[i],
+                ),
+            ],
+          ),
         ),
-      ));
+      );
 
       expect(find.text('Warmup'), findsOneWidget);
       expect(find.text('AMRAP'), findsOneWidget);
@@ -76,22 +79,25 @@ void main() {
     });
   });
 
-  testWidgets('AMRAP set shows AMRAP target line, timed shows Hold',
-      (tester) async {
+  testWidgets('AMRAP set shows AMRAP target line, timed shows Hold', (
+    tester,
+  ) async {
     await runWithPlan(tester, (runner, plan) async {
-      await tester.pumpWidget(_wrap(
-        runner: runner,
-        child: Column(
-          children: [
-            for (var i = 0; i < plan.exercises.first.sets.length; i++)
-              SetRow(
-                exerciseIndex: 0,
-                setIndex: i,
-                target: plan.exercises.first.sets[i],
-              ),
-          ],
+      await tester.pumpWidget(
+        _wrap(
+          runner: runner,
+          child: Column(
+            children: [
+              for (var i = 0; i < plan.exercises.first.sets.length; i++)
+                SetRow(
+                  exerciseIndex: 0,
+                  setIndex: i,
+                  target: plan.exercises.first.sets[i],
+                ),
+            ],
+          ),
         ),
-      ));
+      );
 
       expect(find.textContaining('AMRAP — '), findsOneWidget);
       expect(find.textContaining('Hold '), findsOneWidget);

@@ -125,34 +125,37 @@ class WorkoutExercise {
     // strings in meta before this phase made them first-class).
     final equipmentId =
         json['equipment'] as String? ?? meta?['equipment'] as String?;
-    final movementId = json['movementPattern'] as String? ??
+    final movementId =
+        json['movementPattern'] as String? ??
         meta?['movementPattern'] as String?;
     final difficultyId =
         json['difficulty'] as String? ?? meta?['difficulty'] as String?;
-    final aliasesRaw = json['aliases'] as List<dynamic>? ??
-        meta?['aliases'] as List<dynamic>?;
+    final aliasesRaw =
+        json['aliases'] as List<dynamic>? ?? meta?['aliases'] as List<dynamic>?;
     final searchRaw = json['searchTerms'] as List<dynamic>?;
     return WorkoutExercise(
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String?,
-      category: json['category'] == null
-          ? null
-          : ExerciseCategory.fromJson(
-              json['category'] as Map<String, dynamic>,
-            ),
-      muscles: (json['muscles'] as List<dynamic>? ?? const [])
-          .map((m) => Muscle.fromJson(m as Map<String, dynamic>))
-          .toList(),
-      sets: (json['sets'] as List<dynamic>? ?? const [])
-          .map((s) => WorkoutSet.fromJson(s as Map<String, dynamic>))
-          .toList(),
+      category:
+          json['category'] == null
+              ? null
+              : ExerciseCategory.fromJson(
+                json['category'] as Map<String, dynamic>,
+              ),
+      muscles:
+          (json['muscles'] as List<dynamic>? ?? const [])
+              .map((m) => Muscle.fromJson(m as Map<String, dynamic>))
+              .toList(),
+      sets:
+          (json['sets'] as List<dynamic>? ?? const [])
+              .map((s) => WorkoutSet.fromJson(s as Map<String, dynamic>))
+              .toList(),
       notes: json['notes'] as String?,
       meta: meta,
       met: (json['met'] as num?)?.toDouble(),
-      equipment: equipmentId == null
-          ? null
-          : ExerciseEquipmentId.fromId(equipmentId),
+      equipment:
+          equipmentId == null ? null : ExerciseEquipmentId.fromId(equipmentId),
       movementPattern: MovementPatternId.fromId(movementId),
       difficulty: ExerciseDifficultyId.fromId(difficultyId),
       unilateral: json['unilateral'] as bool? ?? false,

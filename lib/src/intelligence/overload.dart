@@ -57,7 +57,9 @@ class OverloadSuggestion {
         suggestedWeight: (json['suggestedWeight'] as num?)?.toDouble(),
         suggestedReps: (json['suggestedReps'] as num).toInt(),
         reason: json['reason'] as String,
-        strategy: OverloadStrategySerializer.fromId(json['strategy'] as String?),
+        strategy: OverloadStrategySerializer.fromId(
+          json['strategy'] as String?,
+        ),
       );
 
   @override
@@ -85,13 +87,11 @@ class OverloadEngine {
   }) {
     if (historyForExercise.isEmpty) return null;
 
-    final sessions = [...historyForExercise]..sort(
-      (a, b) => _sessionTime(b).compareTo(_sessionTime(a)),
-    );
+    final sessions = [...historyForExercise]
+      ..sort((a, b) => _sessionTime(b).compareTo(_sessionTime(a)));
 
-    final lastWorking = sessions.first.sets
-        .where((s) => s.type == SetType.working)
-        .toList();
+    final lastWorking =
+        sessions.first.sets.where((s) => s.type == SetType.working).toList();
     if (lastWorking.isEmpty) return null;
 
     switch (strategy) {
@@ -211,9 +211,7 @@ class OverloadEngine {
       return OverloadSuggestion(
         suggestedWeight: target.targetWeight == null ? null : base,
         suggestedReps: target.targetReps,
-        reason: missed
-            ? 'missed reps — hold weight'
-            : 'RIR 0 — hold weight',
+        reason: missed ? 'missed reps — hold weight' : 'RIR 0 — hold weight',
         strategy: OverloadStrategy.rpe,
       );
     }

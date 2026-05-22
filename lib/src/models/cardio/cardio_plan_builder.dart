@@ -24,8 +24,8 @@ class CardioPlanBuilder {
     this.discipline = CardioDiscipline.mixed,
     this.category,
     Map<String, dynamic>? meta,
-  })  : id = id ?? _slug(name),
-        meta = meta == null ? null : Map<String, dynamic>.from(meta);
+  }) : id = id ?? _slug(name),
+       meta = meta == null ? null : Map<String, dynamic>.from(meta);
 
   final String id;
   final String name;
@@ -81,10 +81,10 @@ class CardioPlanBuilder {
       );
 
   CardioPlanBuilder rest({Duration? duration, String? name}) => interval(
-        name: name ?? 'Rest',
-        phase: CardioPhase.rest,
-        duration: duration,
-      );
+    name: name ?? 'Rest',
+    phase: CardioPhase.rest,
+    duration: duration,
+  );
 
   /// Append an already-constructed interval.
   CardioPlanBuilder addInterval(CardioInterval interval) {
@@ -93,14 +93,14 @@ class CardioPlanBuilder {
   }
 
   CardioPlan build() => CardioPlan(
-        id: id,
-        name: name,
-        description: description,
-        discipline: discipline,
-        category: category,
-        intervals: List<CardioInterval>.unmodifiable(_intervals),
-        meta: meta,
-      );
+    id: id,
+    name: name,
+    description: description,
+    discipline: discipline,
+    category: category,
+    intervals: List<CardioInterval>.unmodifiable(_intervals),
+    meta: meta,
+  );
 
   String _uniqueIntervalId(String baseId) {
     final base = baseId.isEmpty ? 'interval' : baseId;

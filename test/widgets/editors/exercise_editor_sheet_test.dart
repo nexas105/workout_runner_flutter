@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _category = ExerciseCategory(id: 'compound', name: 'Compound');
-const _otherCategory =
-    ExerciseCategory(id: 'isolation', name: 'Isolation');
+const _otherCategory = ExerciseCategory(id: 'isolation', name: 'Isolation');
 const _muscle = Muscle(id: 'quads', name: 'Quadriceps', group: 'Lower');
 const _muscle2 = Muscle(id: 'glutes', name: 'Glutes', group: 'Lower');
 
 Widget _wrap(Widget child) => MaterialApp(
-      home: WorkoutRunnerTheme(
-        data: WorkoutRunnerThemeData.dark(),
-        child: Scaffold(body: child),
-      ),
-    );
+  home: WorkoutRunnerTheme(
+    data: WorkoutRunnerThemeData.dark(),
+    child: Scaffold(body: child),
+  ),
+);
 
 void main() {
   testWidgets('renders empty form when existing is null', (tester) async {

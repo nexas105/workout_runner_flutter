@@ -68,63 +68,68 @@ void main() {
       expect(result.duplicatedIds, isEmpty);
     });
 
-    test('skip policy: conflicting id is added to skippedIds and not imported',
-        () {
-      final bundle = _bundle(workouts: [_workoutPlan('plan_a')]);
-
-      final result = WorkoutImport.fromBundle(
-        bundle,
-        existingPlanIds: const ['plan_a'],
-      );
-
-      expect(result.importedWorkouts, isEmpty);
-      expect(result.skippedIds, ['plan_a']);
-      expect(result.duplicatedIds, isEmpty);
-      expect(result.hasErrors, isFalse);
-    });
-
-    test('duplicate policy: assigns _imported_1 suffix for first collision', () {
-      final bundle = _bundle(workouts: [_workoutPlan('plan_a')]);
-
-      final result = WorkoutImport.fromBundle(
-        bundle,
-        policy: ImportConflictPolicy.duplicate,
-        existingPlanIds: const ['plan_a'],
-      );
-
-      expect(result.importedWorkouts, hasLength(1));
-      expect(result.importedWorkouts.single.id, 'plan_a_imported_1');
-      expect(result.duplicatedIds, ['plan_a_imported_1']);
-      expect(result.skippedIds, isEmpty);
-    });
-
     test(
-      'duplicate policy: bumps suffix when _imported_1 is also taken',
+      'skip policy: conflicting id is added to skippedIds and not imported',
       () {
         final bundle = _bundle(workouts: [_workoutPlan('plan_a')]);
+
         final result = WorkoutImport.fromBundle(
           bundle,
-          policy: ImportConflictPolicy.duplicate,
-          existingPlanIds: const ['plan_a', 'plan_a_imported_1'],
+          existingPlanIds: const ['plan_a'],
         );
-        expect(result.importedWorkouts.single.id, 'plan_a_imported_2');
+
+        expect(result.importedWorkouts, isEmpty);
+        expect(result.skippedIds, ['plan_a']);
+        expect(result.duplicatedIds, isEmpty);
+        expect(result.hasErrors, isFalse);
       },
     );
 
-    test('replace policy: keeps original id, no skipped/duplicated entries', () {
-      final bundle = _bundle(workouts: [_workoutPlan('plan_a', name: 'New')]);
+    test(
+      'duplicate policy: assigns _imported_1 suffix for first collision',
+      () {
+        final bundle = _bundle(workouts: [_workoutPlan('plan_a')]);
 
+        final result = WorkoutImport.fromBundle(
+          bundle,
+          policy: ImportConflictPolicy.duplicate,
+          existingPlanIds: const ['plan_a'],
+        );
+
+        expect(result.importedWorkouts, hasLength(1));
+        expect(result.importedWorkouts.single.id, 'plan_a_imported_1');
+        expect(result.duplicatedIds, ['plan_a_imported_1']);
+        expect(result.skippedIds, isEmpty);
+      },
+    );
+
+    test('duplicate policy: bumps suffix when _imported_1 is also taken', () {
+      final bundle = _bundle(workouts: [_workoutPlan('plan_a')]);
       final result = WorkoutImport.fromBundle(
         bundle,
-        policy: ImportConflictPolicy.replace,
-        existingPlanIds: const ['plan_a'],
+        policy: ImportConflictPolicy.duplicate,
+        existingPlanIds: const ['plan_a', 'plan_a_imported_1'],
       );
-
-      expect(result.importedWorkouts.single.id, 'plan_a');
-      expect(result.importedWorkouts.single.name, 'New');
-      expect(result.skippedIds, isEmpty);
-      expect(result.duplicatedIds, isEmpty);
+      expect(result.importedWorkouts.single.id, 'plan_a_imported_2');
     });
+
+    test(
+      'replace policy: keeps original id, no skipped/duplicated entries',
+      () {
+        final bundle = _bundle(workouts: [_workoutPlan('plan_a', name: 'New')]);
+
+        final result = WorkoutImport.fromBundle(
+          bundle,
+          policy: ImportConflictPolicy.replace,
+          existingPlanIds: const ['plan_a'],
+        );
+
+        expect(result.importedWorkouts.single.id, 'plan_a');
+        expect(result.importedWorkouts.single.name, 'New');
+        expect(result.skippedIds, isEmpty);
+        expect(result.duplicatedIds, isEmpty);
+      },
+    );
 
     test(
       'malformed plan produces an ImportError but siblings still import',
@@ -172,14 +177,15 @@ void main() {
 
   group('ImportError / ImportResult JSON shape', () {
     test('ImportError.toJson includes planId only when present', () {
-      expect(
-        const ImportError(key: 'k', message: 'm').toJson(),
-        {'key': 'k', 'message': 'm'},
-      );
-      expect(
-        const ImportError(key: 'k', message: 'm', planId: 'p').toJson(),
-        {'key': 'k', 'message': 'm', 'planId': 'p'},
-      );
+      expect(const ImportError(key: 'k', message: 'm').toJson(), {
+        'key': 'k',
+        'message': 'm',
+      });
+      expect(const ImportError(key: 'k', message: 'm', planId: 'p').toJson(), {
+        'key': 'k',
+        'message': 'm',
+        'planId': 'p',
+      });
     });
 
     test('ImportResult.toJson roundtrips through jsonEncode', () {

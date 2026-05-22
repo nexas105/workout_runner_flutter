@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
-      home: WorkoutRunnerTheme(
-        data: WorkoutRunnerThemeData.dark(),
-        child: Scaffold(body: SingleChildScrollView(child: child)),
-      ),
-    );
+  home: WorkoutRunnerTheme(
+    data: WorkoutRunnerThemeData.dark(),
+    child: Scaffold(body: SingleChildScrollView(child: child)),
+  ),
+);
 
 WorkoutResult _result({
   String planId = 'Push Day',
@@ -105,11 +105,13 @@ void main() {
       );
 
       await tester.pumpWidget(
-        _wrap(PrHighlightsCard(
-          // Intentionally unsorted input.
-          prs: [older, newest, mid, newer],
-          maxItems: 2,
-        )),
+        _wrap(
+          PrHighlightsCard(
+            // Intentionally unsorted input.
+            prs: [older, newest, mid, newer],
+            maxItems: 2,
+          ),
+        ),
       );
 
       // The two newest should be visible: newest + newer.
@@ -121,9 +123,7 @@ void main() {
     });
 
     testWidgets('shows empty state when no PRs are passed', (tester) async {
-      await tester.pumpWidget(
-        _wrap(const PrHighlightsCard(prs: [])),
-      );
+      await tester.pumpWidget(_wrap(const PrHighlightsCard(prs: [])));
       expect(find.text('No personal records yet.'), findsOneWidget);
     });
   });
@@ -138,14 +138,16 @@ void main() {
 
     testWidgets('renders bars for non-empty data', (tester) async {
       await tester.pumpWidget(
-        _wrap(VolumeTrendChart(
-          data: [
-            (weekStart: DateTime.utc(2026, 4, 6), volume: 1000),
-            (weekStart: DateTime.utc(2026, 4, 13), volume: 2000),
-            (weekStart: DateTime.utc(2026, 4, 20), volume: 1500),
-            (weekStart: DateTime.utc(2026, 4, 27), volume: 2500),
-          ],
-        )),
+        _wrap(
+          VolumeTrendChart(
+            data: [
+              (weekStart: DateTime.utc(2026, 4, 6), volume: 1000),
+              (weekStart: DateTime.utc(2026, 4, 13), volume: 2000),
+              (weekStart: DateTime.utc(2026, 4, 20), volume: 1500),
+              (weekStart: DateTime.utc(2026, 4, 27), volume: 2500),
+            ],
+          ),
+        ),
       );
       expect(tester.takeException(), isNull);
       // CustomPaint instance is present.
@@ -167,10 +169,7 @@ void main() {
         ),
       ];
       await tester.pumpWidget(
-        _wrap(RecentSessionsList(
-          results: results,
-          onTap: (r) => tapped = r,
-        )),
+        _wrap(RecentSessionsList(results: results, onTap: (r) => tapped = r)),
       );
 
       expect(find.text('Push Day'), findsOneWidget);
@@ -183,9 +182,7 @@ void main() {
     });
 
     testWidgets('shows empty state with no results', (tester) async {
-      await tester.pumpWidget(
-        _wrap(const RecentSessionsList(results: [])),
-      );
+      await tester.pumpWidget(_wrap(const RecentSessionsList(results: [])));
       expect(find.text('No sessions yet.'), findsOneWidget);
     });
   });

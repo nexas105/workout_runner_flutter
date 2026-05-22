@@ -7,22 +7,29 @@ void main() {
     test('dark preset exposes a set-type accent for every SetType', () {
       final theme = WorkoutRunnerThemeData.dark();
       for (final type in SetType.values) {
-        expect(theme.setTypeAccents[type], isNotNull,
-            reason: 'missing accent for $type');
+        expect(
+          theme.setTypeAccents[type],
+          isNotNull,
+          reason: 'missing accent for $type',
+        );
       }
     });
 
     test('light preset exposes a set-type accent for every SetType', () {
       final theme = WorkoutRunnerThemeData.light();
       for (final type in SetType.values) {
-        expect(theme.setTypeAccents[type], isNotNull,
-            reason: 'missing accent for $type');
+        expect(
+          theme.setTypeAccents[type],
+          isNotNull,
+          reason: 'missing accent for $type',
+        );
       }
     });
 
     test('accentFor returns the regular accent for unknown types', () {
-      final theme = WorkoutRunnerThemeData.dark()
-          .copyWith(setTypeAccents: const <SetType, Color>{});
+      final theme = WorkoutRunnerThemeData.dark().copyWith(
+        setTypeAccents: const <SetType, Color>{},
+      );
       expect(theme.accentFor(SetType.working), theme.accent);
     });
 
@@ -52,9 +59,7 @@ void main() {
     });
 
     test('uses the light baseline when scheme.brightness is light', () {
-      final scheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF6E2ACF),
-      );
+      final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF6E2ACF));
       final theme = WorkoutRunnerThemeData.fromColorScheme(scheme);
 
       expect(theme.accent, scheme.primary);

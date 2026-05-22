@@ -46,10 +46,7 @@ void main() {
       name: 'Incline Bench Press',
       category: chest,
       muscles: [pectoralis, triceps],
-      meta: {
-        'equipment': 'barbell',
-        'movementPattern': 'push',
-      },
+      meta: {'equipment': 'barbell', 'movementPattern': 'push'},
     ),
     _ex(
       id: 'pullup',
@@ -68,10 +65,7 @@ void main() {
       name: 'Bent Over Row',
       category: back,
       muscles: [lats],
-      meta: {
-        'equipment': 'barbell',
-        'movementPattern': 'pull',
-      },
+      meta: {'equipment': 'barbell', 'movementPattern': 'pull'},
     ),
   ];
 

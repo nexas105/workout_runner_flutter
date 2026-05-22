@@ -224,11 +224,11 @@ class WorkoutRunnerThemeData {
       motionMedium: const Duration(milliseconds: 320),
       setTypeAccents: const {
         SetType.working: accent,
-        SetType.warmup: Color(0xFF8BB4FF),  // cool blue
-        SetType.drop: hot,                  // orange
-        SetType.failure: danger,            // red
-        SetType.amrap: success,             // mint
-        SetType.timed: Color(0xFFB39DFF),   // violet
+        SetType.warmup: Color(0xFF8BB4FF), // cool blue
+        SetType.drop: hot, // orange
+        SetType.failure: danger, // red
+        SetType.amrap: success, // mint
+        SetType.timed: Color(0xFFB39DFF), // violet
       },
       timerDefault: const TextStyle(
         fontSize: 56,
@@ -348,15 +348,17 @@ class WorkoutRunnerThemeData {
   /// The mapping is opinionated — override individual fields via [copyWith]
   /// if the result doesn't match your brand exactly.
   factory WorkoutRunnerThemeData.fromColorScheme(ColorScheme scheme) {
-    final base = scheme.brightness == Brightness.light
-        ? WorkoutRunnerThemeData.light()
-        : WorkoutRunnerThemeData.dark();
+    final base =
+        scheme.brightness == Brightness.light
+            ? WorkoutRunnerThemeData.light()
+            : WorkoutRunnerThemeData.dark();
     final accent = scheme.primary;
     final hot = scheme.tertiary;
     final danger = scheme.error;
-    final success = scheme.brightness == Brightness.light
-        ? const Color(0xFF1E9D5B)
-        : const Color(0xFF7CE2A8);
+    final success =
+        scheme.brightness == Brightness.light
+            ? const Color(0xFF1E9D5B)
+            : const Color(0xFF7CE2A8);
 
     return base.copyWith(
       background: scheme.surface,

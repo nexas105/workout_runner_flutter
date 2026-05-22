@@ -36,8 +36,7 @@ class ExperienceLevelPicker extends StatelessWidget {
               onTap: () => onChanged(level),
             ),
           ),
-          if (level != ExperienceLevel.values.last)
-            SizedBox(width: t.space2),
+          if (level != ExperienceLevel.values.last) SizedBox(width: t.space2),
         ],
       ],
     );
@@ -73,10 +72,7 @@ class _LevelChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: selected ? t.accent : Colors.transparent,
             borderRadius: t.radiusPill,
-            border: Border.all(
-              color: selected ? t.accent : t.border,
-              width: 1,
-            ),
+            border: Border.all(color: selected ? t.accent : t.border, width: 1),
           ),
           padding: EdgeInsets.symmetric(
             horizontal: t.space3,

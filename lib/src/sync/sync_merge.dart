@@ -15,10 +15,7 @@ class SyncConflict<T> {
 }
 
 class SyncMergeResult<T> {
-  const SyncMergeResult({
-    required this.resolved,
-    required this.conflicts,
-  });
+  const SyncMergeResult({required this.resolved, required this.conflicts});
 
   final List<SyncEnvelope<T>> resolved;
   final List<SyncConflict<T>> conflicts;
@@ -50,9 +47,7 @@ abstract class SyncMerge {
     SyncMergeStrategy strategy = SyncMergeStrategy.lastWriteWins,
     List<String>? sourcePriority,
   }) {
-    final localById = <String, SyncEnvelope<T>>{
-      for (final e in local) e.id: e,
-    };
+    final localById = <String, SyncEnvelope<T>>{for (final e in local) e.id: e};
     final remoteById = <String, SyncEnvelope<T>>{
       for (final e in remote) e.id: e,
     };
@@ -75,20 +70,19 @@ abstract class SyncMerge {
       if (l == null || r == null) continue;
 
       if (strategy == SyncMergeStrategy.manual) {
-        conflicts.add(SyncConflict<T>(
-          local: l,
-          remote: r,
-          reason: 'manual strategy: caller must resolve',
-        ));
+        conflicts.add(
+          SyncConflict<T>(
+            local: l,
+            remote: r,
+            reason: 'manual strategy: caller must resolve',
+          ),
+        );
         continue;
       }
 
-      resolved.add(resolve<T>(
-        l,
-        r,
-        strategy: strategy,
-        sourcePriority: sourcePriority,
-      ));
+      resolved.add(
+        resolve<T>(l, r, strategy: strategy, sourcePriority: sourcePriority),
+      );
     }
 
     return SyncMergeResult<T>(resolved: resolved, conflicts: conflicts);

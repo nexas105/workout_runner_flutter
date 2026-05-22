@@ -40,25 +40,27 @@ void main() {
     history = InMemoryPagedHistoryStorage();
   });
 
-  test('totalVolume matches sum of WorkoutResult.totalVolume across pages',
-      () async {
-    final base = DateTime.utc(2026, 1, 1);
-    var expected = 0.0;
-    for (var i = 0; i < 120; i++) {
-      final r = _workout(
-        finishedAt: base.add(Duration(minutes: i)),
-        id: 'w$i',
-        setCount: 3,
-        weight: 50.0 + i,
-        reps: 5,
-      );
-      await history.saveWorkout(r);
-      expected += r.totalVolume;
-    }
+  test(
+    'totalVolume matches sum of WorkoutResult.totalVolume across pages',
+    () async {
+      final base = DateTime.utc(2026, 1, 1);
+      var expected = 0.0;
+      for (var i = 0; i < 120; i++) {
+        final r = _workout(
+          finishedAt: base.add(Duration(minutes: i)),
+          id: 'w$i',
+          setCount: 3,
+          weight: 50.0 + i,
+          reps: 5,
+        );
+        await history.saveWorkout(r);
+        expected += r.totalVolume;
+      }
 
-    final streamed = await StreamingStats.totalVolume(history, pageSize: 25);
-    expect(streamed, closeTo(expected, 1e-9));
-  });
+      final streamed = await StreamingStats.totalVolume(history, pageSize: 25);
+      expect(streamed, closeTo(expected, 1e-9));
+    },
+  );
 
   test('totalSets sums every performed set newest-first', () async {
     final base = DateTime.utc(2026, 1, 1);

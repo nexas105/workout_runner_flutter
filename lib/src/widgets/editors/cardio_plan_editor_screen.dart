@@ -107,9 +107,10 @@ class _CardioPlanEditorScreenState extends State<CardioPlanEditorScreen> {
         phase: draft.phase,
         duration: draft.duration,
         distanceMeters: draft.distanceMeters,
-        intensity: draft.intensity?.trim().isEmpty ?? true
-            ? null
-            : draft.intensity!.trim(),
+        intensity:
+            draft.intensity?.trim().isEmpty ?? true
+                ? null
+                : draft.intensity!.trim(),
         pacePerKm: draft.pacePerKm,
         notes: draft.notes?.trim().isEmpty ?? true ? null : draft.notes!.trim(),
         met: draft.met,
@@ -126,7 +127,8 @@ class _CardioPlanEditorScreenState extends State<CardioPlanEditorScreen> {
 
   void _addInterval() {
     setState(() {
-      final id = 'interval-${DateTime.now().microsecondsSinceEpoch}-'
+      final id =
+          'interval-${DateTime.now().microsecondsSinceEpoch}-'
           '${_autoCounter++}';
       _intervals.add(
         _IntervalDraft(
@@ -142,7 +144,8 @@ class _CardioPlanEditorScreenState extends State<CardioPlanEditorScreen> {
   void _duplicateInterval(int index) {
     setState(() {
       final source = _intervals[index];
-      final id = 'interval-${DateTime.now().microsecondsSinceEpoch}-'
+      final id =
+          'interval-${DateTime.now().microsecondsSinceEpoch}-'
           '${_autoCounter++}';
       _intervals.insert(index + 1, source.copyWith(id: id));
     });
@@ -193,9 +196,10 @@ class _CardioPlanEditorScreenState extends State<CardioPlanEditorScreen> {
     final minutes = total.inMinutes;
     final minutesPart = minutes <= 0 ? '<1 min' : '~$minutes min';
     final distanceKm = distance / 1000;
-    final distancePart = distanceKm > 0
-        ? ' • ${distanceKm.toStringAsFixed(distanceKm < 10 ? 1 : 0)} km'
-        : '';
+    final distancePart =
+        distanceKm > 0
+            ? ' • ${distanceKm.toStringAsFixed(distanceKm < 10 ? 1 : 0)} km'
+            : '';
     final n = _intervals.length;
     return '$n ${n == 1 ? 'interval' : 'intervals'} • '
         '$minutesPart$distancePart';
@@ -212,13 +216,14 @@ class _CardioPlanEditorScreenState extends State<CardioPlanEditorScreen> {
         backgroundColor: t.surface,
         foregroundColor: t.textPrimary,
         elevation: 0,
-        leading: widget.onCancel == null
-            ? null
-            : IconButton(
-                icon: const Icon(Icons.close_rounded),
-                onPressed: widget.onCancel,
-                tooltip: 'Cancel',
-              ),
+        leading:
+            widget.onCancel == null
+                ? null
+                : IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  onPressed: widget.onCancel,
+                  tooltip: 'Cancel',
+                ),
         titleSpacing: 0,
         title: TextField(
           key: const ValueKey('cardio-plan-name-field'),
@@ -265,10 +270,9 @@ class _CardioPlanEditorScreenState extends State<CardioPlanEditorScreen> {
               _MetaCard(
                 description: _description,
                 discipline: _discipline,
-                onDescriptionChanged: (v) =>
-                    setState(() => _description = v),
-                onDisciplineChanged: (v) =>
-                    setState(() => _discipline = v ?? _discipline),
+                onDescriptionChanged: (v) => setState(() => _description = v),
+                onDisciplineChanged:
+                    (v) => setState(() => _discipline = v ?? _discipline),
               ),
               SizedBox(height: t.space5),
               SectionLabel(
@@ -297,52 +301,65 @@ class _CardioPlanEditorScreenState extends State<CardioPlanEditorScreen> {
                       draft: draft,
                       expanded: _expanded.contains(draft.id),
                       onTap: () => _toggleExpanded(draft.id),
-                      onNameChanged: (v) =>
-                          _updateInterval(index, (d) => d.copyWith(name: v)),
-                      onPhaseChanged: (v) => _updateInterval(
-                        index,
-                        (d) => d.copyWith(phase: v ?? d.phase),
-                      ),
-                      onDurationChanged: (seconds) => _updateInterval(
-                        index,
-                        (d) => d.copyWith(
-                          duration: seconds == 0
-                              ? null
-                              : Duration(seconds: seconds.toInt()),
-                          clearDuration: seconds == 0,
-                        ),
-                      ),
-                      onDistanceChanged: (meters) => _updateInterval(
-                        index,
-                        (d) => d.copyWith(
-                          distanceMeters: meters == 0 ? null : meters.toDouble(),
-                          clearDistance: meters == 0,
-                        ),
-                      ),
-                      onMetChanged: (met) => _updateInterval(
-                        index,
-                        (d) => d.copyWith(
-                          met: met == 0 ? null : met.toDouble(),
-                          clearMet: met == 0,
-                        ),
-                      ),
-                      onIntensityChanged: (v) => _updateInterval(
-                        index,
-                        (d) => d.copyWith(intensity: v),
-                      ),
-                      onNotesChanged: (v) => _updateInterval(
-                        index,
-                        (d) => d.copyWith(notes: v),
-                      ),
-                      onPaceSecondsChanged: (seconds) => _updateInterval(
-                        index,
-                        (d) => d.copyWith(
-                          pacePerKm: seconds == 0
-                              ? null
-                              : Duration(seconds: seconds.toInt()),
-                          clearPace: seconds == 0,
-                        ),
-                      ),
+                      onNameChanged:
+                          (v) => _updateInterval(
+                            index,
+                            (d) => d.copyWith(name: v),
+                          ),
+                      onPhaseChanged:
+                          (v) => _updateInterval(
+                            index,
+                            (d) => d.copyWith(phase: v ?? d.phase),
+                          ),
+                      onDurationChanged:
+                          (seconds) => _updateInterval(
+                            index,
+                            (d) => d.copyWith(
+                              duration:
+                                  seconds == 0
+                                      ? null
+                                      : Duration(seconds: seconds.toInt()),
+                              clearDuration: seconds == 0,
+                            ),
+                          ),
+                      onDistanceChanged:
+                          (meters) => _updateInterval(
+                            index,
+                            (d) => d.copyWith(
+                              distanceMeters:
+                                  meters == 0 ? null : meters.toDouble(),
+                              clearDistance: meters == 0,
+                            ),
+                          ),
+                      onMetChanged:
+                          (met) => _updateInterval(
+                            index,
+                            (d) => d.copyWith(
+                              met: met == 0 ? null : met.toDouble(),
+                              clearMet: met == 0,
+                            ),
+                          ),
+                      onIntensityChanged:
+                          (v) => _updateInterval(
+                            index,
+                            (d) => d.copyWith(intensity: v),
+                          ),
+                      onNotesChanged:
+                          (v) => _updateInterval(
+                            index,
+                            (d) => d.copyWith(notes: v),
+                          ),
+                      onPaceSecondsChanged:
+                          (seconds) => _updateInterval(
+                            index,
+                            (d) => d.copyWith(
+                              pacePerKm:
+                                  seconds == 0
+                                      ? null
+                                      : Duration(seconds: seconds.toInt()),
+                              clearPace: seconds == 0,
+                            ),
+                          ),
                       onDuplicate: () => _duplicateInterval(index),
                       onRemove: () => _removeInterval(index),
                     );
@@ -391,16 +408,16 @@ class _IntervalDraft {
   });
 
   factory _IntervalDraft.fromInterval(CardioInterval i) => _IntervalDraft(
-        id: i.id,
-        name: i.name,
-        phase: i.phase,
-        duration: i.targetDuration,
-        distanceMeters: i.targetDistanceMeters,
-        met: i.met,
-        intensity: i.intensity,
-        pacePerKm: i.targetPacePerKm,
-        notes: i.notes,
-      );
+    id: i.id,
+    name: i.name,
+    phase: i.phase,
+    duration: i.targetDuration,
+    distanceMeters: i.targetDistanceMeters,
+    met: i.met,
+    intensity: i.intensity,
+    pacePerKm: i.targetPacePerKm,
+    notes: i.notes,
+  );
 
   _IntervalDraft copyWith({
     String? id,
@@ -417,17 +434,17 @@ class _IntervalDraft {
     bool clearMet = false,
     bool clearPace = false,
   }) => _IntervalDraft(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        phase: phase ?? this.phase,
-        duration: clearDuration ? null : (duration ?? this.duration),
-        distanceMeters:
-            clearDistance ? null : (distanceMeters ?? this.distanceMeters),
-        met: clearMet ? null : (met ?? this.met),
-        intensity: intensity ?? this.intensity,
-        pacePerKm: clearPace ? null : (pacePerKm ?? this.pacePerKm),
-        notes: notes ?? this.notes,
-      );
+    id: id ?? this.id,
+    name: name ?? this.name,
+    phase: phase ?? this.phase,
+    duration: clearDuration ? null : (duration ?? this.duration),
+    distanceMeters:
+        clearDistance ? null : (distanceMeters ?? this.distanceMeters),
+    met: clearMet ? null : (met ?? this.met),
+    intensity: intensity ?? this.intensity,
+    pacePerKm: clearPace ? null : (pacePerKm ?? this.pacePerKm),
+    notes: notes ?? this.notes,
+  );
 }
 
 class _PreviewChip extends StatelessWidget {
@@ -440,10 +457,7 @@ class _PreviewChip extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: t.space3,
-          vertical: t.space2,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: t.space3, vertical: t.space2),
         decoration: BoxDecoration(
           color: t.surfaceElevated,
           borderRadius: t.radiusPill,
@@ -515,11 +529,7 @@ class _EmptyIntervals extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            'No intervals yet',
-            style: t.title,
-            textAlign: TextAlign.center,
-          ),
+          Text('No intervals yet', style: t.title, textAlign: TextAlign.center),
           SizedBox(height: t.space1),
           Text(
             'Add at least one interval to save this plan.',
@@ -590,10 +600,7 @@ class _IntervalRow extends StatelessWidget {
                   index: index,
                   child: Padding(
                     padding: EdgeInsets.only(right: t.space2),
-                    child: Icon(
-                      Icons.drag_indicator_rounded,
-                      color: t.textDim,
-                    ),
+                    child: Icon(Icons.drag_indicator_rounded, color: t.textDim),
                   ),
                 ),
                 Expanded(
@@ -604,10 +611,7 @@ class _IntervalRow extends StatelessWidget {
                     onChanged: onNameChanged,
                   ),
                 ),
-                _KebabMenu(
-                  onDuplicate: onDuplicate,
-                  onRemove: onRemove,
-                ),
+                _KebabMenu(onDuplicate: onDuplicate, onRemove: onRemove),
               ],
             ),
             MetaFieldRow.dropdown<CardioPhase>(
@@ -713,19 +717,17 @@ class _KebabMenu extends StatelessWidget {
             break;
         }
       },
-      itemBuilder: (ctx) => [
-        PopupMenuItem(
-          value: 'duplicate',
-          child: Text('Duplicate', style: t.body),
-        ),
-        PopupMenuItem(
-          value: 'remove',
-          child: Text(
-            'Remove',
-            style: t.body.copyWith(color: t.danger),
-          ),
-        ),
-      ],
+      itemBuilder:
+          (ctx) => [
+            PopupMenuItem(
+              value: 'duplicate',
+              child: Text('Duplicate', style: t.body),
+            ),
+            PopupMenuItem(
+              value: 'remove',
+              child: Text('Remove', style: t.body.copyWith(color: t.danger)),
+            ),
+          ],
     );
   }
 }

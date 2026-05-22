@@ -87,7 +87,9 @@ void main() {
       final plan = WorkoutPlan(
         id: 'p',
         name: 'P',
-        exercises: [_ex('bp', [warm1, warm2, ...working])],
+        exercises: [
+          _ex('bp', [warm1, warm2, ...working]),
+        ],
       );
 
       final d = DeloadPlan.from(plan, strategy: DeloadStrategy.balanced);

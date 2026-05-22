@@ -3,22 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
-      home: WorkoutRunnerTheme(
-        data: WorkoutRunnerThemeData.dark(),
-        child: Scaffold(body: child),
-      ),
-    );
+  home: WorkoutRunnerTheme(
+    data: WorkoutRunnerThemeData.dark(),
+    child: Scaffold(body: child),
+  ),
+);
 
 void main() {
   testWidgets('renders empty form when existing is null', (tester) async {
     ExerciseCategory? saved;
     await tester.pumpWidget(
-      _wrap(
-        CategoryEditorSheet(
-          existing: null,
-          onSave: (c) => saved = c,
-        ),
-      ),
+      _wrap(CategoryEditorSheet(existing: null, onSave: (c) => saved = c)),
     );
 
     expect(find.text('New category'), findsOneWidget);
@@ -35,12 +30,7 @@ void main() {
     );
 
     await tester.pumpWidget(
-      _wrap(
-        CategoryEditorSheet(
-          existing: existing,
-          onSave: (_) {},
-        ),
-      ),
+      _wrap(CategoryEditorSheet(existing: existing, onSave: (_) {})),
     );
     await tester.pump();
 
@@ -52,12 +42,7 @@ void main() {
   testWidgets('Save emits category with entered fields', (tester) async {
     ExerciseCategory? saved;
     await tester.pumpWidget(
-      _wrap(
-        CategoryEditorSheet(
-          existing: null,
-          onSave: (c) => saved = c,
-        ),
-      ),
+      _wrap(CategoryEditorSheet(existing: null, onSave: (c) => saved = c)),
     );
 
     final fields = find.byType(TextField);
@@ -82,12 +67,7 @@ void main() {
       description: 'd',
     );
     await tester.pumpWidget(
-      _wrap(
-        CategoryEditorSheet(
-          existing: existing,
-          onSave: (c) => saved = c,
-        ),
-      ),
+      _wrap(CategoryEditorSheet(existing: existing, onSave: (c) => saved = c)),
     );
 
     await tester.tap(find.text('Save changes'));

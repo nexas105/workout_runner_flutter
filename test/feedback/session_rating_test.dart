@@ -28,9 +28,7 @@ void main() {
     });
 
     test('preserves nullable fields when omitted', () {
-      final rating = SessionRating(
-        ratedAt: DateTime.utc(2026, 5, 21, 10, 0),
-      );
+      final rating = SessionRating(ratedAt: DateTime.utc(2026, 5, 21, 10, 0));
 
       final round = SessionRating.fromJson(rating.toJson());
 
@@ -51,10 +49,7 @@ void main() {
         difficulty: 2,
         ratedAt: DateTime.utc(2026, 5, 21),
       );
-      final next = base.copyWith(
-        mood: SessionMood.great,
-        notes: 'pr day',
-      );
+      final next = base.copyWith(mood: SessionMood.great, notes: 'pr day');
       expect(next.sessionKey, 'k1');
       expect(next.mood, SessionMood.great);
       expect(next.difficulty, 2);

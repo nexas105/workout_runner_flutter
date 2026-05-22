@@ -37,7 +37,8 @@ class ExerciseFocusCard extends StatelessWidget {
     final plan = runner.plan;
     if (plan == null) return _EmptyFocus(message: 'No active workout');
 
-    final exerciseIndex = exerciseIndexOverride ??
+    final exerciseIndex =
+        exerciseIndexOverride ??
         runner.activeExerciseIndex ??
         runner.currentExerciseIndex;
     if (exerciseIndex >= plan.exercises.length) {
@@ -46,7 +47,8 @@ class ExerciseFocusCard extends StatelessWidget {
     final exercise = plan.exercises[exerciseIndex];
     final nextSetIndex = _nextSetIndex(runner, exerciseIndex, exercise);
 
-    final isRunning = runner.activeSetExerciseIndex == exerciseIndex &&
+    final isRunning =
+        runner.activeSetExerciseIndex == exerciseIndex &&
         runner.activeSetIndex != null;
     final isResting = runner.isResting;
 
@@ -131,15 +133,9 @@ class _PendingFocus extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Up next',
-          style: t.eyebrow.copyWith(color: t.accent),
-        ),
+        Text('Up next', style: t.eyebrow.copyWith(color: t.accent)),
         SizedBox(height: t.space2),
-        Text(
-          '${l.setIndexLabel(setIndex + 1)} of $totalSets',
-          style: t.title,
-        ),
+        Text('${l.setIndexLabel(setIndex + 1)} of $totalSets', style: t.title),
         SizedBox(height: t.space2),
         _TargetLine(t: t, l: l, set: set),
       ],
@@ -166,8 +162,8 @@ class _RunningFocus extends StatelessWidget {
     final isTimed = set.isTimed && set.targetDuration != null;
     final shown =
         isTimed ? runner.currentSetRemaining : runner.currentSetElapsed;
-    final hitTarget = isTimed &&
-        runner.currentSetElapsed >= set.targetDuration!;
+    final hitTarget =
+        isTimed && runner.currentSetElapsed >= set.targetDuration!;
     final color = hitTarget ? t.success : t.hot;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,10 +173,7 @@ class _RunningFocus extends StatelessWidget {
           style: t.eyebrow.copyWith(color: color),
         ),
         SizedBox(height: t.space2),
-        TimerText(
-          duration: shown,
-          style: t.heroNumber.copyWith(color: color),
-        ),
+        TimerText(duration: shown, style: t.heroNumber.copyWith(color: color)),
         SizedBox(height: t.space2),
         _TargetLine(
           t: t,
@@ -228,12 +221,14 @@ class _TargetLine extends StatelessWidget {
   Widget build(BuildContext context) {
     String line;
     if (set.type == SetType.amrap && set.targetDuration != null) {
-      line = '${l.labelForSetType(SetType.amrap)} — '
+      line =
+          '${l.labelForSetType(SetType.amrap)} — '
           '${TimerText.format(set.targetDuration!)}';
     } else if (set.type == SetType.timed && set.targetDuration != null) {
       line = 'Hold ${TimerText.format(set.targetDuration!)}';
     } else if (set.targetWeight != null) {
-      line = '${set.targetReps} × ${l.formatWeight(set.targetWeight!)} ${l.unitKg}';
+      line =
+          '${set.targetReps} × ${l.formatWeight(set.targetWeight!)} ${l.unitKg}';
     } else {
       line = '${set.targetReps} ${l.repsLabel.toLowerCase()}';
     }

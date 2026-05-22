@@ -74,11 +74,13 @@ void main() {
     });
 
     test('preserves other meta entries', () {
-      final ex = _ex(meta: {'note': 'hello', 'tags': const ['gym']});
-      final written = FormCues.write(
-        ex,
-        const FormCueBundle(cues: ['Brace']),
+      final ex = _ex(
+        meta: {
+          'note': 'hello',
+          'tags': const ['gym'],
+        },
       );
+      final written = FormCues.write(ex, const FormCueBundle(cues: ['Brace']));
       expect(written.meta!['note'], 'hello');
       expect(written.meta!['tags'], const ['gym']);
       expect((written.meta!['formCues'] as Map)['cues'], ['Brace']);
@@ -95,7 +97,14 @@ void main() {
     });
 
     test('empty bundle keeps untouched meta entries', () {
-      final ex = _ex(meta: {'note': 'hi', 'formCues': {'cues': ['x']}});
+      final ex = _ex(
+        meta: {
+          'note': 'hi',
+          'formCues': {
+            'cues': ['x'],
+          },
+        },
+      );
       final cleared = FormCues.write(ex, FormCueBundle.empty);
       expect(cleared.meta!.containsKey('formCues'), isFalse);
       expect(cleared.meta!['note'], 'hi');
@@ -117,10 +126,7 @@ void main() {
       final merged = FormCues.merge(a, b);
       expect(merged.cues, ['Brace', 'Knees out', 'Chest up']);
       expect(merged.commonMistakes, ['Heels lift', 'Rounded back']);
-      expect(merged.setupInstructions, [
-        'Feet shoulder-width',
-        'Bar mid-foot',
-      ]);
+      expect(merged.setupInstructions, ['Feet shoulder-width', 'Bar mid-foot']);
     });
 
     test('merging with empty returns the non-empty side intact', () {

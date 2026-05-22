@@ -334,9 +334,7 @@ void main() {
             PerformedExerciseDetails(
               exerciseId: 'bench',
               exerciseName: 'Bench',
-              sets: [
-                mkSet(setIndex: 0, reps: 5, weight: 80, at: priorDay),
-              ],
+              sets: [mkSet(setIndex: 0, reps: 5, weight: 80, at: priorDay)],
             ),
           ],
         ),

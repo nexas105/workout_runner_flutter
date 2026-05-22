@@ -45,10 +45,7 @@ class NextUpStrip extends StatelessWidget {
             ),
           ),
           if (next.sets.isNotEmpty)
-            Text(
-              '${next.sets.length} sets',
-              style: t.caption,
-            ),
+            Text('${next.sets.length} sets', style: t.caption),
         ],
       ),
     );

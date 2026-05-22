@@ -55,20 +55,21 @@ class RunnerFocusPanel extends StatelessWidget {
       );
     }
 
-    final header = sessionHeaderBuilder != null
-        ? sessionHeaderBuilder!(context, runner)
-        : SessionHeader(
-            onPauseToggle:
-                runner.isPaused ? runner.resume : runner.pause,
-            onFinish: () async {
-              final result = await runner.finish();
-              onFinished?.call(result != null);
-            },
-          );
+    final header =
+        sessionHeaderBuilder != null
+            ? sessionHeaderBuilder!(context, runner)
+            : SessionHeader(
+              onPauseToggle: runner.isPaused ? runner.resume : runner.pause,
+              onFinish: () async {
+                final result = await runner.finish();
+                onFinished?.call(result != null);
+              },
+            );
 
-    final actions = focusActionBarBuilder != null
-        ? focusActionBarBuilder!(context, runner)
-        : _defaultActionBar(context, runner);
+    final actions =
+        focusActionBarBuilder != null
+            ? focusActionBarBuilder!(context, runner)
+            : _defaultActionBar(context, runner);
 
     return Stack(
       children: [
@@ -99,9 +100,10 @@ class RunnerFocusPanel extends StatelessWidget {
           child: RestOverlay(
             visible: runner.isResting,
             remaining: runner.restRemaining,
-            total: runner.restTotal == Duration.zero
-                ? runner.restRemaining
-                : runner.restTotal,
+            total:
+                runner.restTotal == Duration.zero
+                    ? runner.restRemaining
+                    : runner.restTotal,
             onSkip: runner.skipRest,
             onAdd: runner.extendRest,
           ),

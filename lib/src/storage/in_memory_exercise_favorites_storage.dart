@@ -39,8 +39,8 @@ class InMemoryExerciseFavoritesStorage implements ExerciseFavoritesStorage {
 
   @override
   Future<List<String>> recents({int limit = 10}) async {
-    final entries = _lastUsed.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final entries =
+        _lastUsed.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
     final ids = entries.map((e) => e.key).toList();
     if (ids.length > limit) {
       return ids.take(limit).toList();
@@ -55,12 +55,12 @@ class InMemoryExerciseFavoritesStorage implements ExerciseFavoritesStorage {
 
   @override
   Future<List<String>> mostUsed({int limit = 10}) async {
-    final entries = _counts.entries.toList()
-      ..sort((a, b) {
-        final byCount = b.value.compareTo(a.value);
-        if (byCount != 0) return byCount;
-        return a.key.compareTo(b.key);
-      });
+    final entries =
+        _counts.entries.toList()..sort((a, b) {
+          final byCount = b.value.compareTo(a.value);
+          if (byCount != 0) return byCount;
+          return a.key.compareTo(b.key);
+        });
     final ids = entries.map((e) => e.key).toList();
     if (ids.length > limit) {
       return ids.take(limit).toList();

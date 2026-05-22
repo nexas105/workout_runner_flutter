@@ -1,7 +1,11 @@
 import 'package:fitness_workout/fitness_workout.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-ExportAuditEntry _entry(String id, DateTime at, {String kind = 'workoutResult'}) {
+ExportAuditEntry _entry(
+  String id,
+  DateTime at, {
+  String kind = 'workoutResult',
+}) {
   return ExportAuditEntry(
     id: id,
     kind: kind,
@@ -65,9 +69,7 @@ void main() {
     test('recent honors limit', () async {
       final sink = InMemoryExportAuditSink();
       for (var i = 0; i < 5; i++) {
-        await sink.record(
-          _entry('e$i', DateTime.utc(2026, 5, 21, i + 1)),
-        );
+        await sink.record(_entry('e$i', DateTime.utc(2026, 5, 21, i + 1)));
       }
       final recent = await sink.recent(limit: 2);
       expect(recent.length, 2);

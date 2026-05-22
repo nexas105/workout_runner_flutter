@@ -60,10 +60,14 @@ void main() {
         source: 'b',
       );
 
-      expect(SyncMerge.resolve(updated, deleted).operation,
-          SyncOperation.delete);
-      expect(SyncMerge.resolve(deleted, updated).operation,
-          SyncOperation.delete);
+      expect(
+        SyncMerge.resolve(updated, deleted).operation,
+        SyncOperation.delete,
+      );
+      expect(
+        SyncMerge.resolve(deleted, updated).operation,
+        SyncOperation.delete,
+      );
     });
 
     test('sourcePriority overrides updatedAt order', () {
@@ -183,49 +187,51 @@ void main() {
       expect(byId['c']!.source, 'r');
     });
 
-    test('manual strategy collects conflicts and passes through singletons',
-        () {
-      final local = [
-        _env(
-          id: 'a',
-          op: SyncOperation.update,
-          updatedAt: DateTime.utc(2026, 5, 21, 10),
-          source: 'l',
-        ),
-        _env(
-          id: 'b',
-          op: SyncOperation.update,
-          updatedAt: DateTime.utc(2026, 5, 21, 10),
-          source: 'l',
-        ),
-      ];
-      final remote = [
-        _env(
-          id: 'a',
-          op: SyncOperation.update,
-          updatedAt: DateTime.utc(2026, 5, 21, 12),
-          source: 'r',
-        ),
-        _env(
-          id: 'c',
-          op: SyncOperation.create,
-          updatedAt: DateTime.utc(2026, 5, 21, 12),
-          source: 'r',
-        ),
-      ];
+    test(
+      'manual strategy collects conflicts and passes through singletons',
+      () {
+        final local = [
+          _env(
+            id: 'a',
+            op: SyncOperation.update,
+            updatedAt: DateTime.utc(2026, 5, 21, 10),
+            source: 'l',
+          ),
+          _env(
+            id: 'b',
+            op: SyncOperation.update,
+            updatedAt: DateTime.utc(2026, 5, 21, 10),
+            source: 'l',
+          ),
+        ];
+        final remote = [
+          _env(
+            id: 'a',
+            op: SyncOperation.update,
+            updatedAt: DateTime.utc(2026, 5, 21, 12),
+            source: 'r',
+          ),
+          _env(
+            id: 'c',
+            op: SyncOperation.create,
+            updatedAt: DateTime.utc(2026, 5, 21, 12),
+            source: 'r',
+          ),
+        ];
 
-      final result = SyncMerge.resolveBatch(
-        local,
-        remote,
-        strategy: SyncMergeStrategy.manual,
-      );
+        final result = SyncMerge.resolveBatch(
+          local,
+          remote,
+          strategy: SyncMergeStrategy.manual,
+        );
 
-      expect(result.conflicts.length, 1);
-      expect(result.conflicts.first.local.id, 'a');
-      expect(result.conflicts.first.remote.id, 'a');
+        expect(result.conflicts.length, 1);
+        expect(result.conflicts.first.local.id, 'a');
+        expect(result.conflicts.first.remote.id, 'a');
 
-      final resolvedIds = result.resolved.map((e) => e.id).toSet();
-      expect(resolvedIds, {'b', 'c'});
-    });
+        final resolvedIds = result.resolved.map((e) => e.id).toSet();
+        expect(resolvedIds, {'b', 'c'});
+      },
+    );
   });
 }

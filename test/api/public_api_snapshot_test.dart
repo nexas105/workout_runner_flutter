@@ -51,9 +51,8 @@ void main() {
     final current = symbols.toList()..sort();
     final currentBlob = current.join('\n');
 
-    final goldenBlob = goldenFile.existsSync()
-        ? goldenFile.readAsStringSync().trim()
-        : '';
+    final goldenBlob =
+        goldenFile.existsSync() ? goldenFile.readAsStringSync().trim() : '';
 
     if (goldenBlob.isEmpty) {
       goldenFile.writeAsStringSync('$currentBlob\n');
@@ -63,11 +62,12 @@ void main() {
       );
     }
 
-    final golden = goldenBlob
-        .split('\n')
-        .map((s) => s.trim())
-        .where((s) => s.isNotEmpty)
-        .toList();
+    final golden =
+        goldenBlob
+            .split('\n')
+            .map((s) => s.trim())
+            .where((s) => s.isNotEmpty)
+            .toList();
 
     final goldenSet = golden.toSet();
     final currentSet = current.toSet();
@@ -80,10 +80,11 @@ void main() {
       return;
     }
 
-    final buffer = StringBuffer()
-      ..writeln('Public API drift detected vs $_goldenRelative.')
-      ..writeln('')
-      ..writeln('  Added (${added.length}):');
+    final buffer =
+        StringBuffer()
+          ..writeln('Public API drift detected vs $_goldenRelative.')
+          ..writeln('')
+          ..writeln('  Added (${added.length}):');
     if (added.isEmpty) {
       buffer.writeln('    (none)');
     } else {
@@ -211,10 +212,7 @@ Set<String> _extractFromFile(File file) {
   }
 
   // Enums.
-  final enumRe = RegExp(
-    r'^enum\s+([A-Za-z_]\w*)',
-    multiLine: true,
-  );
+  final enumRe = RegExp(r'^enum\s+([A-Za-z_]\w*)', multiLine: true);
   for (final m in enumRe.allMatches(stripped)) {
     _add(out, m.group(1)!, kind: 'enum');
   }
@@ -234,20 +232,14 @@ Set<String> _extractFromFile(File file) {
 
   // Extensions — `extension FooX on Bar { ... }`. Anonymous extensions
   // (`extension on Bar`) are intentionally skipped.
-  final extRe = RegExp(
-    r'^extension\s+([A-Za-z_]\w*)\s+on\b',
-    multiLine: true,
-  );
+  final extRe = RegExp(r'^extension\s+([A-Za-z_]\w*)\s+on\b', multiLine: true);
   for (final m in extRe.allMatches(stripped)) {
     _add(out, m.group(1)!, kind: 'extension');
   }
 
   // Typedefs — both `typedef Foo = ...;` and the legacy
   // `typedef Foo(...);` form.
-  final typedefRe = RegExp(
-    r'^typedef\s+([A-Za-z_]\w*)\b',
-    multiLine: true,
-  );
+  final typedefRe = RegExp(r'^typedef\s+([A-Za-z_]\w*)\b', multiLine: true);
   for (final m in typedefRe.allMatches(stripped)) {
     _add(out, m.group(1)!, kind: 'typedef');
   }

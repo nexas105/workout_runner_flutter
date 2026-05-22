@@ -45,10 +45,7 @@ class VolumeTrendChart extends StatelessWidget {
             SizedBox(
               height: height,
               child: Center(
-                child: Text(
-                  'Not enough data yet.',
-                  style: t.bodyMuted,
-                ),
+                child: Text('Not enough data yet.', style: t.bodyMuted),
               ),
             )
           else
@@ -109,13 +106,17 @@ class _BarChartPainter extends CustomPainter {
     if (data.isEmpty) return;
 
     const double labelStripHeight = 16;
-    final chartHeight = (size.height - labelStripHeight).clamp(0.0, double.infinity);
+    final chartHeight = (size.height - labelStripHeight).clamp(
+      0.0,
+      double.infinity,
+    );
     if (chartHeight <= 0) return;
 
     final maxValue = _resolveMax();
-    final gridPaint = Paint()
-      ..color = border
-      ..strokeWidth = 1;
+    final gridPaint =
+        Paint()
+          ..color = border
+          ..strokeWidth = 1;
 
     // 4 horizontal grid lines (0%, 33%, 66%, 100%).
     for (var i = 0; i < 4; i++) {
@@ -151,12 +152,17 @@ class _BarChartPainter extends CustomPainter {
       if (!isFirst && !isLast && i.isOdd) continue;
       final text = _shortDate(data[i].weekStart);
       final tp = TextPainter(
-        text: TextSpan(text: text, style: labelStyle.copyWith(color: labelColor)),
+        text: TextSpan(
+          text: text,
+          style: labelStyle.copyWith(color: labelColor),
+        ),
         textDirection: TextDirection.ltr,
         maxLines: 1,
       )..layout(maxWidth: slot * 2);
-      final labelX = (slot * i + slot / 2 - tp.width / 2)
-          .clamp(0.0, (size.width - tp.width).clamp(0.0, double.infinity));
+      final labelX = (slot * i + slot / 2 - tp.width / 2).clamp(
+        0.0,
+        (size.width - tp.width).clamp(0.0, double.infinity),
+      );
       tp.paint(canvas, Offset(labelX, labelY));
     }
   }

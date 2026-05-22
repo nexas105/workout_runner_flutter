@@ -90,7 +90,11 @@ void main() {
         id: 'bad',
         name: 'Bad',
         exercises: [
-          WorkoutExercise(id: 'a', name: 'A', sets: [WorkoutSet(targetReps: 5)]),
+          WorkoutExercise(
+            id: 'a',
+            name: 'A',
+            sets: [WorkoutSet(targetReps: 5)],
+          ),
         ],
         blocks: [
           WorkoutBlock(id: 'oops', exerciseIndices: [0, 5]),
@@ -109,7 +113,11 @@ void main() {
         id: 'bad',
         name: 'Bad',
         exercises: [
-          WorkoutExercise(id: 'a', name: 'A', sets: [WorkoutSet(targetReps: 5)]),
+          WorkoutExercise(
+            id: 'a',
+            name: 'A',
+            sets: [WorkoutSet(targetReps: 5)],
+          ),
         ],
         blocks: [
           WorkoutBlock(id: 'dup', exerciseIndices: [0]),

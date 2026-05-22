@@ -42,11 +42,11 @@ class SyncEnvelope<T> {
     );
     final updatedAt = DateTime.parse(json['updatedAt'] as String);
     final deletedAtRaw = json['deletedAt'];
-    final deletedAt = deletedAtRaw is String ? DateTime.parse(deletedAtRaw) : null;
+    final deletedAt =
+        deletedAtRaw is String ? DateTime.parse(deletedAtRaw) : null;
     final payloadRaw = json['payload'];
-    final payload = payloadRaw is Map<String, dynamic>
-        ? payloadFromJson(payloadRaw)
-        : null;
+    final payload =
+        payloadRaw is Map<String, dynamic> ? payloadFromJson(payloadRaw) : null;
     return SyncEnvelope<T>(
       id: json['id'] as String,
       operation: operation,

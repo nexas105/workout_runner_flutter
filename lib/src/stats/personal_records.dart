@@ -120,14 +120,8 @@ class PersonalRecord {
           other.sourceResultId == sourceResultId);
 
   @override
-  int get hashCode => Object.hash(
-    exerciseId,
-    type,
-    value,
-    unit,
-    achievedAt,
-    sourceResultId,
-  );
+  int get hashCode =>
+      Object.hash(exerciseId, type, value, unit, achievedAt, sourceResultId);
 
   @override
   String toString() =>
@@ -288,7 +282,8 @@ abstract class PersonalRecords {
       final at = r.finishedAt;
 
       final dist = r.totalDistanceMeters;
-      if (dist > 0 && _beatsCardio(longestDistance, dist, at, higherWins: true)) {
+      if (dist > 0 &&
+          _beatsCardio(longestDistance, dist, at, higherWins: true)) {
         longestDistance = _CardioHit(dist, at, src);
       }
 

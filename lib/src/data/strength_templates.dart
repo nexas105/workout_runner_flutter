@@ -13,9 +13,11 @@ abstract class StrengthTemplates {
     final lower = name.toLowerCase();
     return DefaultExercises.all.firstWhere(
       (e) => e.name.toLowerCase() == lower,
-      orElse: () => throw StateError(
-        'StrengthTemplates: DefaultExercises is missing "$name".',
-      ),
+      orElse:
+          () =>
+              throw StateError(
+                'StrengthTemplates: DefaultExercises is missing "$name".',
+              ),
     );
   }
 
@@ -155,11 +157,7 @@ abstract class StrengthTemplates {
         ),
       ),
     ],
-    meta: const {
-      'kind': 'strength',
-      'split': 'push',
-      'template': 'push_day',
-    },
+    meta: const {'kind': 'strength', 'split': 'push', 'template': 'push_day'},
   );
 
   static final WorkoutPlan pullDay = WorkoutPlan(
@@ -206,11 +204,7 @@ abstract class StrengthTemplates {
         ),
       ),
     ],
-    meta: const {
-      'kind': 'strength',
-      'split': 'pull',
-      'template': 'pull_day',
-    },
+    meta: const {'kind': 'strength', 'split': 'pull', 'template': 'pull_day'},
   );
 
   static final WorkoutPlan legDay = WorkoutPlan(
@@ -257,11 +251,7 @@ abstract class StrengthTemplates {
         ),
       ),
     ],
-    meta: const {
-      'kind': 'strength',
-      'split': 'legs',
-      'template': 'leg_day',
-    },
+    meta: const {'kind': 'strength', 'split': 'legs', 'template': 'leg_day'},
   );
 
   static final WorkoutPlan upperA = WorkoutPlan(
@@ -281,11 +271,7 @@ abstract class StrengthTemplates {
       ),
       _with(
         'Pull-ups',
-        sets: _working(
-          sets: 4,
-          reps: 8,
-          rest: const Duration(seconds: 90),
-        ),
+        sets: _working(sets: 4, reps: 8, rest: const Duration(seconds: 90)),
       ),
       _with(
         'Overhead press',
@@ -307,11 +293,7 @@ abstract class StrengthTemplates {
         ),
       ),
     ],
-    meta: const {
-      'kind': 'strength',
-      'split': 'upper',
-      'template': 'upper_a',
-    },
+    meta: const {'kind': 'strength', 'split': 'upper', 'template': 'upper_a'},
   );
 
   static final WorkoutPlan lowerA = WorkoutPlan(
@@ -358,11 +340,7 @@ abstract class StrengthTemplates {
         ),
       ),
     ],
-    meta: const {
-      'kind': 'strength',
-      'split': 'lower',
-      'template': 'lower_a',
-    },
+    meta: const {'kind': 'strength', 'split': 'lower', 'template': 'lower_a'},
   );
 
   static final WorkoutPlan fiveByFive = WorkoutPlan(

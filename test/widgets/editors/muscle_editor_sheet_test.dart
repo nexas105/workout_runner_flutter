@@ -3,22 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
-      home: WorkoutRunnerTheme(
-        data: WorkoutRunnerThemeData.dark(),
-        child: Scaffold(body: child),
-      ),
-    );
+  home: WorkoutRunnerTheme(
+    data: WorkoutRunnerThemeData.dark(),
+    child: Scaffold(body: child),
+  ),
+);
 
 void main() {
   testWidgets('renders empty form when existing is null', (tester) async {
     Muscle? saved;
     await tester.pumpWidget(
-      _wrap(
-        MuscleEditorSheet(
-          existing: null,
-          onSave: (m) => saved = m,
-        ),
-      ),
+      _wrap(MuscleEditorSheet(existing: null, onSave: (m) => saved = m)),
     );
 
     expect(find.text('New muscle'), findsOneWidget);
@@ -36,12 +31,7 @@ void main() {
     );
 
     await tester.pumpWidget(
-      _wrap(
-        MuscleEditorSheet(
-          existing: existing,
-          onSave: (_) {},
-        ),
-      ),
+      _wrap(MuscleEditorSheet(existing: existing, onSave: (_) {})),
     );
     await tester.pump();
 
@@ -53,12 +43,7 @@ void main() {
   testWidgets('Save emits muscle with entered name and group', (tester) async {
     Muscle? saved;
     await tester.pumpWidget(
-      _wrap(
-        MuscleEditorSheet(
-          existing: null,
-          onSave: (m) => saved = m,
-        ),
-      ),
+      _wrap(MuscleEditorSheet(existing: null, onSave: (m) => saved = m)),
     );
 
     final fields = find.byType(TextField);
@@ -79,12 +64,7 @@ void main() {
     Muscle? saved;
     const existing = Muscle(id: 'keep-me', name: 'Keep Me', group: 'g');
     await tester.pumpWidget(
-      _wrap(
-        MuscleEditorSheet(
-          existing: existing,
-          onSave: (m) => saved = m,
-        ),
-      ),
+      _wrap(MuscleEditorSheet(existing: existing, onSave: (m) => saved = m)),
     );
 
     await tester.tap(find.text('Save changes'));

@@ -82,9 +82,10 @@ abstract class WorkoutStats {
     List<WorkoutResult> results, {
     DateTime? weekStart,
   }) {
-    final end = weekStart == null
-        ? DateTime.now()
-        : weekStart.add(const Duration(days: 7));
+    final end =
+        weekStart == null
+            ? DateTime.now()
+            : weekStart.add(const Duration(days: 7));
     final start = weekStart ?? end.subtract(const Duration(days: 7));
 
     var count = 0;

@@ -39,10 +39,8 @@ class PlanGenerationProfileSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => PlanGenerationProfileSheet(
-        initial: initial,
-        onSave: (_) {},
-      ),
+      builder:
+          (ctx) => PlanGenerationProfileSheet(initial: initial, onSave: (_) {}),
     );
   }
 
@@ -137,17 +135,10 @@ class _PlanGenerationProfileSheetState
         child: Container(
           decoration: BoxDecoration(
             color: t.surface,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(28),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             border: Border(top: BorderSide(color: t.border)),
           ),
-          padding: EdgeInsets.fromLTRB(
-            t.space4,
-            t.space3,
-            t.space4,
-            t.space4,
-          ),
+          padding: EdgeInsets.fromLTRB(t.space4, t.space3, t.space4, t.space4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -164,10 +155,7 @@ class _PlanGenerationProfileSheetState
               ),
               Text('Plan profile', style: t.titleLarge),
               SizedBox(height: t.space2),
-              Text(
-                'Tell the plan generator who you are.',
-                style: t.bodyMuted,
-              ),
+              Text('Tell the plan generator who you are.', style: t.bodyMuted),
               SizedBox(height: t.space4),
               Expanded(
                 child: SingleChildScrollView(
@@ -354,9 +342,10 @@ class _EquipmentSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
-    final summary = items.isEmpty
-        ? 'Any equipment'
-        : '${items.length} item${items.length == 1 ? '' : 's'} selected';
+    final summary =
+        items.isEmpty
+            ? 'Any equipment'
+            : '${items.length} item${items.length == 1 ? '' : 's'} selected';
     return RunnerCard(
       onTap: onTap,
       child: Row(

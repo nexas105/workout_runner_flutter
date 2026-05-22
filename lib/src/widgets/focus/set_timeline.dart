@@ -12,11 +12,7 @@ class SetTimeline extends StatelessWidget {
   final int? exerciseIndexOverride;
   final ValueChanged<int>? onSetTap;
 
-  const SetTimeline({
-    super.key,
-    this.exerciseIndexOverride,
-    this.onSetTap,
-  });
+  const SetTimeline({super.key, this.exerciseIndexOverride, this.onSetTap});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +20,8 @@ class SetTimeline extends StatelessWidget {
     final runner = RunnerScope.of(context);
     final plan = runner.plan;
     if (plan == null) return const SizedBox.shrink();
-    final exerciseIndex = exerciseIndexOverride ??
+    final exerciseIndex =
+        exerciseIndexOverride ??
         runner.activeExerciseIndex ??
         runner.currentExerciseIndex;
     if (exerciseIndex >= plan.exercises.length) return const SizedBox.shrink();
@@ -121,9 +118,10 @@ class _Dot extends StatelessWidget {
         break;
     }
     final dot = AnimatedContainer(
-      duration: MediaQuery.disableAnimationsOf(context)
-          ? Duration.zero
-          : t.motionFast,
+      duration:
+          MediaQuery.disableAnimationsOf(context)
+              ? Duration.zero
+              : t.motionFast,
       width: 28,
       height: 28,
       alignment: Alignment.center,

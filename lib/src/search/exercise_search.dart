@@ -35,29 +35,33 @@ abstract class ExerciseSearch {
     String? equipmentMetaKey,
     String? movementPatternMetaKey,
   }) {
-    return source.where((exercise) {
-      if (categoryId != null) {
-        final catId = exercise.category?.id ?? _metaString(exercise, 'category');
-        if (catId != categoryId) return false;
-      }
-      if (muscleIds != null && muscleIds.isNotEmpty) {
-        final ids = exercise.muscles.map((m) => m.id).toSet();
-        if (!muscleIds.every(ids.contains)) return false;
-      }
-      if (equipmentMetaKey != null) {
-        final equipment = _metaString(exercise, 'equipment');
-        if (equipment?.toLowerCase() != equipmentMetaKey.toLowerCase()) {
-          return false;
-        }
-      }
-      if (movementPatternMetaKey != null) {
-        final pattern = _metaString(exercise, 'movementPattern');
-        if (pattern?.toLowerCase() != movementPatternMetaKey.toLowerCase()) {
-          return false;
-        }
-      }
-      return true;
-    }).toList(growable: false);
+    return source
+        .where((exercise) {
+          if (categoryId != null) {
+            final catId =
+                exercise.category?.id ?? _metaString(exercise, 'category');
+            if (catId != categoryId) return false;
+          }
+          if (muscleIds != null && muscleIds.isNotEmpty) {
+            final ids = exercise.muscles.map((m) => m.id).toSet();
+            if (!muscleIds.every(ids.contains)) return false;
+          }
+          if (equipmentMetaKey != null) {
+            final equipment = _metaString(exercise, 'equipment');
+            if (equipment?.toLowerCase() != equipmentMetaKey.toLowerCase()) {
+              return false;
+            }
+          }
+          if (movementPatternMetaKey != null) {
+            final pattern = _metaString(exercise, 'movementPattern');
+            if (pattern?.toLowerCase() !=
+                movementPatternMetaKey.toLowerCase()) {
+              return false;
+            }
+          }
+          return true;
+        })
+        .toList(growable: false);
   }
 
   static List<String> suggest(

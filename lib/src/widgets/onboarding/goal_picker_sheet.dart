@@ -30,10 +30,7 @@ class GoalPickerSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => GoalPickerSheet(
-        initial: initial,
-        onPick: (g) {},
-      ),
+      builder: (ctx) => GoalPickerSheet(initial: initial, onPick: (g) {}),
     );
   }
 
@@ -53,12 +50,7 @@ class GoalPickerSheet extends StatelessWidget {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           border: Border(top: BorderSide(color: t.border)),
         ),
-        padding: EdgeInsets.fromLTRB(
-          t.space4,
-          t.space3,
-          t.space4,
-          t.space5,
-        ),
+        padding: EdgeInsets.fromLTRB(t.space4, t.space3, t.space4, t.space5),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -90,8 +82,7 @@ class GoalPickerSheet extends StatelessWidget {
                   Navigator.of(context).pop(goal);
                 },
               ),
-              if (goal != TrainingGoal.values.last)
-                SizedBox(height: t.space3),
+              if (goal != TrainingGoal.values.last) SizedBox(height: t.space3),
             ],
           ],
         ),

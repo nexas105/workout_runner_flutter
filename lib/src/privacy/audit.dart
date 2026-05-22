@@ -26,10 +26,11 @@ class ExportAuditEntry {
 
   factory ExportAuditEntry.fromJson(Map<String, dynamic> json) {
     final rawAt = json['at'];
-    final at = rawAt is String
-        ? (DateTime.tryParse(rawAt) ??
-              DateTime.fromMillisecondsSinceEpoch(0, isUtc: true))
-        : DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
+    final at =
+        rawAt is String
+            ? (DateTime.tryParse(rawAt) ??
+                DateTime.fromMillisecondsSinceEpoch(0, isUtc: true))
+            : DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
     final rawCount = json['itemCount'];
     final itemCount = rawCount is num ? rawCount.toInt() : 0;
     final rawMeta = json['meta'];

@@ -99,9 +99,7 @@ abstract class SessionRatingStats {
   }
 
   static Map<SessionMood, int> moodHistogram(List<SessionRating> ratings) {
-    final hist = <SessionMood, int>{
-      for (final m in SessionMood.values) m: 0,
-    };
+    final hist = <SessionMood, int>{for (final m in SessionMood.values) m: 0};
     for (final r in ratings) {
       final m = r.mood;
       if (m != null) hist[m] = (hist[m] ?? 0) + 1;

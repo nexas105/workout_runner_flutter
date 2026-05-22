@@ -66,9 +66,10 @@ class _SessionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
     final volume = result.totalVolume;
-    final subtitle = volume > 0
-        ? '${result.totalSets} sets · ${volume.toStringAsFixed(0)} kg'
-        : '${result.totalSets} sets';
+    final subtitle =
+        volume > 0
+            ? '${result.totalSets} sets · ${volume.toStringAsFixed(0)} kg'
+            : '${result.totalSets} sets';
     return RunnerCard(
       onTap: onTap,
       child: Row(

@@ -61,17 +61,18 @@ class ProgramProgress {
         programId: json['programId'] as String,
         currentWeekIndex: (json['currentWeekIndex'] as num).toInt(),
         currentDayIndex: (json['currentDayIndex'] as num).toInt(),
-        completedDayIds: ((json['completedDayIds'] as List<dynamic>?) ??
-                const [])
-            .map((e) => e as String)
-            .toSet(),
-        skippedDayIds: ((json['skippedDayIds'] as List<dynamic>?) ??
-                const [])
-            .map((e) => e as String)
-            .toSet(),
-        allDayIds: ((json['allDayIds'] as List<dynamic>?) ?? const [])
-            .map((e) => e as String)
-            .toSet(),
+        completedDayIds:
+            ((json['completedDayIds'] as List<dynamic>?) ?? const [])
+                .map((e) => e as String)
+                .toSet(),
+        skippedDayIds:
+            ((json['skippedDayIds'] as List<dynamic>?) ?? const [])
+                .map((e) => e as String)
+                .toSet(),
+        allDayIds:
+            ((json['allDayIds'] as List<dynamic>?) ?? const [])
+                .map((e) => e as String)
+                .toSet(),
       );
 }
 
@@ -82,8 +83,8 @@ abstract class ProgramProgressTracker {
     List<CardioResult> cardioResults, {
     DateTime? startedAt,
   }) {
-    final start = startedAt ??
-        DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
+    final start =
+        startedAt ?? DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
 
     final strengthByPlan = <String, List<DateTime>>{};
     for (final r in workoutResults) {
@@ -95,9 +96,7 @@ abstract class ProgramProgressTracker {
     final cardioByPlan = <String, List<DateTime>>{};
     for (final r in cardioResults) {
       if (r.finishedAt.isBefore(start)) continue;
-      cardioByPlan
-          .putIfAbsent(r.planId, () => <DateTime>[])
-          .add(r.finishedAt);
+      cardioByPlan.putIfAbsent(r.planId, () => <DateTime>[]).add(r.finishedAt);
     }
     for (final list in strengthByPlan.values) {
       list.sort((a, b) => a.compareTo(b));

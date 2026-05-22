@@ -41,9 +41,8 @@ class TimerText extends StatelessWidget {
     final h = v.inHours;
     final m = v.inMinutes.remainder(60);
     final s = v.inSeconds.remainder(60);
-    final spoken = h > 0
-        ? '$h hours $m minutes $s seconds'
-        : '$m minutes $s seconds';
+    final spoken =
+        h > 0 ? '$h hours $m minutes $s seconds' : '$m minutes $s seconds';
     return Semantics(
       value: spoken,
       excludeSemantics: true,

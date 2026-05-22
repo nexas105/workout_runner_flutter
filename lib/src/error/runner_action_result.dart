@@ -17,20 +17,13 @@ class RunnerActionResult {
   final RunnerActionError? error;
   final String? message;
 
-  const RunnerActionResult._({
-    required this.success,
-    this.error,
-    this.message,
-  });
+  const RunnerActionResult._({required this.success, this.error, this.message});
 
   factory RunnerActionResult.ok() {
     return const RunnerActionResult._(success: true);
   }
 
-  factory RunnerActionResult.fail(
-    RunnerActionError error, [
-    String? message,
-  ]) {
+  factory RunnerActionResult.fail(RunnerActionError error, [String? message]) {
     return RunnerActionResult._(
       success: false,
       error: error,

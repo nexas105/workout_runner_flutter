@@ -91,7 +91,10 @@ void main() {
 
     test('byMuscleGroup aggregates across muscle ids in that group', () {
       final arms = index.byMuscleGroup('arms');
-      expect(arms, containsAll([benchPress, bentOverRow, dumbbellCurl, pushup]));
+      expect(
+        arms,
+        containsAll([benchPress, bentOverRow, dumbbellCurl, pushup]),
+      );
       expect(arms.length, 4);
 
       final chestGroup = index.byMuscleGroup('chest');
@@ -133,24 +136,21 @@ void main() {
     });
 
     test('muscleIds enumerates every indexed muscle', () {
-      expect(
-        index.muscleIds.toSet(),
-        {'m-pec', 'm-tri', 'm-lat', 'm-bi', 'm-quad'},
-      );
+      expect(index.muscleIds.toSet(), {
+        'm-pec',
+        'm-tri',
+        'm-lat',
+        'm-bi',
+        'm-quad',
+      });
     });
 
     test('muscleGroups enumerates every indexed group', () {
-      expect(
-        index.muscleGroups.toSet(),
-        {'chest', 'arms', 'back', 'legs'},
-      );
+      expect(index.muscleGroups.toSet(), {'chest', 'arms', 'back', 'legs'});
     });
 
     test('categoryIds enumerates every indexed category', () {
-      expect(
-        index.categoryIds.toSet(),
-        {'cat-chest', 'cat-back', 'cat-legs'},
-      );
+      expect(index.categoryIds.toSet(), {'cat-chest', 'cat-back', 'cat-legs'});
     });
 
     test('equipmentTypes enumerates every indexed equipment', () {

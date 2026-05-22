@@ -269,9 +269,10 @@ abstract class Readiness {
 
     final level = _levelForScore(score);
     final multipliers = _multipliersForLevel(level);
-    final reason = reasons.isEmpty
-        ? _defaultReasonForLevel(level, filtered.isEmpty)
-        : reasons.join(' ');
+    final reason =
+        reasons.isEmpty
+            ? _defaultReasonForLevel(level, filtered.isEmpty)
+            : reasons.join(' ');
 
     return TrainingReadiness(
       level: level,
@@ -373,9 +374,10 @@ abstract class Readiness {
       if (repsList.length < 2) return; // need a baseline.
       final sorted = [...repsList]..sort();
       final mid = sorted.length ~/ 2;
-      final median = sorted.length.isOdd
-          ? sorted[mid].toDouble()
-          : (sorted[mid - 1] + sorted[mid]) / 2.0;
+      final median =
+          sorted.length.isOdd
+              ? sorted[mid].toDouble()
+              : (sorted[mid - 1] + sorted[mid]) / 2.0;
       if (median <= 0) return;
       final threshold = median * _missThreshold;
       for (final reps in repsList) {

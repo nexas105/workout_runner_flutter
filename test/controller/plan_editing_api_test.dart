@@ -2,24 +2,24 @@ import 'package:fitness_workout/fitness_workout.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 WorkoutPlan _plan() => const WorkoutPlan(
-      id: 'p',
-      name: 'Push',
-      exercises: [
-        WorkoutExercise(
-          id: 'bench',
-          name: 'Bench',
-          sets: [
-            WorkoutSet(targetReps: 8, targetWeight: 60),
-            WorkoutSet(targetReps: 8, targetWeight: 60),
-          ],
-        ),
-        WorkoutExercise(
-          id: 'press',
-          name: 'OHP',
-          sets: [WorkoutSet(targetReps: 6, targetWeight: 40)],
-        ),
+  id: 'p',
+  name: 'Push',
+  exercises: [
+    WorkoutExercise(
+      id: 'bench',
+      name: 'Bench',
+      sets: [
+        WorkoutSet(targetReps: 8, targetWeight: 60),
+        WorkoutSet(targetReps: 8, targetWeight: 60),
       ],
-    );
+    ),
+    WorkoutExercise(
+      id: 'press',
+      name: 'OHP',
+      sets: [WorkoutSet(targetReps: 6, targetWeight: 40)],
+    ),
+  ],
+);
 
 void main() {
   late InMemoryRunnerStorage storage;
@@ -125,11 +125,7 @@ void main() {
       runner.startSet(0, 0);
       await runner.finishCurrentSet(reps: 8, rest: Duration.zero);
 
-      final ok = await runner.replaceSet(
-        0,
-        0,
-        const WorkoutSet(targetReps: 1),
-      );
+      final ok = await runner.replaceSet(0, 0, const WorkoutSet(targetReps: 1));
       expect(ok, isFalse);
     });
   });

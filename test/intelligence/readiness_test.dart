@@ -10,25 +10,26 @@ void main() {
     required Map<String, List<int>> repsByExercise,
     double weightPerRep = 50.0,
   }) {
-    final exercises = repsByExercise.entries.map((entry) {
-      final sets = <PerformedSet>[];
-      for (var i = 0; i < entry.value.length; i++) {
-        sets.add(
-          PerformedSet(
-            exerciseIndex: 0,
-            setIndex: i,
-            actualReps: entry.value[i],
-            actualWeight: weightPerRep,
-            completedAt: finishedAt,
-          ),
-        );
-      }
-      return PerformedExerciseDetails(
-        exerciseId: entry.key,
-        exerciseName: entry.key,
-        sets: sets,
-      );
-    }).toList();
+    final exercises =
+        repsByExercise.entries.map((entry) {
+          final sets = <PerformedSet>[];
+          for (var i = 0; i < entry.value.length; i++) {
+            sets.add(
+              PerformedSet(
+                exerciseIndex: 0,
+                setIndex: i,
+                actualReps: entry.value[i],
+                actualWeight: weightPerRep,
+                completedAt: finishedAt,
+              ),
+            );
+          }
+          return PerformedExerciseDetails(
+            exerciseId: entry.key,
+            exerciseName: entry.key,
+            sets: sets,
+          );
+        }).toList();
 
     return WorkoutResult(
       planId: planId,
@@ -54,12 +55,16 @@ void main() {
         buildResult(
           planId: 'p',
           finishedAt: now.subtract(const Duration(days: 10)),
-          repsByExercise: const {'squat': [8, 8, 8]},
+          repsByExercise: const {
+            'squat': [8, 8, 8],
+          },
         ),
         buildResult(
           planId: 'p',
           finishedAt: now.subtract(const Duration(days: 3)),
-          repsByExercise: const {'squat': [8, 8, 8]},
+          repsByExercise: const {
+            'squat': [8, 8, 8],
+          },
         ),
       ];
       final r = Readiness.fromHistory(results, now: now);
@@ -73,20 +78,21 @@ void main() {
         buildResult(
           planId: 'p',
           finishedAt: now.subtract(const Duration(days: 10)),
-          repsByExercise: const {'squat': [10, 10, 10, 10]},
+          repsByExercise: const {
+            'squat': [10, 10, 10, 10],
+          },
         ),
         // Recent week: rep counts collapse far below the median.
         buildResult(
           planId: 'p',
           finishedAt: now.subtract(const Duration(days: 2)),
-          repsByExercise: const {'squat': [4, 3, 4, 3]},
+          repsByExercise: const {
+            'squat': [4, 3, 4, 3],
+          },
         ),
       ];
       final r = Readiness.fromHistory(results, now: now);
-      expect(
-        r.level,
-        anyOf(ReadinessLevel.cautious, ReadinessLevel.fatigued),
-      );
+      expect(r.level, anyOf(ReadinessLevel.cautious, ReadinessLevel.fatigued));
       expect(r.suggestedVolumeMultiplier, lessThan(1.0));
       expect(r.score, lessThan(0.65));
     });
@@ -118,22 +124,14 @@ void main() {
 
     test('sleep 4h shifts score down', () {
       final neutral = Readiness.fromHistory(const [], now: now);
-      final tired = Readiness.fromHistory(
-        const [],
-        sleepHours: 4.0,
-        now: now,
-      );
+      final tired = Readiness.fromHistory(const [], sleepHours: 4.0, now: now);
       expect(tired.score, lessThan(neutral.score));
       expect(tired.reason, contains('sleep'));
     });
 
     test('sleep 8h does not penalise', () {
       final neutral = Readiness.fromHistory(const [], now: now);
-      final rested = Readiness.fromHistory(
-        const [],
-        sleepHours: 8.0,
-        now: now,
-      );
+      final rested = Readiness.fromHistory(const [], sleepHours: 8.0, now: now);
       expect(rested.score, equals(neutral.score));
     });
 
@@ -142,7 +140,9 @@ void main() {
         buildResult(
           planId: 'p',
           finishedAt: now.subtract(const Duration(days: 60)),
-          repsByExercise: const {'squat': [1, 1, 1, 1]},
+          repsByExercise: const {
+            'squat': [1, 1, 1, 1],
+          },
         ),
       ];
       final r = Readiness.fromHistory(results, now: now);
@@ -156,7 +156,9 @@ void main() {
         buildResult(
           planId: 'p',
           finishedAt: now.subtract(const Duration(days: 20)),
-          repsByExercise: const {'squat': [10, 10]},
+          repsByExercise: const {
+            'squat': [10, 10],
+          },
         ),
       ];
       final defaultWindow = Readiness.fromHistory(results, now: now);
@@ -224,10 +226,7 @@ void main() {
     });
 
     test('fatigued returns 0.6 multiplier', () {
-      expect(
-        Readiness.adjust(sample(ReadinessLevel.fatigued)).multiplier,
-        0.6,
-      );
+      expect(Readiness.adjust(sample(ReadinessLevel.fatigued)).multiplier, 0.6);
     });
 
     test('VolumeAdjustment toJson exposes multiplier and reason', () {

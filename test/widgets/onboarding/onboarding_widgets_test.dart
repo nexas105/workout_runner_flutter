@@ -3,18 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
-      home: WorkoutRunnerTheme(
-        data: WorkoutRunnerThemeData.dark(),
-        child: Scaffold(body: child),
-      ),
-    );
+  home: WorkoutRunnerTheme(
+    data: WorkoutRunnerThemeData.dark(),
+    child: Scaffold(body: child),
+  ),
+);
 
 void main() {
   group('GoalPickerSheet', () {
     testWidgets('renders all 4 goals', (tester) async {
-      await tester.pumpWidget(
-        _wrap(GoalPickerSheet(onPick: (_) {})),
-      );
+      await tester.pumpWidget(_wrap(GoalPickerSheet(onPick: (_) {})));
       expect(find.text('Strength'), findsOneWidget);
       expect(find.text('Hypertrophy'), findsOneWidget);
       expect(find.text('Conditioning'), findsOneWidget);
@@ -24,9 +22,7 @@ void main() {
     testWidgets('tap fires onPick with the goal', (tester) async {
       TrainingGoal? picked;
       await tester.pumpWidget(
-        _wrap(GoalPickerSheet(
-          onPick: (g) => picked = g,
-        )),
+        _wrap(GoalPickerSheet(onPick: (g) => picked = g)),
       );
       // Wrap in a navigator so Navigator.pop in the widget does not crash —
       // the MaterialApp root provides one.
@@ -38,10 +34,14 @@ void main() {
     testWidgets('static show resolves with the tapped goal', (tester) async {
       late BuildContext capturedCtx;
       await tester.pumpWidget(
-        _wrap(Builder(builder: (ctx) {
-          capturedCtx = ctx;
-          return const SizedBox.shrink();
-        })),
+        _wrap(
+          Builder(
+            builder: (ctx) {
+              capturedCtx = ctx;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
       );
 
       final future = GoalPickerSheet.show(capturedCtx);
@@ -53,13 +53,10 @@ void main() {
   });
 
   group('EquipmentPickerSheet', () {
-    testWidgets('toggles selection and Done emits the set',
-        (tester) async {
+    testWidgets('toggles selection and Done emits the set', (tester) async {
       Set<EquipmentItem>? saved;
       await tester.pumpWidget(
-        _wrap(EquipmentPickerSheet(
-          onSave: (s) => saved = s,
-        )),
+        _wrap(EquipmentPickerSheet(onSave: (s) => saved = s)),
       );
 
       await tester.tap(find.text('Barbell'));
@@ -75,14 +72,15 @@ void main() {
       expect(saved!.length, 2);
     });
 
-    testWidgets('toggling an already-selected item removes it',
-        (tester) async {
+    testWidgets('toggling an already-selected item removes it', (tester) async {
       Set<EquipmentItem>? saved;
       await tester.pumpWidget(
-        _wrap(EquipmentPickerSheet(
-          initial: const {EquipmentItem.barbell},
-          onSave: (s) => saved = s,
-        )),
+        _wrap(
+          EquipmentPickerSheet(
+            initial: const {EquipmentItem.barbell},
+            onSave: (s) => saved = s,
+          ),
+        ),
       );
 
       await tester.tap(find.text('Barbell'));
@@ -94,14 +92,17 @@ void main() {
       expect(saved!, isEmpty);
     });
 
-    testWidgets('Bodyweight only quick-pick replaces the selection',
-        (tester) async {
+    testWidgets('Bodyweight only quick-pick replaces the selection', (
+      tester,
+    ) async {
       Set<EquipmentItem>? saved;
       await tester.pumpWidget(
-        _wrap(EquipmentPickerSheet(
-          initial: const {EquipmentItem.barbell, EquipmentItem.dumbbell},
-          onSave: (s) => saved = s,
-        )),
+        _wrap(
+          EquipmentPickerSheet(
+            initial: const {EquipmentItem.barbell, EquipmentItem.dumbbell},
+            onSave: (s) => saved = s,
+          ),
+        ),
       );
 
       await tester.tap(find.text('Bodyweight only'));
@@ -116,16 +117,19 @@ void main() {
   });
 
   group('ExperienceLevelPicker', () {
-    testWidgets('renders all 3 levels and reflects value',
-        (tester) async {
+    testWidgets('renders all 3 levels and reflects value', (tester) async {
       ExperienceLevel current = ExperienceLevel.beginner;
       await tester.pumpWidget(
-        _wrap(StatefulBuilder(builder: (ctx, setState) {
-          return ExperienceLevelPicker(
-            value: current,
-            onChanged: (l) => setState(() => current = l),
-          );
-        })),
+        _wrap(
+          StatefulBuilder(
+            builder: (ctx, setState) {
+              return ExperienceLevelPicker(
+                value: current,
+                onChanged: (l) => setState(() => current = l),
+              );
+            },
+          ),
+        ),
       );
 
       expect(find.text('Beginner'), findsOneWidget);
@@ -148,18 +152,17 @@ void main() {
         goal: TrainingGoal.hypertrophy,
         level: ExperienceLevel.advanced,
         daysPerWeek: 4,
-        equipment: {
-          EquipmentItem.barbell.id,
-          EquipmentItem.dumbbell.id,
-        },
+        equipment: {EquipmentItem.barbell.id, EquipmentItem.dumbbell.id},
       );
 
       PlanGenerationProfile? saved;
       await tester.pumpWidget(
-        _wrap(PlanGenerationProfileSheet(
-          initial: initial,
-          onSave: (p) => saved = p,
-        )),
+        _wrap(
+          PlanGenerationProfileSheet(
+            initial: initial,
+            onSave: (p) => saved = p,
+          ),
+        ),
       );
 
       // Sanity: initial level shown.
@@ -182,9 +185,7 @@ void main() {
     testWidgets('days-per-week stepper clamps to 3..6', (tester) async {
       PlanGenerationProfile? saved;
       await tester.pumpWidget(
-        _wrap(PlanGenerationProfileSheet(
-          onSave: (p) => saved = p,
-        )),
+        _wrap(PlanGenerationProfileSheet(onSave: (p) => saved = p)),
       );
 
       // Default 3 — decrement should stay at 3.

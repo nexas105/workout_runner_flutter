@@ -96,8 +96,6 @@ class CatalogSnapshot {
 
   CatalogSnapshot({required this.index, required this.builtAt});
 
-  factory CatalogSnapshot.from(List<WorkoutExercise> source) => CatalogSnapshot(
-    index: ExerciseIndex(source),
-    builtAt: DateTime.now(),
-  );
+  factory CatalogSnapshot.from(List<WorkoutExercise> source) =>
+      CatalogSnapshot(index: ExerciseIndex(source), builtAt: DateTime.now());
 }

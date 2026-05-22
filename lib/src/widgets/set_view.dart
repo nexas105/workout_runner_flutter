@@ -39,10 +39,8 @@ class SetRowSlotData {
 
 /// Builder signature for [SetRow.trailingBuilder]. Return any widget — the
 /// bundled trailing visuals are shown when the builder is `null`.
-typedef SetTrailingBuilder = Widget Function(
-  BuildContext context,
-  SetRowSlotData data,
-);
+typedef SetTrailingBuilder =
+    Widget Function(BuildContext context, SetRowSlotData data);
 
 enum _SetMode { pending, running, done, locked }
 
@@ -87,9 +85,10 @@ class SetRow extends StatelessWidget {
     final isWarmup = target.type == SetType.warmup;
 
     return Opacity(
-      opacity: isWarmup && mode != _SetMode.running && mode != _SetMode.done
-          ? 0.85
-          : 1,
+      opacity:
+          isWarmup && mode != _SetMode.running && mode != _SetMode.done
+              ? 0.85
+              : 1,
       child: RunnerCard(
         padding: EdgeInsets.symmetric(horizontal: t.space4, vertical: t.space3),
         borderRadius: t.radiusMedium,
@@ -97,9 +96,8 @@ class SetRow extends StatelessWidget {
             mode == _SetMode.running
                 ? t.hot.withValues(alpha: 0.08)
                 : t.surfaceElevated,
-        borderColor: mode == _SetMode.running
-            ? t.hot
-            : (typeAccent ?? t.border),
+        borderColor:
+            mode == _SetMode.running ? t.hot : (typeAccent ?? t.border),
         shadow:
             mode == _SetMode.running
                 ? [
@@ -119,16 +117,16 @@ class SetRow extends StatelessWidget {
             SizedBox(width: t.space3),
             trailingBuilder != null
                 ? trailingBuilder!(
-                    context,
-                    SetRowSlotData(
-                      runner: runner,
-                      target: target,
-                      performed: performed,
-                      exerciseIndex: exerciseIndex,
-                      setIndex: setIndex,
-                      state: _publicState(mode),
-                    ),
-                  )
+                  context,
+                  SetRowSlotData(
+                    runner: runner,
+                    target: target,
+                    performed: performed,
+                    exerciseIndex: exerciseIndex,
+                    setIndex: setIndex,
+                    state: _publicState(mode),
+                  ),
+                )
                 : _SetTrailing(mode: mode, runner: runner, target: target),
           ],
         ),
@@ -137,11 +135,11 @@ class SetRow extends StatelessWidget {
   }
 
   SetRowState _publicState(_SetMode m) => switch (m) {
-        _SetMode.pending => SetRowState.pending,
-        _SetMode.running => SetRowState.running,
-        _SetMode.done => SetRowState.done,
-        _SetMode.locked => SetRowState.locked,
-      };
+    _SetMode.pending => SetRowState.pending,
+    _SetMode.running => SetRowState.running,
+    _SetMode.done => SetRowState.done,
+    _SetMode.locked => SetRowState.locked,
+  };
 
   _SetMode _modeFor(WorkoutRunner runner) {
     if (performed != null) return _SetMode.done;
@@ -280,25 +278,26 @@ class _SetMeta extends StatelessWidget {
       targetLine = '${target.targetReps} ${l.repsLabel.toLowerCase()}';
     }
 
-    final typePill = typeLabel == null
-        ? null
-        : Container(
-            padding: EdgeInsets.symmetric(horizontal: t.space2, vertical: 2),
-            margin: EdgeInsets.only(bottom: t.space1),
-            decoration: BoxDecoration(
-              color: (typeAccent ?? t.accent).withValues(alpha: 0.18),
-              borderRadius: t.radiusPill,
-            ),
-            child: Text(
-              typeLabel,
-              style: t.caption.copyWith(
-                color: typeAccent ?? t.accent,
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.8,
+    final typePill =
+        typeLabel == null
+            ? null
+            : Container(
+              padding: EdgeInsets.symmetric(horizontal: t.space2, vertical: 2),
+              margin: EdgeInsets.only(bottom: t.space1),
+              decoration: BoxDecoration(
+                color: (typeAccent ?? t.accent).withValues(alpha: 0.18),
+                borderRadius: t.radiusPill,
               ),
-            ),
-          );
+              child: Text(
+                typeLabel,
+                style: t.caption.copyWith(
+                  color: typeAccent ?? t.accent,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            );
 
     if (p == null) {
       return Column(
@@ -376,11 +375,10 @@ class _SetTrailing extends StatelessWidget {
         );
       case _SetMode.running:
         final isTimed = target.isTimed && target.targetDuration != null;
-        final shownDuration = isTimed
-            ? runner.currentSetRemaining
-            : runner.currentSetElapsed;
-        final reachedTarget = isTimed &&
-            runner.currentSetElapsed >= target.targetDuration!;
+        final shownDuration =
+            isTimed ? runner.currentSetRemaining : runner.currentSetElapsed;
+        final reachedTarget =
+            isTimed && runner.currentSetElapsed >= target.targetDuration!;
         return Container(
           padding: EdgeInsets.symmetric(
             horizontal: t.space3,

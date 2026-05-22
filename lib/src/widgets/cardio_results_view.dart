@@ -11,10 +11,8 @@ import 'internals/timer_text.dart';
 
 /// Build the row of stat tiles shown in a [CardioResultsView]. Use the
 /// bundled [CardioResultsStatTile] for consistent visuals.
-typedef CardioStatBuilder = List<Widget> Function(
-  BuildContext context,
-  CardioResult result,
-);
+typedef CardioStatBuilder =
+    List<Widget> Function(BuildContext context, CardioResult result);
 
 /// Stand-alone result summary for a finished cardio session.
 class CardioResultsView extends StatelessWidget {
@@ -125,9 +123,8 @@ class _StatsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
     final l = WorkoutRunnerLocalizationsScope.of(context);
-    final tiles = builder != null
-        ? builder!(context, result)
-        : _defaultTiles(result, l);
+    final tiles =
+        builder != null ? builder!(context, result) : _defaultTiles(result, l);
     if (tiles.isEmpty) return const SizedBox.shrink();
     return Row(
       children: [

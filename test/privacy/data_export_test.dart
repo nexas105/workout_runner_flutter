@@ -117,8 +117,10 @@ void main() {
       expect(restored.exportedAt, bundle.exportedAt);
       expect(restored.workoutResults, hasLength(1));
       expect(restored.workoutResults.first.planId, 'plan-1');
-      expect(restored.workoutResults.first.exercises.first.exerciseName,
-          'Bench press');
+      expect(
+        restored.workoutResults.first.exercises.first.exerciseName,
+        'Bench press',
+      );
       expect(restored.cardioResults, hasLength(1));
       expect(restored.cardioResults.first.planName, 'Easy run');
       expect(restored.workoutPlans, hasLength(1));

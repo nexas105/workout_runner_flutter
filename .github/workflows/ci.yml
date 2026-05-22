@@ -16,8 +16,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          # Match the lower bound declared in pubspec.yaml.
-          flutter-version: '3.16.0'
+          # Ships Dart 3.7 — the SDK lower bound declared in pubspec.yaml.
+          flutter-version: '3.29.0'
 
       - name: Pub get
         run: flutter pub get

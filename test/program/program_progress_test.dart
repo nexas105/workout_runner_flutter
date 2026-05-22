@@ -94,12 +94,9 @@ void main() {
     test('cardio results mark cardio days completed', () {
       final program = _twoDayProgram();
       final start = DateTime.utc(2026, 1, 1);
-      final progress = ProgramProgressTracker.compute(
-        program,
-        const [],
-        [_cardio('plan_c', start.add(const Duration(days: 2)))],
-        startedAt: start,
-      );
+      final progress = ProgramProgressTracker.compute(program, const [], [
+        _cardio('plan_c', start.add(const Duration(days: 2))),
+      ], startedAt: start);
       expect(progress.completedDayIds, {'prog_t_w1d2'});
       expect(progress.currentWeekIndex, 1);
       expect(progress.currentDayIndex, 0);
@@ -162,18 +159,20 @@ void main() {
       expect(progress.isCompleted, isFalse);
     });
 
-    test('compute against beginnerStrength5x5 template yields valid result',
-        () {
-      final program = ProgramTemplates.beginnerStrength5x5();
-      final progress = ProgramProgressTracker.compute(
-        program,
-        const [],
-        const [],
-      );
-      expect(progress.programId, program.id);
-      expect(progress.currentWeekIndex, 1);
-      expect(progress.currentDayIndex, 0);
-      expect(progress.allDayIds.length, program.totalDays);
-    });
+    test(
+      'compute against beginnerStrength5x5 template yields valid result',
+      () {
+        final program = ProgramTemplates.beginnerStrength5x5();
+        final progress = ProgramProgressTracker.compute(
+          program,
+          const [],
+          const [],
+        );
+        expect(progress.programId, program.id);
+        expect(progress.currentWeekIndex, 1);
+        expect(progress.currentDayIndex, 0);
+        expect(progress.allDayIds.length, program.totalDays);
+      },
+    );
   });
 }

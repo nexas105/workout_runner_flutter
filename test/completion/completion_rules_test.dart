@@ -40,11 +40,7 @@ void main() {
           PerformedExerciseDetails(
             exerciseId: 'bench',
             exerciseName: 'bench',
-            sets: [
-              _performed(0, 0),
-              _performed(0, 1),
-              _performed(0, 2),
-            ],
+            sets: [_performed(0, 0), _performed(0, 1), _performed(0, 2)],
           ),
         ],
       );
@@ -112,11 +108,7 @@ void main() {
           PerformedExerciseDetails(
             exerciseId: 'bench',
             exerciseName: 'bench',
-            sets: [
-              _performed(0, 0),
-              _performed(0, 1),
-              _performed(0, 2),
-            ],
+            sets: [_performed(0, 0), _performed(0, 1), _performed(0, 2)],
           ),
         ],
       );
@@ -187,11 +179,7 @@ void main() {
           PerformedExerciseDetails(
             exerciseId: 'bench',
             exerciseName: 'bench',
-            sets: [
-              _performed(0, 0),
-              _performed(0, 1),
-              _performed(0, 2),
-            ],
+            sets: [_performed(0, 0), _performed(0, 1), _performed(0, 2)],
           ),
         ],
       );

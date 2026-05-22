@@ -19,11 +19,7 @@ class WeeklySummaryCard extends StatelessWidget {
   final WeeklyWorkoutSummary summary;
   final VoidCallback? onTap;
 
-  const WeeklySummaryCard({
-    super.key,
-    required this.summary,
-    this.onTap,
-  });
+  const WeeklySummaryCard({super.key, required this.summary, this.onTap});
 
   @override
   Widget build(BuildContext context) {

@@ -52,9 +52,8 @@ void main() {
       final plan = StrengthTemplates.fiveByFive;
       expect(plan.exercises, isNotEmpty);
       for (final exercise in plan.exercises) {
-        final workingSets = exercise.sets
-            .where((s) => s.type == SetType.working)
-            .toList();
+        final workingSets =
+            exercise.sets.where((s) => s.type == SetType.working).toList();
         expect(
           workingSets.length,
           5,

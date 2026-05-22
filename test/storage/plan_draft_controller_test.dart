@@ -20,21 +20,26 @@ void main() {
     await controller.dispose();
   });
 
-  test('rapid onPlanChanged calls only save the LAST plan after debounce',
-      () async {
-    await controller.onPlanChanged(_plan('p', name: 'v1'));
-    await controller.onPlanChanged(_plan('p', name: 'v2'));
-    await controller.onPlanChanged(_plan('p', name: 'v3'));
+  test(
+    'rapid onPlanChanged calls only save the LAST plan after debounce',
+    () async {
+      await controller.onPlanChanged(_plan('p', name: 'v1'));
+      await controller.onPlanChanged(_plan('p', name: 'v2'));
+      await controller.onPlanChanged(_plan('p', name: 'v3'));
 
-    expect(await storage.hasDraft(), isFalse,
-        reason: 'nothing should be persisted before the debounce elapses');
+      expect(
+        await storage.hasDraft(),
+        isFalse,
+        reason: 'nothing should be persisted before the debounce elapses',
+      );
 
-    await Future<void>.delayed(_afterDebounce);
+      await Future<void>.delayed(_afterDebounce);
 
-    final saved = await storage.readDraft();
-    expect(saved, isNotNull);
-    expect(saved!.name, 'v3');
-  });
+      final saved = await storage.readDraft();
+      expect(saved, isNotNull);
+      expect(saved!.name, 'v3');
+    },
+  );
 
   test('resume returns the active slot draft', () async {
     await storage.saveDraft(_plan('p', name: 'resumed'));
@@ -50,8 +55,11 @@ void main() {
     expect(await storage.hasDraft(), isFalse);
 
     await Future<void>.delayed(_afterDebounce);
-    expect(await storage.hasDraft(), isFalse,
-        reason: 'the cancelled debounce must not resurrect the draft');
+    expect(
+      await storage.hasDraft(),
+      isFalse,
+      reason: 'the cancelled debounce must not resurrect the draft',
+    );
   });
 
   test('dispose flushes any pending plan immediately', () async {
@@ -76,10 +84,7 @@ void main() {
 
     expect(await storage.hasDraft(slot: 'editor-b'), isTrue);
     expect(await storage.hasDraft(), isFalse);
-    expect(
-      (await storage.readDraft(slot: 'editor-b'))?.name,
-      'slotted',
-    );
+    expect((await storage.readDraft(slot: 'editor-b'))?.name, 'slotted');
     await slotted.dispose();
   });
 }

@@ -3,27 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _host(Widget Function(BuildContext) builder) => MaterialApp(
-      home: WorkoutRunnerTheme(
-        data: WorkoutRunnerThemeData.dark(),
-        child: Scaffold(body: Builder(builder: builder)),
-      ),
-    );
+  home: WorkoutRunnerTheme(
+    data: WorkoutRunnerThemeData.dark(),
+    child: Scaffold(body: Builder(builder: builder)),
+  ),
+);
 
 void main() {
   testWidgets('Empty list shows an empty-state placeholder', (tester) async {
-    await tester.pumpWidget(_host((context) {
-      return Center(
-        child: ElevatedButton(
-          onPressed: () => CatalogPickerSheet.show<String>(
-            context,
-            items: const <String>[],
-            labelOf: (s) => s,
-            title: 'Pick exercise',
+    await tester.pumpWidget(
+      _host((context) {
+        return Center(
+          child: ElevatedButton(
+            onPressed:
+                () => CatalogPickerSheet.show<String>(
+                  context,
+                  items: const <String>[],
+                  labelOf: (s) => s,
+                  title: 'Pick exercise',
+                ),
+            child: const Text('open'),
           ),
-          child: const Text('open'),
-        ),
-      );
-    }));
+        );
+      }),
+    );
 
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
@@ -33,19 +36,27 @@ void main() {
   });
 
   testWidgets('Search filters items (typing reduces results)', (tester) async {
-    await tester.pumpWidget(_host((context) {
-      return Center(
-        child: ElevatedButton(
-          onPressed: () => CatalogPickerSheet.show<String>(
-            context,
-            items: const ['Bench Press', 'Squat', 'Deadlift', 'Benchmark'],
-            labelOf: (s) => s,
-            title: 'Pick',
+    await tester.pumpWidget(
+      _host((context) {
+        return Center(
+          child: ElevatedButton(
+            onPressed:
+                () => CatalogPickerSheet.show<String>(
+                  context,
+                  items: const [
+                    'Bench Press',
+                    'Squat',
+                    'Deadlift',
+                    'Benchmark',
+                  ],
+                  labelOf: (s) => s,
+                  title: 'Pick',
+                ),
+            child: const Text('open'),
           ),
-          child: const Text('open'),
-        ),
-      );
-    }));
+        );
+      }),
+    );
 
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
@@ -65,24 +76,27 @@ void main() {
     expect(find.text('Deadlift'), findsNothing);
   });
 
-  testWidgets('Single-select returns the tapped item immediately',
-      (tester) async {
+  testWidgets('Single-select returns the tapped item immediately', (
+    tester,
+  ) async {
     List<String>? result;
-    await tester.pumpWidget(_host((context) {
-      return Center(
-        child: ElevatedButton(
-          onPressed: () async {
-            result = await CatalogPickerSheet.show<String>(
-              context,
-              items: const ['Alpha', 'Beta', 'Gamma'],
-              labelOf: (s) => s,
-              title: 'Pick one',
-            );
-          },
-          child: const Text('open'),
-        ),
-      );
-    }));
+    await tester.pumpWidget(
+      _host((context) {
+        return Center(
+          child: ElevatedButton(
+            onPressed: () async {
+              result = await CatalogPickerSheet.show<String>(
+                context,
+                items: const ['Alpha', 'Beta', 'Gamma'],
+                labelOf: (s) => s,
+                title: 'Pick one',
+              );
+            },
+            child: const Text('open'),
+          ),
+        );
+      }),
+    );
 
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
@@ -95,26 +109,29 @@ void main() {
     expect(result, ['Beta']);
   });
 
-  testWidgets('Multi-select returns the list of toggled items on Done',
-      (tester) async {
+  testWidgets('Multi-select returns the list of toggled items on Done', (
+    tester,
+  ) async {
     List<String>? result;
-    await tester.pumpWidget(_host((context) {
-      return Center(
-        child: ElevatedButton(
-          onPressed: () async {
-            result = await CatalogPickerSheet.show<String>(
-              context,
-              items: const ['Chest', 'Back', 'Legs', 'Shoulders'],
-              labelOf: (s) => s,
-              multiSelect: true,
-              initialSelection: const ['Legs'],
-              title: 'Pick muscles',
-            );
-          },
-          child: const Text('open'),
-        ),
-      );
-    }));
+    await tester.pumpWidget(
+      _host((context) {
+        return Center(
+          child: ElevatedButton(
+            onPressed: () async {
+              result = await CatalogPickerSheet.show<String>(
+                context,
+                items: const ['Chest', 'Back', 'Legs', 'Shoulders'],
+                labelOf: (s) => s,
+                multiSelect: true,
+                initialSelection: const ['Legs'],
+                title: 'Pick muscles',
+              );
+            },
+            child: const Text('open'),
+          ),
+        );
+      }),
+    );
 
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();

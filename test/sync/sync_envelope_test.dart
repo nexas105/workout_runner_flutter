@@ -25,10 +25,7 @@ void main() {
       );
 
       final json = envelope.toJson((p) => p.toJson());
-      final restored = SyncEnvelope.fromJson<_Payload>(
-        json,
-        _Payload.fromJson,
-      );
+      final restored = SyncEnvelope.fromJson<_Payload>(json, _Payload.fromJson);
 
       expect(restored.id, 'plan-1');
       expect(restored.operation, SyncOperation.update);
@@ -53,10 +50,7 @@ void main() {
       final json = envelope.toJson((p) => p.toJson());
       expect(json.containsKey('payload'), isFalse);
 
-      final restored = SyncEnvelope.fromJson<_Payload>(
-        json,
-        _Payload.fromJson,
-      );
+      final restored = SyncEnvelope.fromJson<_Payload>(json, _Payload.fromJson);
 
       expect(restored.operation, SyncOperation.delete);
       expect(restored.deletedAt, DateTime.utc(2026, 5, 21, 12));

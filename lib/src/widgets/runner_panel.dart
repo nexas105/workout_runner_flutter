@@ -29,13 +29,13 @@ class RunnerPanel extends StatefulWidget {
   /// header can react to runner state (timer, elapsed, paused) without an
   /// external rebuild trigger. Ignored when [header] is non-null.
   final Widget Function(BuildContext context, WorkoutRunner runner)?
-      headerBuilder;
+  headerBuilder;
 
   /// Replaces the bundled "Finish workout" CTA at the bottom of the panel.
   /// Receives the active [WorkoutRunner] so the builder can drive its own
   /// disabled / loading state. When `null` the default `_FinishBar` is used.
   final Widget Function(BuildContext context, WorkoutRunner runner)?
-      finishButtonBuilder;
+  finishButtonBuilder;
 
   /// When `true` (default) confirms before finishing if there are pending
   /// sets, and disables the *Finish* button when zero sets are done.
@@ -100,12 +100,13 @@ class _RunnerPanelState extends State<RunnerPanel> {
                     t.space5,
                     t.space5,
                   ),
-                  child: widget.finishButtonBuilder != null
-                      ? widget.finishButtonBuilder!(context, runner)
-                      : _FinishBar(
-                          onFinished: widget.onFinished,
-                          confirmFinish: widget.confirmFinish,
-                        ),
+                  child:
+                      widget.finishButtonBuilder != null
+                          ? widget.finishButtonBuilder!(context, runner)
+                          : _FinishBar(
+                            onFinished: widget.onFinished,
+                            confirmFinish: widget.confirmFinish,
+                          ),
                 ),
               ],
             ),

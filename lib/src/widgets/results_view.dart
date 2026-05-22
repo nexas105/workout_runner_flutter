@@ -12,10 +12,8 @@ import 'internals/timer_text.dart';
 /// widgets you want — the bundled `ResultsStatTile` is exposed publicly so you
 /// can mix custom values in with the defaults without rebuilding the visual
 /// style from scratch.
-typedef WorkoutStatBuilder = List<Widget> Function(
-  BuildContext context,
-  WorkoutResult result,
-);
+typedef WorkoutStatBuilder =
+    List<Widget> Function(BuildContext context, WorkoutResult result);
 
 /// Stand-alone result summary, ready to push as a destination after
 /// `runner.finish()`. Looks the same as the in-app `RunnerScreen` summary.
@@ -102,10 +100,7 @@ class _Hero extends StatelessWidget {
             children: [
               Icon(Icons.celebration_rounded, color: t.accent, size: 28),
               SizedBox(width: t.space2),
-              Text(
-                l.workoutComplete,
-                style: t.title.copyWith(color: t.accent),
-              ),
+              Text(l.workoutComplete, style: t.title.copyWith(color: t.accent)),
             ],
           ),
           SizedBox(height: t.space3),
@@ -127,9 +122,8 @@ class _StatsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
     final l = WorkoutRunnerLocalizationsScope.of(context);
-    final tiles = builder != null
-        ? builder!(context, result)
-        : _defaultTiles(result, l);
+    final tiles =
+        builder != null ? builder!(context, result) : _defaultTiles(result, l);
     if (tiles.isEmpty) return const SizedBox.shrink();
     return Row(
       children: [

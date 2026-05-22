@@ -33,8 +33,8 @@ class InMemorySessionRatingStorage implements SessionRatingStorage {
 
   @override
   Future<List<SessionRating>> recent({int? limit, DateTime? since}) async {
-    final entries = _byKey.values.toList()
-      ..sort((a, b) => b.ratedAt.compareTo(a.ratedAt));
+    final entries =
+        _byKey.values.toList()..sort((a, b) => b.ratedAt.compareTo(a.ratedAt));
     Iterable<SessionRating> filtered = entries;
     if (since != null) {
       filtered = filtered.where((r) => !r.ratedAt.isBefore(since));

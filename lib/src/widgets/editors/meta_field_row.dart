@@ -143,8 +143,7 @@ class MetaFieldRow extends StatelessWidget {
     final t = WorkoutRunnerTheme.of(context);
     final trailing = expandChild ? Expanded(child: child) : child;
     return Padding(
-      padding:
-          padding ?? EdgeInsets.symmetric(vertical: t.space2),
+      padding: padding ?? EdgeInsets.symmetric(vertical: t.space2),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -184,8 +183,9 @@ class _ThemedTextField extends StatefulWidget {
 }
 
 class _ThemedTextFieldState extends State<_ThemedTextField> {
-  late final TextEditingController _controller =
-      TextEditingController(text: widget.value);
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.value,
+  );
 
   @override
   void didUpdateWidget(covariant _ThemedTextField oldWidget) {
@@ -218,10 +218,7 @@ class _ThemedTextFieldState extends State<_ThemedTextField> {
         borderRadius: t.radiusMedium,
         border: Border.all(color: t.border),
       ),
-      padding: EdgeInsets.symmetric(
-        horizontal: t.space3,
-        vertical: t.space2,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: t.space3, vertical: t.space2),
       child: TextField(
         controller: _controller,
         onChanged: widget.onChanged,

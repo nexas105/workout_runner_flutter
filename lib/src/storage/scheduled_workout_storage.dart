@@ -36,8 +36,9 @@ class InMemoryScheduledWorkoutStorage implements ScheduledWorkoutStorage {
 
   @override
   Future<List<ScheduledWorkout>> all() async {
-    final list = _entries.values.toList()
-      ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+    final list =
+        _entries.values.toList()
+          ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
     return list;
   }
 

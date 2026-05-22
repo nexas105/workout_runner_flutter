@@ -57,10 +57,7 @@ class _EmptyRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: theme.space2),
-      child: Text(
-        'No personal records yet.',
-        style: theme.bodyMuted,
-      ),
+      child: Text('No personal records yet.', style: theme.bodyMuted),
     );
   }
 }
@@ -134,19 +131,13 @@ class _TypeChip extends StatelessWidget {
     final t = WorkoutRunnerTheme.of(context);
     final label = _shortLabel(type);
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: t.space2,
-        vertical: 4,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: t.space2, vertical: 4),
       decoration: BoxDecoration(
         color: t.accentMuted,
         borderRadius: t.radiusPill,
         border: Border.all(color: t.accent.withValues(alpha: 0.6)),
       ),
-      child: Text(
-        label,
-        style: t.caption.copyWith(color: t.accent),
-      ),
+      child: Text(label, style: t.caption.copyWith(color: t.accent)),
     );
   }
 

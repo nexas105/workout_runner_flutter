@@ -91,8 +91,10 @@ void main() {
       const empty = ConsentState();
       final granted = empty.grant(ConsentScope.healthExport);
 
-      expect(await gate.requireConsent(ConsentScope.healthExport, empty),
-          isFalse);
+      expect(
+        await gate.requireConsent(ConsentScope.healthExport, empty),
+        isFalse,
+      );
       expect(
         await gate.requireConsent(ConsentScope.healthExport, granted),
         isTrue,

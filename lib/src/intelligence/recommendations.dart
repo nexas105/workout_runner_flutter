@@ -179,12 +179,12 @@ abstract class Recommendations {
     required int consecutiveMissedSets,
     required int weeklyVolumeTrendPct,
   }) {
-    final needsDeload =
-        consecutiveMissedSets >= 6 || weeklyVolumeTrendPct > 30;
+    final needsDeload = consecutiveMissedSets >= 6 || weeklyVolumeTrendPct > 30;
     if (needsDeload) {
-      final reason = consecutiveMissedSets >= 6
-          ? 'High missed-set count signals accumulated fatigue.'
-          : 'Weekly volume spike exceeds 30% — back off to recover.';
+      final reason =
+          consecutiveMissedSets >= 6
+              ? 'High missed-set count signals accumulated fatigue.'
+              : 'Weekly volume spike exceeds 30% — back off to recover.';
       return DeloadSuggestion(
         volumeMultiplier: 0.6,
         intensityMultiplier: 0.85,

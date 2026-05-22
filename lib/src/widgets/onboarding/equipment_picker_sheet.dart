@@ -35,10 +35,7 @@ class EquipmentPickerSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => EquipmentPickerSheet(
-        initial: initial,
-        onSave: (_) {},
-      ),
+      builder: (ctx) => EquipmentPickerSheet(initial: initial, onSave: (_) {}),
     );
   }
 
@@ -86,17 +83,10 @@ class _EquipmentPickerSheetState extends State<EquipmentPickerSheet> {
         child: Container(
           decoration: BoxDecoration(
             color: t.surface,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(28),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             border: Border(top: BorderSide(color: t.border)),
           ),
-          padding: EdgeInsets.fromLTRB(
-            t.space4,
-            t.space3,
-            t.space4,
-            t.space4,
-          ),
+          padding: EdgeInsets.fromLTRB(t.space4, t.space3, t.space4, t.space4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -160,15 +150,9 @@ class _QuickPickRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
     final presets = <_QuickPick>[
-      _QuickPick(
-        'Bodyweight only',
-        EquipmentProfile.bodyweightOnly().items,
-      ),
+      _QuickPick('Bodyweight only', EquipmentProfile.bodyweightOnly().items),
       _QuickPick('Home gym', EquipmentProfile.homeGymBasic().items),
-      _QuickPick(
-        'Commercial gym',
-        EquipmentProfile.commercialGym().items,
-      ),
+      _QuickPick('Commercial gym', EquipmentProfile.commercialGym().items),
       _QuickPick('Cardio studio', EquipmentProfile.cardioStudio().items),
     ];
 
@@ -180,10 +164,7 @@ class _QuickPickRow extends StatelessWidget {
         separatorBuilder: (_, _) => SizedBox(width: t.space2),
         itemBuilder: (ctx, i) {
           final p = presets[i];
-          return _PresetPill(
-            label: p.label,
-            onTap: () => onApply(p.items),
-          );
+          return _PresetPill(label: p.label, onTap: () => onApply(p.items));
         },
       ),
     );
@@ -214,10 +195,7 @@ class _PresetPill extends StatelessWidget {
           borderRadius: t.radiusPill,
           border: Border.all(color: t.border),
         ),
-        padding: EdgeInsets.symmetric(
-          horizontal: t.space3,
-          vertical: t.space2,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: t.space3, vertical: t.space2),
         alignment: Alignment.center,
         child: Text(
           label,
@@ -255,15 +233,9 @@ class _EquipmentChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected ? t.accent : Colors.transparent,
           borderRadius: t.radiusPill,
-          border: Border.all(
-            color: selected ? t.accent : t.border,
-            width: 1,
-          ),
+          border: Border.all(color: selected ? t.accent : t.border, width: 1),
         ),
-        padding: EdgeInsets.symmetric(
-          horizontal: t.space3,
-          vertical: t.space2,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: t.space3, vertical: t.space2),
         child: Text(
           _labelOf(item),
           style: t.body.copyWith(

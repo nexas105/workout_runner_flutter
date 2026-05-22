@@ -64,14 +64,15 @@ class CatalogPickerSheet<T> extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => CatalogPickerSheet<T>(
-        items: items,
-        labelOf: labelOf,
-        subtitleOf: subtitleOf,
-        multiSelect: multiSelect,
-        initialSelection: initialSelection,
-        title: title,
-      ),
+      builder:
+          (ctx) => CatalogPickerSheet<T>(
+            items: items,
+            labelOf: labelOf,
+            subtitleOf: subtitleOf,
+            multiSelect: multiSelect,
+            initialSelection: initialSelection,
+            title: title,
+          ),
     );
   }
 
@@ -139,12 +140,7 @@ class _CatalogPickerSheetState<T> extends State<CatalogPickerSheet<T>> {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             border: Border(top: BorderSide(color: t.border)),
           ),
-          padding: EdgeInsets.fromLTRB(
-            t.space4,
-            t.space3,
-            t.space4,
-            t.space4,
-          ),
+          padding: EdgeInsets.fromLTRB(t.space4, t.space3, t.space4, t.space4),
           child: Column(
             children: [
               // Drag handle
@@ -179,24 +175,25 @@ class _CatalogPickerSheetState<T> extends State<CatalogPickerSheet<T>> {
               SizedBox(height: t.space3),
               // List / empty state
               Expanded(
-                child: filtered.isEmpty
-                    ? _EmptyState(query: _query)
-                    : ListView.separated(
-                        itemCount: filtered.length,
-                        separatorBuilder: (_, _) =>
-                            SizedBox(height: t.space2),
-                        itemBuilder: (ctx, i) {
-                          final item = filtered[i];
-                          final selected = _selected.contains(item);
-                          return _CatalogRow<T>(
-                            item: item,
-                            label: widget.labelOf(item),
-                            subtitle: widget.subtitleOf?.call(item),
-                            selected: selected,
-                            onTap: () => _onTapItem(item),
-                          );
-                        },
-                      ),
+                child:
+                    filtered.isEmpty
+                        ? _EmptyState(query: _query)
+                        : ListView.separated(
+                          itemCount: filtered.length,
+                          separatorBuilder:
+                              (_, _) => SizedBox(height: t.space2),
+                          itemBuilder: (ctx, i) {
+                            final item = filtered[i];
+                            final selected = _selected.contains(item);
+                            return _CatalogRow<T>(
+                              item: item,
+                              label: widget.labelOf(item),
+                              subtitle: widget.subtitleOf?.call(item),
+                              selected: selected,
+                              onTap: () => _onTapItem(item),
+                            );
+                          },
+                        ),
               ),
               SizedBox(height: t.space3),
               // Done
@@ -277,10 +274,7 @@ class _CatalogRow<T> extends StatelessWidget {
     return RunnerCard(
       onTap: onTap,
       borderColor: selected ? t.accent : t.border,
-      padding: EdgeInsets.symmetric(
-        horizontal: t.space3,
-        vertical: t.space3,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: t.space3, vertical: t.space3),
       child: Row(
         children: [
           Expanded(
@@ -327,9 +321,8 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = WorkoutRunnerTheme.of(context);
-    final message = query.isEmpty
-        ? 'Nothing here yet'
-        : 'No results for "$query"';
+    final message =
+        query.isEmpty ? 'Nothing here yet' : 'No results for "$query"';
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,

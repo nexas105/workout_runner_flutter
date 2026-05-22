@@ -52,13 +52,18 @@ void main() {
       final at = DateTime.utc(2026, 5, 21, 11, 0);
       final future = engine.messages.first;
 
-      engine.emitSignal(CoachSignalEvent(signal: CoachSignal.prAchieved, at: at));
+      engine.emitSignal(
+        CoachSignalEvent(signal: CoachSignal.prAchieved, at: at),
+      );
 
       final msg = await future.timeout(const Duration(seconds: 1));
       final tpl = DefaultCoachEngine.defaultTemplates[CoachSignal.prAchieved]!;
 
       expect(msg.severity, CoachSeverity.success);
-      expect(msg.title, tpl.severity == CoachSeverity.success ? 'New PR!' : msg.title);
+      expect(
+        msg.title,
+        tpl.severity == CoachSeverity.success ? 'New PR!' : msg.title,
+      );
       expect(msg.title, 'New PR!');
       expect(msg.body, 'You just set a new personal record.');
       expect(msg.source, 'overload');
@@ -79,19 +84,22 @@ void main() {
 
     test('custom mapper overrides defaults', () async {
       final engine = DefaultCoachEngine(
-        mapper: (event) => CoachingMessage(
-          id: 'custom-${event.signal.id}',
-          severity: CoachSeverity.alert,
-          title: 'CUSTOM',
-          body: 'mapped body',
-          at: event.at,
-          source: 'app:userCoach',
-        ),
+        mapper:
+            (event) => CoachingMessage(
+              id: 'custom-${event.signal.id}',
+              severity: CoachSeverity.alert,
+              title: 'CUSTOM',
+              body: 'mapped body',
+              at: event.at,
+              source: 'app:userCoach',
+            ),
       );
       final at = DateTime.utc(2026, 5, 21, 11, 1);
       final future = engine.messages.first;
 
-      engine.emitSignal(CoachSignalEvent(signal: CoachSignal.prAchieved, at: at));
+      engine.emitSignal(
+        CoachSignalEvent(signal: CoachSignal.prAchieved, at: at),
+      );
 
       final msg = await future.timeout(const Duration(seconds: 1));
       expect(msg.id, 'custom-prAchieved');
@@ -130,10 +138,7 @@ void main() {
     test('dispose closes the stream cleanly', () async {
       final engine = DefaultCoachEngine();
       final done = Completer<void>();
-      engine.messages.listen(
-        (_) {},
-        onDone: done.complete,
-      );
+      engine.messages.listen((_) {}, onDone: done.complete);
 
       await engine.dispose();
       await done.future.timeout(const Duration(seconds: 1));

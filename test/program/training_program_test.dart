@@ -110,11 +110,7 @@ void main() {
     });
 
     test('ProgramDay json omits unset optionals', () {
-      const d = ProgramDay(
-        id: 'd1',
-        label: 'Day 1',
-        kind: ProgramDayKind.rest,
-      );
+      const d = ProgramDay(id: 'd1', label: 'Day 1', kind: ProgramDayKind.rest);
       final j = d.toJson();
       expect(j.containsKey('planId'), isFalse);
       expect(j.containsKey('notes'), isFalse);

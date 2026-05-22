@@ -32,10 +32,11 @@ class CategoryEditorSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => CategoryEditorSheet(
-        existing: existing,
-        onSave: (c) => Navigator.of(ctx).pop(c),
-      ),
+      builder:
+          (ctx) => CategoryEditorSheet(
+            existing: existing,
+            onSave: (c) => Navigator.of(ctx).pop(c),
+          ),
     );
   }
 
@@ -86,12 +87,7 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
       curve: Curves.easeOut,
       child: RunnerCard(
-        padding: EdgeInsets.fromLTRB(
-          t.space4,
-          t.space3,
-          t.space4,
-          t.space4,
-        ),
+        padding: EdgeInsets.fromLTRB(t.space4, t.space3, t.space4, t.space4),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         child: Column(
           mainAxisSize: MainAxisSize.min,

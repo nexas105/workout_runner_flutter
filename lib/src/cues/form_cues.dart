@@ -89,15 +89,11 @@ abstract class FormCues {
     return ex.copyWith(meta: next.isEmpty ? <String, dynamic>{} : next);
   }
 
-  static FormCueBundle merge(FormCueBundle a, FormCueBundle b) =>
-      FormCueBundle(
-        cues: _concatDedup(a.cues, b.cues),
-        commonMistakes: _concatDedup(a.commonMistakes, b.commonMistakes),
-        setupInstructions: _concatDedup(
-          a.setupInstructions,
-          b.setupInstructions,
-        ),
-      );
+  static FormCueBundle merge(FormCueBundle a, FormCueBundle b) => FormCueBundle(
+    cues: _concatDedup(a.cues, b.cues),
+    commonMistakes: _concatDedup(a.commonMistakes, b.commonMistakes),
+    setupInstructions: _concatDedup(a.setupInstructions, b.setupInstructions),
+  );
 
   static List<String> _concatDedup(List<String> a, List<String> b) {
     final seen = <String>{};

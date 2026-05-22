@@ -14,7 +14,12 @@ void main() {
     test('returns empty list when tags is not a List', () {
       expect(WorkoutTags.read({'tags': 'strength'}), isEmpty);
       expect(WorkoutTags.read({'tags': 42}), isEmpty);
-      expect(WorkoutTags.read({'tags': {'a': 1}}), isEmpty);
+      expect(
+        WorkoutTags.read({
+          'tags': {'a': 1},
+        }),
+        isEmpty,
+      );
     });
 
     test('normalizes case, whitespace, and duplicates', () {
@@ -50,18 +55,28 @@ void main() {
     test('returns a new map and does not mutate the input', () {
       final input = <String, dynamic>{'other': 'keep'};
       final out = WorkoutTags.write(input, ['Gym', 'gym ', 'home']);
-      expect(out, {'other': 'keep', 'tags': ['gym', 'home']});
+      expect(out, {
+        'other': 'keep',
+        'tags': ['gym', 'home'],
+      });
       expect(input.containsKey('tags'), isFalse);
       expect(identical(input, out), isFalse);
     });
 
     test('accepts null meta', () {
       final out = WorkoutTags.write(null, ['strength']);
-      expect(out, {'tags': ['strength']});
+      expect(out, {
+        'tags': ['strength'],
+      });
     });
 
     test('overwrites existing tags', () {
-      final out = WorkoutTags.write({'tags': ['old']}, ['new', 'new']);
+      final out = WorkoutTags.write(
+        {
+          'tags': ['old'],
+        },
+        ['new', 'new'],
+      );
       expect(out['tags'], ['new']);
     });
   });
@@ -77,7 +92,9 @@ void main() {
     });
 
     test('is idempotent for duplicate tags', () {
-      final out = WorkoutTags.add({'tags': ['gym']}, 'GYM');
+      final out = WorkoutTags.add({
+        'tags': ['gym'],
+      }, 'GYM');
       expect(out['tags'], ['gym']);
     });
   });
@@ -93,14 +110,18 @@ void main() {
     });
 
     test('is a no-op when tag is absent', () {
-      final out = WorkoutTags.remove({'tags': ['gym']}, 'rehab');
+      final out = WorkoutTags.remove({
+        'tags': ['gym'],
+      }, 'rehab');
       expect(out['tags'], ['gym']);
     });
   });
 
   group('WorkoutTags.has', () {
     test('matches case-insensitively', () {
-      final meta = {'tags': ['Strength']};
+      final meta = {
+        'tags': ['Strength'],
+      };
       expect(WorkoutTags.has(meta, 'strength'), isTrue);
       expect(WorkoutTags.has(meta, 'STRENGTH'), isTrue);
       expect(WorkoutTags.has(meta, 'cardio'), isFalse);
@@ -108,7 +129,12 @@ void main() {
 
     test('returns false for null meta and empty tag', () {
       expect(WorkoutTags.has(null, 'strength'), isFalse);
-      expect(WorkoutTags.has({'tags': ['strength']}, '  '), isFalse);
+      expect(
+        WorkoutTags.has({
+          'tags': ['strength'],
+        }, '  '),
+        isFalse,
+      );
     });
   });
 

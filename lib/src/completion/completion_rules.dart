@@ -117,7 +117,8 @@ abstract class WorkoutCompletion {
   ) {
     final performedSets = _countPerformedSets(result);
     final planned = plan.totalTargetSets;
-    final ratio = planned == 0 ? 1.0 : (performedSets / planned).clamp(0.0, 1.0);
+    final ratio =
+        planned == 0 ? 1.0 : (performedSets / planned).clamp(0.0, 1.0);
     final missing = _missingExerciseIds(result, plan);
 
     if (performedSets == 0) {

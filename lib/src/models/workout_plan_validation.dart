@@ -163,7 +163,8 @@ extension WorkoutPlanValidation on WorkoutPlan {
         issues.add(
           WorkoutPlanValidationIssue(
             code: 'block_empty',
-            message: 'Block "${block.id}" must reference at least one exercise.',
+            message:
+                'Block "${block.id}" must reference at least one exercise.',
             severity: WorkoutPlanValidationSeverity.warning,
           ),
         );

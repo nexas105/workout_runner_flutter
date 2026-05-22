@@ -58,43 +58,44 @@ class WorkoutBlock {
     Duration? restBetween,
     Duration? restAfterBlock,
     Map<String, dynamic>? meta,
-  }) =>
-      WorkoutBlock(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        exerciseIndices: exerciseIndices ?? this.exerciseIndices,
-        rounds: rounds ?? this.rounds,
-        restBetween: restBetween ?? this.restBetween,
-        restAfterBlock: restAfterBlock ?? this.restAfterBlock,
-        meta: meta ?? this.meta,
-      );
+  }) => WorkoutBlock(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    exerciseIndices: exerciseIndices ?? this.exerciseIndices,
+    rounds: rounds ?? this.rounds,
+    restBetween: restBetween ?? this.restBetween,
+    restAfterBlock: restAfterBlock ?? this.restAfterBlock,
+    meta: meta ?? this.meta,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        if (name.isNotEmpty) 'name': name,
-        'exerciseIndices': exerciseIndices,
-        'rounds': rounds,
-        if (restBetween != null) 'restBetween': restBetween!.inSeconds,
-        if (restAfterBlock != null) 'restAfterBlock': restAfterBlock!.inSeconds,
-        if (meta != null) 'meta': meta,
-      };
+    'id': id,
+    if (name.isNotEmpty) 'name': name,
+    'exerciseIndices': exerciseIndices,
+    'rounds': rounds,
+    if (restBetween != null) 'restBetween': restBetween!.inSeconds,
+    if (restAfterBlock != null) 'restAfterBlock': restAfterBlock!.inSeconds,
+    if (meta != null) 'meta': meta,
+  };
 
   factory WorkoutBlock.fromJson(Map<String, dynamic> json) => WorkoutBlock(
-        id: json['id'] as String,
-        name: json['name'] as String? ?? '',
-        exerciseIndices: ((json['exerciseIndices'] as List<dynamic>?) ?? const [])
-            .whereType<num>()
-            .map((n) => n.toInt())
-            .toList(growable: false),
-        rounds: (json['rounds'] as num?)?.toInt() ?? 1,
-        restBetween: json['restBetween'] == null
+    id: json['id'] as String,
+    name: json['name'] as String? ?? '',
+    exerciseIndices: ((json['exerciseIndices'] as List<dynamic>?) ?? const [])
+        .whereType<num>()
+        .map((n) => n.toInt())
+        .toList(growable: false),
+    rounds: (json['rounds'] as num?)?.toInt() ?? 1,
+    restBetween:
+        json['restBetween'] == null
             ? null
             : Duration(seconds: (json['restBetween'] as num).toInt()),
-        restAfterBlock: json['restAfterBlock'] == null
+    restAfterBlock:
+        json['restAfterBlock'] == null
             ? null
             : Duration(seconds: (json['restAfterBlock'] as num).toInt()),
-        meta: (json['meta'] as Map?)?.cast<String, dynamic>(),
-      );
+    meta: (json['meta'] as Map?)?.cast<String, dynamic>(),
+  );
 
   @override
   bool operator ==(Object other) =>

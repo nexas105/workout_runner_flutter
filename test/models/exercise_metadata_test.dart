@@ -3,8 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('WorkoutExercise metadata', () {
-    test('round-trips equipment, movement pattern, difficulty and aliases',
-        () {
+    test('round-trips equipment, movement pattern, difficulty and aliases', () {
       const e = WorkoutExercise(
         id: 'bench',
         name: 'Bench press',

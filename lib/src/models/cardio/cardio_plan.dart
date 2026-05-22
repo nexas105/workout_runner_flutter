@@ -118,9 +118,10 @@ class CardioPlan {
     final minutes = plannedDuration.inMinutes;
     final minutesPart = minutes <= 0 ? '<1 min' : '~$minutes min';
     final distanceKm = plannedDistanceMeters / 1000;
-    final distancePart = distanceKm > 0
-        ? ' • ${distanceKm.toStringAsFixed(distanceKm < 10 ? 1 : 0)} km'
-        : '';
+    final distancePart =
+        distanceKm > 0
+            ? ' • ${distanceKm.toStringAsFixed(distanceKm < 10 ? 1 : 0)} km'
+            : '';
     return '${intervals.length} '
         '${intervals.length == 1 ? 'interval' : 'intervals'} '
         '• $minutesPart$distancePart';

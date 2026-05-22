@@ -39,9 +39,10 @@ class RestOverlay extends StatelessWidget {
       ignoring: !visible,
       child: Semantics(
         liveRegion: visible,
-        label: visible
-            ? '${l.restHeader}, ${remaining.inSeconds} ${l.restRemainingTrailing}'
-            : null,
+        label:
+            visible
+                ? '${l.restHeader}, ${remaining.inSeconds} ${l.restRemainingTrailing}'
+                : null,
         child: AnimatedOpacity(
           duration: reduceMotion ? Duration.zero : t.motionMedium,
           curve: Curves.easeOut,
@@ -49,57 +50,55 @@ class RestOverlay extends StatelessWidget {
           child: Container(
             color: t.restBackdrop,
             child: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: t.space6,
-                vertical: t.space5,
-              ),
-              child: Column(
-                children: [
-                  const Spacer(),
-                  Text(l.restHeader, style: t.eyebrow.copyWith(color: t.hot)),
-                  SizedBox(height: t.space3),
-                  _RingTimer(progress: progress, remaining: remaining),
-                  SizedBox(height: t.space3),
-                  Text(
-                    remaining.inSeconds <= 3
-                        ? l.restGetReady
-                        : l.restBreathe,
-                    style: t.bodyMuted,
-                  ),
-                  const Spacer(),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RunnerPillButton(
-                          label: l.restAdd30,
-                          icon: Icons.add_rounded,
-                          style: RunnerButtonStyle.outline,
-                          expand: true,
-                          onPressed:
-                              onAdd == null
-                                  ? null
-                                  : () => onAdd!(const Duration(seconds: 30)),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: t.space6,
+                  vertical: t.space5,
+                ),
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    Text(l.restHeader, style: t.eyebrow.copyWith(color: t.hot)),
+                    SizedBox(height: t.space3),
+                    _RingTimer(progress: progress, remaining: remaining),
+                    SizedBox(height: t.space3),
+                    Text(
+                      remaining.inSeconds <= 3 ? l.restGetReady : l.restBreathe,
+                      style: t.bodyMuted,
+                    ),
+                    const Spacer(),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: RunnerPillButton(
+                            label: l.restAdd30,
+                            icon: Icons.add_rounded,
+                            style: RunnerButtonStyle.outline,
+                            expand: true,
+                            onPressed:
+                                onAdd == null
+                                    ? null
+                                    : () => onAdd!(const Duration(seconds: 30)),
+                          ),
                         ),
-                      ),
-                      SizedBox(width: t.space2),
-                      Expanded(
-                        flex: 2,
-                        child: RunnerPillButton(
-                          label: l.restSkip,
-                          icon: Icons.skip_next_rounded,
-                          style: RunnerButtonStyle.hot,
-                          expand: true,
-                          onPressed: onSkip,
+                        SizedBox(width: t.space2),
+                        Expanded(
+                          flex: 2,
+                          child: RunnerPillButton(
+                            label: l.restSkip,
+                            icon: Icons.skip_next_rounded,
+                            style: RunnerButtonStyle.hot,
+                            expand: true,
+                            onPressed: onSkip,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
         ),
       ),
     );
@@ -144,7 +143,9 @@ class _RingTimer extends StatelessWidget {
               ),
               SizedBox(height: t.space1),
               Text(
-                WorkoutRunnerLocalizationsScope.of(context).restRemainingTrailing,
+                WorkoutRunnerLocalizationsScope.of(
+                  context,
+                ).restRemainingTrailing,
                 style: t.caption,
               ),
             ],

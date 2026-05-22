@@ -2,33 +2,33 @@ import 'package:fitness_workout/fitness_workout.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 WorkoutPlan _planA() => const WorkoutPlan(
-      id: 'a',
-      name: 'A',
-      exercises: [
-        WorkoutExercise(
-          id: 'bench',
-          name: 'Bench',
-          sets: [WorkoutSet(targetReps: 8)],
-        ),
-        WorkoutExercise(
-          id: 'press',
-          name: 'OHP',
-          sets: [WorkoutSet(targetReps: 6)],
-        ),
-      ],
-    );
+  id: 'a',
+  name: 'A',
+  exercises: [
+    WorkoutExercise(
+      id: 'bench',
+      name: 'Bench',
+      sets: [WorkoutSet(targetReps: 8)],
+    ),
+    WorkoutExercise(
+      id: 'press',
+      name: 'OHP',
+      sets: [WorkoutSet(targetReps: 6)],
+    ),
+  ],
+);
 
 WorkoutPlan _planB() => const WorkoutPlan(
-      id: 'b',
-      name: 'B',
-      exercises: [
-        WorkoutExercise(
-          id: 'squat',
-          name: 'Squat',
-          sets: [WorkoutSet(targetReps: 5)],
-        ),
-      ],
-    );
+  id: 'b',
+  name: 'B',
+  exercises: [
+    WorkoutExercise(
+      id: 'squat',
+      name: 'Squat',
+      sets: [WorkoutSet(targetReps: 5)],
+    ),
+  ],
+);
 
 void main() {
   late WorkoutRunner runner;
@@ -51,20 +51,21 @@ void main() {
     expect(runner.state!.performed, isNotEmpty);
   });
 
-  test('replacePlan clears performed when preservePerformed is false',
-      () async {
-    await runner.start(_planA());
-    runner.setActiveExercise(0);
-    runner.startSet(0, 0);
-    await runner.finishCurrentSet(reps: 8, rest: Duration.zero);
+  test(
+    'replacePlan clears performed when preservePerformed is false',
+    () async {
+      await runner.start(_planA());
+      runner.setActiveExercise(0);
+      runner.startSet(0, 0);
+      await runner.finishCurrentSet(reps: 8, rest: Duration.zero);
 
-    final ok =
-        await runner.replacePlan(_planB(), preservePerformed: false);
-    expect(ok, isTrue);
-    expect(runner.plan!.id, 'b');
-    expect(runner.state!.performed, isEmpty);
-    expect(runner.activeExerciseIndex, isNull);
-  });
+      final ok = await runner.replacePlan(_planB(), preservePerformed: false);
+      expect(ok, isTrue);
+      expect(runner.plan!.id, 'b');
+      expect(runner.state!.performed, isEmpty);
+      expect(runner.activeExerciseIndex, isNull);
+    },
+  );
 
   test('replacePlan caps activeExerciseIndex when out of range', () async {
     await runner.start(_planA());

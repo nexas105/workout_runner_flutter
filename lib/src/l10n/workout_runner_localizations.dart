@@ -17,13 +17,13 @@ class WorkoutRunnerLocalizations {
 
   // ─── Set types ─────────────────────────────────────────────────────────────
   String labelForSetType(SetType type) => switch (type) {
-        SetType.working => 'Working',
-        SetType.warmup => 'Warmup',
-        SetType.drop => 'Drop',
-        SetType.failure => 'Failure',
-        SetType.amrap => 'AMRAP',
-        SetType.timed => 'Timed',
-      };
+    SetType.working => 'Working',
+    SetType.warmup => 'Warmup',
+    SetType.drop => 'Drop',
+    SetType.failure => 'Failure',
+    SetType.amrap => 'AMRAP',
+    SetType.timed => 'Timed',
+  };
 
   // ─── Set / input sheet ─────────────────────────────────────────────────────
   String get repsLabel => 'Reps';
@@ -93,8 +93,11 @@ class WorkoutRunnerLocalizationsScope extends InheritedWidget {
       WorkoutRunnerLocalizations();
 
   static WorkoutRunnerLocalizations of(BuildContext context) {
-    final scope = context
-        .dependOnInheritedWidgetOfExactType<WorkoutRunnerLocalizationsScope>();
+    final scope =
+        context
+            .dependOnInheritedWidgetOfExactType<
+              WorkoutRunnerLocalizationsScope
+            >();
     return scope?.data ?? _fallback;
   }
 

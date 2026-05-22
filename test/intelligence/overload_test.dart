@@ -65,11 +65,7 @@ void main() {
 
       test('respects custom increment', () {
         final session = _session([_set(setIndex: 0, reps: 8, weight: 100)]);
-        final s = OverloadEngine.from(
-          [session],
-          target,
-          linearIncrementKg: 5,
-        )!;
+        final s = OverloadEngine.from([session], target, linearIncrementKg: 5)!;
         expect(s.suggestedWeight, 105);
       });
 
@@ -92,11 +88,12 @@ void main() {
           _set(setIndex: 0, reps: 8, weight: 100),
           _set(setIndex: 1, reps: 8, weight: 100),
         ]);
-        final s = OverloadEngine.from(
-          [session],
-          target,
-          strategy: OverloadStrategy.doubleProgression,
-        )!;
+        final s =
+            OverloadEngine.from(
+              [session],
+              target,
+              strategy: OverloadStrategy.doubleProgression,
+            )!;
         expect(s.suggestedReps, 9);
         expect(s.suggestedWeight, 100);
       });
@@ -107,11 +104,12 @@ void main() {
           _set(setIndex: 0, reps: 12, weight: 100),
           _set(setIndex: 1, reps: 12, weight: 100),
         ]);
-        final s = OverloadEngine.from(
-          [session],
-          capped,
-          strategy: OverloadStrategy.doubleProgression,
-        )!;
+        final s =
+            OverloadEngine.from(
+              [session],
+              capped,
+              strategy: OverloadStrategy.doubleProgression,
+            )!;
         expect(s.suggestedWeight, 102.5);
         expect(s.suggestedReps, lessThan(12));
         expect(s.suggestedReps, greaterThanOrEqualTo(1));
@@ -119,11 +117,12 @@ void main() {
 
       test('holds when reps missed', () {
         final session = _session([_set(setIndex: 0, reps: 7, weight: 100)]);
-        final s = OverloadEngine.from(
-          [session],
-          target,
-          strategy: OverloadStrategy.doubleProgression,
-        )!;
+        final s =
+            OverloadEngine.from(
+              [session],
+              target,
+              strategy: OverloadStrategy.doubleProgression,
+            )!;
         expect(s.suggestedWeight, 100);
         expect(s.suggestedReps, 8);
       });
@@ -135,11 +134,12 @@ void main() {
           _set(setIndex: 0, reps: 8, weight: 100, rir: 3),
           _set(setIndex: 1, reps: 8, weight: 100, rir: 2),
         ]);
-        final s = OverloadEngine.from(
-          [session],
-          target,
-          strategy: OverloadStrategy.rpe,
-        )!;
+        final s =
+            OverloadEngine.from(
+              [session],
+              target,
+              strategy: OverloadStrategy.rpe,
+            )!;
         expect(s.suggestedWeight, 102.5);
         expect(s.suggestedReps, 8);
       });
@@ -149,11 +149,12 @@ void main() {
           _set(setIndex: 0, reps: 8, weight: 100, rir: 2),
           _set(setIndex: 1, reps: 8, weight: 100, rir: 0),
         ]);
-        final s = OverloadEngine.from(
-          [session],
-          target,
-          strategy: OverloadStrategy.rpe,
-        )!;
+        final s =
+            OverloadEngine.from(
+              [session],
+              target,
+              strategy: OverloadStrategy.rpe,
+            )!;
         expect(s.suggestedWeight, 100);
       });
 
@@ -161,11 +162,12 @@ void main() {
         final session = _session([
           _set(setIndex: 0, reps: 6, weight: 100, rir: 3),
         ]);
-        final s = OverloadEngine.from(
-          [session],
-          target,
-          strategy: OverloadStrategy.rpe,
-        )!;
+        final s =
+            OverloadEngine.from(
+              [session],
+              target,
+              strategy: OverloadStrategy.rpe,
+            )!;
         expect(s.suggestedWeight, 100);
       });
     });

@@ -63,8 +63,8 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
   @override
   void initState() {
     super.initState();
-    _plan = widget.existing ??
-        const WorkoutPlan(id: '', name: '', exercises: []);
+    _plan =
+        widget.existing ?? const WorkoutPlan(id: '', name: '', exercises: []);
     _nameController = TextEditingController(text: _plan.name);
   }
 
@@ -158,11 +158,12 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => _InlineExerciseEditor(
-        existing: existing,
-        categories: widget.categories,
-        muscles: widget.muscles,
-      ),
+      builder:
+          (ctx) => _InlineExerciseEditor(
+            existing: existing,
+            categories: widget.categories,
+            muscles: widget.muscles,
+          ),
     );
   }
 
@@ -213,10 +214,7 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
               border: InputBorder.none,
               isCollapsed: true,
               hintText: 'Plan name',
-              hintStyle: t.titleLarge.copyWith(
-                fontSize: 20,
-                color: t.textDim,
-              ),
+              hintStyle: t.titleLarge.copyWith(fontSize: 20, color: t.textDim),
             ),
           ),
         ),
@@ -267,9 +265,7 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
             SizedBox(height: t.space3),
             _ValidationBadge(result: validation),
             SizedBox(height: t.space3),
-            SectionLabel(
-              'Exercises (${_plan.exercises.length})',
-            ),
+            SectionLabel('Exercises (${_plan.exercises.length})'),
             SizedBox(height: t.space2),
             _ExerciseList(
               exercises: _plan.exercises,
@@ -354,9 +350,10 @@ class _ValidationBadge extends StatelessWidget {
       icon = Icons.check_circle_outline_rounded;
     }
 
-    final messages = hasErrors
-        ? result.errors
-        : hasWarnings
+    final messages =
+        hasErrors
+            ? result.errors
+            : hasWarnings
             ? result.warnings
             : const [];
     final topMessage = messages.isEmpty ? null : messages.first.message;
@@ -364,10 +361,7 @@ class _ValidationBadge extends StatelessWidget {
     return RunnerCard(
       key: const Key('plan_editor_validation_badge'),
       borderColor: color.withValues(alpha: 0.4),
-      padding: EdgeInsets.symmetric(
-        horizontal: t.space4,
-        vertical: t.space3,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: t.space4, vertical: t.space3),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -383,10 +377,7 @@ class _ValidationBadge extends StatelessWidget {
                 ),
                 if (topMessage != null) ...[
                   SizedBox(height: t.space1),
-                  Text(
-                    topMessage,
-                    style: t.bodyMuted,
-                  ),
+                  Text(topMessage, style: t.bodyMuted),
                 ],
               ],
             ),
@@ -602,20 +593,21 @@ class _RowKebab extends StatelessWidget {
             onRemove();
         }
       },
-      itemBuilder: (ctx) => [
-        PopupMenuItem(
-          value: _RowAction.edit,
-          child: Text('Edit', style: t.body),
-        ),
-        PopupMenuItem(
-          value: _RowAction.duplicate,
-          child: Text('Duplicate', style: t.body),
-        ),
-        PopupMenuItem(
-          value: _RowAction.remove,
-          child: Text('Remove', style: t.body.copyWith(color: t.danger)),
-        ),
-      ],
+      itemBuilder:
+          (ctx) => [
+            PopupMenuItem(
+              value: _RowAction.edit,
+              child: Text('Edit', style: t.body),
+            ),
+            PopupMenuItem(
+              value: _RowAction.duplicate,
+              child: Text('Duplicate', style: t.body),
+            ),
+            PopupMenuItem(
+              value: _RowAction.remove,
+              child: Text('Remove', style: t.body.copyWith(color: t.danger)),
+            ),
+          ],
     );
   }
 }
@@ -631,9 +623,7 @@ class _SetsEditor extends StatelessWidget {
   const _SetsEditor({required this.sets, required this.onChanged});
 
   void _addSet() {
-    final template = sets.isEmpty
-        ? const WorkoutSet(targetReps: 8)
-        : sets.last;
+    final template = sets.isEmpty ? const WorkoutSet(targetReps: 8) : sets.last;
     onChanged([...sets, template.copyWith()]);
   }
 
@@ -705,19 +695,12 @@ class _SetEditorRow extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
-                  l.setIndexLabel(index + 1),
-                  style: t.caption,
-                ),
+                child: Text(l.setIndexLabel(index + 1), style: t.caption),
               ),
               IconButton(
                 key: Key('plan_editor_remove_set_${index}_button'),
                 onPressed: onRemove,
-                icon: Icon(
-                  Icons.close_rounded,
-                  color: t.textMuted,
-                  size: 18,
-                ),
+                icon: Icon(Icons.close_rounded, color: t.textMuted, size: 18),
                 tooltip: 'Remove set',
                 visualDensity: VisualDensity.compact,
               ),
@@ -758,9 +741,7 @@ class _SetEditorRow extends StatelessWidget {
             onChanged: (v) {
               final secs = v.toInt();
               onChanged(
-                set.copyWith(
-                  rest: secs == 0 ? null : Duration(seconds: secs),
-                ),
+                set.copyWith(rest: secs == 0 ? null : Duration(seconds: secs)),
               );
             },
           ),
@@ -858,8 +839,9 @@ class _InlineExerciseEditorState extends State<_InlineExerciseEditor> {
                   value: _description ?? '',
                   hint: 'Optional cue',
                   maxLines: 2,
-                  onChanged: (v) =>
-                      setState(() => _description = v.isEmpty ? null : v),
+                  onChanged:
+                      (v) =>
+                          setState(() => _description = v.isEmpty ? null : v),
                 ),
                 if (widget.categories.isNotEmpty)
                   MetaFieldRow.dropdown<ExerciseCategory?>(
@@ -894,13 +876,14 @@ class _InlineExerciseEditorState extends State<_InlineExerciseEditor> {
                         FilterChip(
                           label: Text(m.name),
                           selected: _muscles.contains(m),
-                          onSelected: (sel) => setState(() {
-                            if (sel) {
-                              _muscles.add(m);
-                            } else {
-                              _muscles.remove(m);
-                            }
-                          }),
+                          onSelected:
+                              (sel) => setState(() {
+                                if (sel) {
+                                  _muscles.add(m);
+                                } else {
+                                  _muscles.remove(m);
+                                }
+                              }),
                         ),
                     ],
                   ),
@@ -920,9 +903,7 @@ class _InlineExerciseEditorState extends State<_InlineExerciseEditor> {
                     Expanded(
                       child: RunnerPillButton(
                         key: const Key('plan_editor_inline_save_button'),
-                        label: widget.existing == null
-                            ? 'Add'
-                            : l.saveChanges,
+                        label: widget.existing == null ? 'Add' : l.saveChanges,
                         icon: Icons.check_rounded,
                         expand: true,
                         onPressed: _name.trim().isEmpty ? null : _save,

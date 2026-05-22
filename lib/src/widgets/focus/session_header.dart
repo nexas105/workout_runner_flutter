@@ -27,15 +27,14 @@ class SessionHeader extends StatelessWidget {
     final t = WorkoutRunnerTheme.of(context);
     final runner = RunnerScope.of(context);
     final plan = runner.plan;
-    final title =
-        titleOverride ?? plan?.name ?? (plan?.id ?? 'Workout');
+    final title = titleOverride ?? plan?.name ?? (plan?.id ?? 'Workout');
 
     final totalSets = plan?.totalTargetSets ?? 0;
     final doneSets =
-        runner.state?.performed
-            .fold<int>(0, (sum, e) => sum + e.sets.length) ??
+        runner.state?.performed.fold<int>(0, (sum, e) => sum + e.sets.length) ??
         0;
-    final progress = totalSets == 0 ? 0.0 : (doneSets / totalSets).clamp(0, 1).toDouble();
+    final progress =
+        totalSets == 0 ? 0.0 : (doneSets / totalSets).clamp(0, 1).toDouble();
 
     return Container(
       padding: EdgeInsets.fromLTRB(t.space5, t.space4, t.space5, t.space3),
@@ -68,10 +67,7 @@ class SessionHeader extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: t.space2),
-                        Text(
-                          '$doneSets / $totalSets',
-                          style: t.caption,
-                        ),
+                        Text('$doneSets / $totalSets', style: t.caption),
                       ],
                     ),
                   ],
@@ -79,9 +75,10 @@ class SessionHeader extends StatelessWidget {
               ),
               if (onPauseToggle != null)
                 _IconChip(
-                  icon: runner.isPaused
-                      ? Icons.play_arrow_rounded
-                      : Icons.pause_rounded,
+                  icon:
+                      runner.isPaused
+                          ? Icons.play_arrow_rounded
+                          : Icons.pause_rounded,
                   semanticLabel: runner.isPaused ? 'Resume' : 'Pause',
                   onTap: onPauseToggle!,
                 ),
@@ -143,7 +140,11 @@ class _IconChip extends StatelessWidget {
             borderRadius: t.radiusMedium,
             border: Border.all(color: accent ? Colors.transparent : t.border),
           ),
-          child: Icon(icon, color: accent ? t.onAccent : t.textPrimary, size: 22),
+          child: Icon(
+            icon,
+            color: accent ? t.onAccent : t.textPrimary,
+            size: 22,
+          ),
         ),
       ),
     );

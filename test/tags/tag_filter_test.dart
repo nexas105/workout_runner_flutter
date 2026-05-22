@@ -11,9 +11,7 @@ WorkoutPlan _plan(String id, List<String>? tags) => WorkoutPlan(
 CardioPlan _cardioPlan(String id, List<String>? tags) => CardioPlan(
   id: id,
   name: id,
-  intervals: const [
-    CardioInterval(id: 'i1', name: 'i1'),
-  ],
+  intervals: const [CardioInterval(id: 'i1', name: 'i1')],
   meta: tags == null ? null : {'tags': tags},
 );
 
@@ -38,40 +36,32 @@ void main() {
     ];
 
     test('any returns items sharing at least one filter tag', () {
-      final out = TagFilter.apply<WorkoutPlan>(
-        items,
-        (p) => p.meta,
-        ['strength'],
-      );
+      final out = TagFilter.apply<WorkoutPlan>(items, (p) => p.meta, [
+        'strength',
+      ]);
       expect(out.map((p) => p.id), ['a', 'c']);
     });
 
     test('any matches the union across multiple filter tags', () {
-      final out = TagFilter.apply<WorkoutPlan>(
-        items,
-        (p) => p.meta,
-        ['strength', 'cardio'],
-      );
+      final out = TagFilter.apply<WorkoutPlan>(items, (p) => p.meta, [
+        'strength',
+        'cardio',
+      ]);
       expect(out.map((p) => p.id), ['a', 'b', 'c']);
     });
 
     test('all requires every filter tag to be present', () {
-      final out = TagFilter.apply<WorkoutPlan>(
-        items,
-        (p) => p.meta,
-        ['strength', 'home'],
-        mode: TagMatchMode.all,
-      );
+      final out = TagFilter.apply<WorkoutPlan>(items, (p) => p.meta, [
+        'strength',
+        'home',
+      ], mode: TagMatchMode.all);
       expect(out.map((p) => p.id), ['c']);
     });
 
     test('none excludes items with any matching tag', () {
-      final out = TagFilter.apply<WorkoutPlan>(
-        items,
-        (p) => p.meta,
-        ['strength'],
-        mode: TagMatchMode.none,
-      );
+      final out = TagFilter.apply<WorkoutPlan>(items, (p) => p.meta, [
+        'strength',
+      ], mode: TagMatchMode.none);
       expect(out.map((p) => p.id), ['b', 'd']);
     });
 
@@ -102,11 +92,9 @@ void main() {
     });
 
     test('filter tags are normalized like stored tags', () {
-      final out = TagFilter.apply<WorkoutPlan>(
-        items,
-        (p) => p.meta,
-        ['  STRENGTH '],
-      );
+      final out = TagFilter.apply<WorkoutPlan>(items, (p) => p.meta, [
+        '  STRENGTH ',
+      ]);
       expect(out.map((p) => p.id), ['a', 'c']);
     });
   });
@@ -163,18 +151,15 @@ void main() {
       final any = TagFilter.filterCardioResults(results, ['hiit']);
       expect(any.map((r) => r.planId), ['a']);
 
-      final all = TagFilter.filterCardioResults(
-        results,
-        ['hiit', 'morning'],
-        mode: TagMatchMode.all,
-      );
+      final all = TagFilter.filterCardioResults(results, [
+        'hiit',
+        'morning',
+      ], mode: TagMatchMode.all);
       expect(all.map((r) => r.planId), ['a']);
 
-      final none = TagFilter.filterCardioResults(
-        results,
-        ['hiit'],
-        mode: TagMatchMode.none,
-      );
+      final none = TagFilter.filterCardioResults(results, [
+        'hiit',
+      ], mode: TagMatchMode.none);
       expect(none.map((r) => r.planId), ['b', 'c']);
     });
   });
