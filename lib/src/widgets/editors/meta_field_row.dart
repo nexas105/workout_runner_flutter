@@ -252,10 +252,16 @@ class _ThemedSwitch extends StatelessWidget {
     return Switch.adaptive(
       value: value,
       onChanged: onChanged,
-      activeThumbColor: t.accent,
-      activeTrackColor: t.accentMuted,
-      inactiveThumbColor: t.textMuted,
-      inactiveTrackColor: t.surfaceElevated,
+      thumbColor: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? t.accent
+            : t.textMuted,
+      ),
+      trackColor: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? t.accentMuted
+            : t.surfaceElevated,
+      ),
     );
   }
 }
